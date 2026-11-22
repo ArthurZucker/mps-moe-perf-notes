@@ -144,15 +144,72 @@ def install_bmv_linear():
     nn.Linear.forward = linear
 
 
-def main(path):
-    cfg = json.load(open(path))
-    os.environ.update({k: str(v) for k, v in cfg.get("env", {}).items()})
-    if not on_ac():
-        sys.exit("refusing to run on battery")
-    busy_before = gpu_busy()
-    if busy_before > 20:
-        sys.exit(f"refusing to run: GPU {busy_before}% busy")
+def install_periodic_commit(model, every):
+    """Lever HC_COMMIT_EVERY=N: commit the MPS command buffer before every N-th decoder layer call (what torch main does
+    every 16 encoded kernels since pytorch/pytorch@9e2fed89, not in 2.15.0), so the GPU starts on a step's first
+    layers while the host still encodes the rest. A side-effect op that mutates the layer input pins it in the graph."""
+    import sys
 
+    import torch
+    from torch.utils.cpp_extension import load as load_ext
+
+    here = os.path.expanduser("~/Work/hub-kernels/mps-events")
+    build = os.path.join(here, ".build", f"py{sys.version_info[0]}{sys.version_info[1]}")
+    ext = load_ext("_mps_events", [os.path.join(here, "mps_events.mm")], build_directory=build,
+                   extra_cflags=["-std=c++20", "-O2", "-D_DARWIN_C_SOURCE", "-include", "sys/types.h"],
+                   extra_ldflags=["-framework", "Metal", "-framework", "Foundation"], verbose=False)  # fmt: skip
+    ops = torch.library.Library("hc_commit", "DEF")
+    ops.define("commit(Tensor(a!) x) -> ()")
+    flush = (lambda: ext.flush_timed(-1)) if os.environ.get("HC_COMMIT_TIMED") == "1" else ext.flush
+    ops.impl("commit", lambda x: flush(), "MPS")
+    torch.library.register_fake("hc_commit::commit")(lambda x: None)
+    install_periodic_commit.keep = (ops, ext)
+    layers = [m for n, m in model.named_modules() if n.endswith(".layers") and isinstance(m, torch.nn.ModuleList)][0]
+
+    def hook(module, args, kwargs):
+        hidden = args[0] if args else kwargs["hidden_states"]
+        torch.ops.hc_commit.commit(hidden)
+
+    for index, layer in enumerate(layers):
+        if index % every == 0:
+            layer.register_forward_pre_hook(hook, with_kwargs=True)
+    return len(layers)
+
+
+def install_commit_after_forward(model):
+    """Lever HC_COMMIT_AFTER_FWD: commit the MPS command buffer as soon as the compiled decode forward returns. Without it
+    the step's tail (last layers, final norm, lm_head) stays in a coalesced, uncommitted buffer until the host's next
+    commit point, while the host sits blocked for the previous step in DeferredStopCheck: the GPU idles at every token
+    boundary (~1.3 ms/token measured with hc_components)."""
+    import sys
+
+    from torch.utils.cpp_extension import load as load_ext
+
+    here = os.path.expanduser("~/Work/hub-kernels/mps-events")
+    build = os.path.join(here, ".build", f"py{sys.version_info[0]}{sys.version_info[1]}")
+    ext = load_ext("_mps_events", [os.path.join(here, "mps_events.mm")], build_directory=build,
+                   extra_cflags=["-std=c++20", "-O2", "-D_DARWIN_C_SOURCE", "-include", "sys/types.h"],
+                   extra_ldflags=["-framework", "Metal", "-framework", "Foundation", "-framework", "QuartzCore"], verbose=False)  # fmt: skip
+    timed = os.environ.get("HC_COMMIT_TIMED") == "1"
+    get = model.get_compiled_call
+
+    def get_compiled_call(compile_config):
+        compiled = get(compile_config)
+
+        def call(*args, **kwargs):
+            out = compiled(*args, **kwargs)
+            ext.flush_timed(-1) if timed else ext.flush()
+            return out
+
+        return call
+
+    model.get_compiled_call = get_compiled_call
+    install_commit_after_forward.keep = ext
+
+
+def load(cfg):
+    """Model, tokenizer, prompt ids and generate kwargs for a config (env levers applied), as every harness uses them."""
+    os.environ.update({k: str(v) for k, v in cfg.get("env", {}).items()})
     import inductor_mps_fixes
     import torch
 
@@ -193,6 +250,25 @@ def main(path):
     compile_config = CompileConfig()
     compile_config._compile_all_devices = True
     gen = {"cache_implementation": "static", "compile_config": compile_config, "do_sample": False}
+    if os.environ.get("HC_COMMIT_EVERY"):
+        install_periodic_commit(model, int(os.environ["HC_COMMIT_EVERY"]))
+    if os.environ.get("HC_COMMIT_AFTER_FWD") == "1":  # E15: submit each decode step's tail (norm, lm_head) right away
+        install_commit_after_forward(model)
+    return model, tokenizer, ids, gen
+
+
+def main(path):
+    cfg = json.load(open(path))
+    os.environ.update({k: str(v) for k, v in cfg.get("env", {}).items()})
+    if not on_ac():
+        sys.exit("refusing to run on battery")
+    busy_before = gpu_busy()
+    if busy_before > 20:
+        sys.exit(f"refusing to run: GPU {busy_before}% busy")
+
+    model, tokenizer, ids, gen = load(cfg)
+    import torch
+
     tokens, samples = cfg.get("tokens", 128), cfg.get("samples", 6)
 
     stamps = []

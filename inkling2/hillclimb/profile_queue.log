@@ -1,0 +1,9 @@
+[1/8] casts | == casts [component]: host step 18.13 ms | GPU in segments 16.61 ms/token | GPU idle between segments 1.53 ms/token | 430 segments/token | elapsed 240s eta ~1680s
+[2/8] bundle | == bundle [component]: host step 17.31 ms | GPU in segments 15.81 ms/token | GPU idle between segments 1.50 ms/token | 429 segments/token | elapsed 410s eta ~1230s
+[3/8] prev-rev | == prev-rev [component]: host step 18.06 ms | GPU in segments 16.34 ms/token | GPU idle between segments 1.74 ms/token | 428 segments/token | elapsed 654s eta ~1090s
+[4/8] qkv-multi | == qkv-multi [component]: host step 17.45 ms | GPU in segments 15.76 ms/token | GPU idle between segments 1.69 ms/token | 427 segments/token | elapsed 827s eta ~824s
+[5/8] prev-rev2 | == prev-rev2 [component]: host step 17.70 ms | GPU in segments 15.96 ms/token | GPU idle between segments 1.74 ms/token | 427 segments/token | elapsed 1037s eta ~621s
+[6/8] down-route | == down-route [component]: host step 17.33 ms | GPU in segments 15.81 ms/token | GPU idle between segments 1.52 ms/token | 428 segments/token | elapsed 1207s eta ~402s
+[7/8] exact-prev | == exact-prev [component]: host step 26.42 ms | GPU in segments 22.81 ms/token | GPU idle between segments 3.61 ms/token | 478 segments/token | elapsed 1421s eta ~203s
+[8/8] exact-bmv | == exact-bmv [component]: host step 26.19 ms | GPU in segments 22.60 ms/token | GPU idle between segments 3.59 ms/token | 479 segments/token | elapsed 1633s eta ~0s
+PROFILE_QUEUE_DONE

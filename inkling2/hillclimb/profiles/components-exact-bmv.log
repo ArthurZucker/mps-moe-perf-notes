@@ -1,0 +1,28 @@
+[gpu_lock] waited 0s, GPU busy 0% before the run
+/Users/arthurzucker/Work/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:70: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+W1122 19:38:25.267000 88129 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+W1122 19:38:25.351000 88129 torch/utils/_pytree.py:646] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1122 19:38:25.368000 88129 torch/utils/_pytree.py:646] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+Fetching 21 files:   0%|          | 0/21 [00:00<?, ?it/s]Fetching 21 files: 100%|██████████| 21/21 [00:00<00:00, 2686.69it/s]
+Kernel 'metal-moe-decode' variant 'torch-metal': not signed, so its integrity cannot be verified
+Kernel 'metal-moe-decode' variant 'torch-metal': the metadata does not record a digest, so its integrity cannot be verified
+Parse safetensors files:   0%|          | 0/1 [00:00<?, ?it/s]Parse safetensors files: 100%|██████████| 1/1 [00:01<00:00,  1.20s/it]Parse safetensors files: 100%|██████████| 1/1 [00:01<00:00,  1.21s/it]
+Loading weights:   0%|          | 0/1115 [00:00<?, ?it/s]Loading weights:   6%|▌         | 65/1115 [00:00<00:04, 246.14it/s]Loading weights:   8%|▊         | 90/1115 [00:00<00:07, 137.94it/s]Loading weights:   9%|▉         | 105/1115 [00:01<00:15, 66.09it/s]Loading weights:  10%|█         | 115/1115 [00:01<00:16, 60.44it/s]Loading weights: 100%|██████████| 1115/1115 [00:01<00:00, 768.00it/s]
+W1122 19:38:56.386000 88129 torch/_inductor/cudagraph_utils.py:405] [0/0] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 19:39:20.983000 88129 torch/_inductor/cudagraph_utils.py:405] [0/1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 19:39:48.643000 88129 torch/_inductor/cudagraph_utils.py:405] [0/2] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+== exact-bmv [component]: host step 26.19 ms | GPU in segments 22.60 ms/token | GPU idle between segments 3.59 ms/token | 479 segments/token
+   experts                            7.23 ms/token  (32.0%)
+   o_proj                             5.03 ms/token  (22.3%)
+   qkv_proj                           4.22 ms/token  (18.7%)
+   pre_attn                           1.53 ms/token  ( 6.8%)
+   attention                          1.38 ms/token  ( 6.1%)
+   attn_inputs                        1.01 ms/token  ( 4.5%)
+   pre_mlp                            0.96 ms/token  ( 4.2%)
+   router                             0.70 ms/token  ( 3.1%)
+   post_mlp_conv                      0.32 ms/token  ( 1.4%)
+   post_attn_conv                     0.23 ms/token  ( 1.0%)
+   GPU idle by what precedes it (ms/token): {'after post_mlp_conv': 3.291, 'after attention': 0.045, 'after experts': 0.036, 'after attn_inputs': 0.034, 'after qkv_proj': 0.034, 'after o_proj': 0.033}
+   largest gaps (us): [(3486, 'after post_mlp_conv (layer 23)'), (3446, 'after post_mlp_conv (layer 23)'), (3424, 'after post_mlp_conv (layer 23)'), (3396, 'after post_mlp_conv (layer 23)'), (3389, 'after post_mlp_conv (layer 23)'), (3384, 'after post_mlp_conv (layer 23)')]
+   per layer (ms/token, loop layers 6-17 run 3x): {0: 0.44, 1: 0.43, 2: 0.43, 3: 0.42, 4: 0.42, 5: 0.44, 6: 1.41, 7: 1.4, 8: 1.4, 9: 1.4, 10: 1.39, 11: 1.44, 12: 1.41, 13: 1.41, 14: 1.41, 15: 1.41, 16: 1.41, 17: 1.46, 18: 0.44, 19: 0.43, 20: 0.53, 21: 0.54, 22: 0.54, 23: 0.6}

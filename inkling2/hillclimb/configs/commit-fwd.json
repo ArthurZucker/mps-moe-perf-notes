@@ -1,0 +1,1 @@
+{"name": "commit-fwd", "dense": "4bit", "env": {"HC_COMMIT_AFTER_FWD": "1"}, "tokens": 128, "samples": 6}

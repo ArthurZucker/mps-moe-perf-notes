@@ -177,3 +177,34 @@ Locals' 2x needs near-verbatim tool output plus an engine-level verify; neither 
 ### E14 (queued, needs AC) exact path without MPSGraph mm: every batch-1 bf16 nn.Linear as a custom kernel
 Tests the PyTorch-issue claim that MPSGraph ops cost an encoder break each (+1.5 us in the microbench; 209-353 per token on the exact path).
 Run: cd benchmark_v2/inkling2_metal/hillclimb && ./queue.sh exact-mm exact-bmvall exact-mm
+
+## PROFILE-VERIFIED STATUS (2026-11-22 evening; idle GPU checked before each run)
+Tools: hc_verify.py (18/18 kernel correctness checks vs torch references), hc_cbtrace.py (passive tracer: swizzled
+-[AGXG15XFamilyCommandBuffer commit] records every command buffer's GPU start / end, no change to scheduling),
+hc_components.py (timed commits before each sub-block: in-context GPU time per component, ~2.2 us per split, calibrated
+48 vs 382 splits), hc_hostprobe.py (host encode / stop-check wait / loop), hc_gputime.py.
+Discarded runs: Metal System Trace (Metal API interception slowed decode 12x, so its timeline is an artifact) and 3 runs taken
+while mediaanalysisd + Brave held the GPU at 72-78% (the harnesses now refuse when the GPU is busy).
+
+Decode (best 4-bit config, 59.2-59.5 tok/s, 16.8 ms/step):
+- GPU busy 98.2% (passive trace); ~1 command buffer per step of 16.4 ms; GPU idle 0.39 ms/token. Not host-bound: the host
+  encodes in 7.1 ms, waits 8.9 ms in DeferredStopCheck (one step behind), loop 0.75 ms. Removing that wait floods the queue
+  and is slower (23.7 ms/token), so the sync is useful pacing.
+- Kernel time 15.4 ms + ~1 ms of serial dispatch inside the buffer (~1170 dependent dispatches).
+- Per component (ms/token): experts 7.24 | qkv_proj (qmv4_multi) 3.13 | pre_attn 1.51 | pre_mlp 0.94 | o_proj 0.92 | router 0.69 |
+  attention 0.60 | post_mlp_conv 0.31 | attn_inputs 0.30 | post_attn_conv 0.22.
+- 4-bit matvecs cap at ~80% of 290 GB/s for big shapes (q group 233 GB/s, best of 14 layouts incl. 16-byte loads);
+  1024-row shapes are latency-bound (~11 us vs 4.6 floor). Experts gate_up 89%, down ~85% of practical.
+Ceiling check for 90 tok/s (11.1 ms/step): byte floor 10.4 ms at 290 GB/s + ~1 ms of dependent dispatch = 11.4 ms, i.e.
+~88 tok/s if every kernel ran at 100% of bandwidth. 90 tok/s is not reachable on this stack at this quality; ~80% kernel
+efficiency (the measured matvec cap) gives ~13 ms + 1 ms -> ~71 tok/s as the practical target.
+
+### Re-verification of E5 / E7 / E8 / E12 with in-context component profiles (control vs candidate, idle GPU, same session)
+Component noise between runs is ~0.2 ms/token; projections and attention inputs are compared as a sum because the hook boundary moved across revisions.
+| experiment | what changed in context | delta ms/token | earlier tok/s verdict | verified verdict |
+|---|---|---|---|---|
+| E5 router v2 + cast-free experts | router 0.85 -> 0.68, experts 7.46 -> 7.20 | -0.43 | accepted +1.4% | confirmed, both kernels active |
+| E7 qmv4_multi | projections + inputs 3.75 -> 3.42 | -0.33 (total GPU -0.58) | kept, "marginal +0.3%" | confirmed -0.33; the A/B undersold it |
+| E8 down_route | experts 7.39 -> 7.21 | -0.18 | accepted +1.4% | confirmed, 1/3 of the eager microbench's 0.5 |
+| E12 exact bmv_multi | projections + inputs 5.51 -> 5.23 | -0.28 (total -0.21) | rejected "no gain" | small real gain, under A/B noise; exact path is bound by bf16 bytes (o_proj 5.03 ~ floor) |
+Exact path "idle" after layer 23 (3.3 ms) = the bf16 lm_head as an MPSGraph mm (own command buffers, outside the timed ones): 0.93 GB -> 3.2 ms.

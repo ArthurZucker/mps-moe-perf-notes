@@ -1,0 +1,1665 @@
+{
+ "name": "down-route",
+ "trace": "/Users/arthurzucker/Work/transformers/.claude/worktrees/inkling2-perf/benchmark_v2/inkling2_metal/hillclimb/profiles/down-route.trace",
+ "schemas": [
+  "ProcessCPUUsage",
+  "SystemCPUUsage",
+  "ThreadCPUUsage",
+  "ca-client-buffer-wait-interval",
+  "ca-client-present-request",
+  "ca-client-presented-handler",
+  "device-display-info",
+  "device-gpu-info",
+  "device-thermal-state-intervals",
+  "display-compositor-events-interval",
+  "display-compositor-interval",
+  "display-events-interval",
+  "display-surface-queue",
+  "display-surface-swap",
+  "display-vsyncs-interval",
+  "displayed-surfaces-interval",
+  "displayed-surfaces-per-second",
+  "dyld-library-load",
+  "gpu-aps-stream",
+  "gpu-counter-info",
+  "gpu-counter-value",
+  "gpu-performance-device-state-intervals",
+  "gpu-performance-state-info",
+  "gpu-performance-state-intervals",
+  "gpu-shader-profiler-interval",
+  "gpu-shader-profiler-sample",
+  "graphics-compiler-activity-intervals",
+  "graphics-compiler-spill-events",
+  "hang-risks",
+  "kdebug",
+  "kdebug-strings",
+  "life-cycle-period",
+  "metal-application-command-buffer-submissions",
+  "metal-application-encoders-list",
+  "metal-application-event-interval",
+  "metal-application-intervals",
+  "metal-ar-events",
+  "metal-command-buffer-completed",
+  "metal-command-buffer-error",
+  "metal-command-buffer-frame-assignment",
+  "metal-command-buffer-to-accelerator-id",
+  "metal-current-allocated-size",
+  "metal-driver-event-intervals",
+  "metal-driver-event-per-thread-intervals",
+  "metal-driver-intervals",
+  "metal-gpu-counter-intervals",
+  "metal-gpu-counter-profile",
+  "metal-gpu-execution-points",
+  "metal-gpu-info",
+  "metal-gpu-intervals",
+  "metal-gpu-state-intervals",
+  "metal-gpu-submission-to-command-buffer-id",
+  "metal-io-surface-access",
+  "metal-kernel-resource-allocations",
+  "metal-known-compositor-process",
+  "metal-object-dependency-chain-app",
+  "metal-object-dependency-chain-display",
+  "metal-object-dependency-chain-driver",
+  "metal-object-dependency-chain-gpu",
+  "metal-object-label",
+  "metal-residency-set-interval",
+  "metal-residency-set-resource-event",
+  "metal-residency-set-usage-event",
+  "metal-resource-allocations",
+  "metal-shader-profiler-intervals",
+  "metal-shader-profiler-shader-list",
+  "metal-visual-highlight-chain-app",
+  "metal-visual-highlight-chain-display",
+  "metal-visual-highlight-chain-driver",
+  "metal-visual-highlight-chain-gpu",
+  "metal-wired-sysmem-level-interval",
+  "mps-hw-intervals",
+  "os-log",
+  "os-signpost",
+  "os-signpost-arg",
+  "potential-hangs",
+  "process-info",
+  "runloop-events",
+  "thread-info",
+  "tick",
+  "time-info",
+  "time-profile",
+  "time-sample",
+  "visual-chain",
+  "visual-connection"
+ ],
+ "tok_s_under_trace": "2.9 tok/s (under trace)",
+ "tables": {
+  "gpu-performance-device-state-intervals": {
+   "rows": 3,
+   "span_ms": 5000.392833,
+   "busy_ms": 4998.511958,
+   "busy_pct": 99.96238545524689,
+   "gaps": 1,
+   "gap_median_us": 1880.875,
+   "gap_total_ms": 1.880875,
+   "label_keys": [
+    "uint64",
+    "uint32"
+   ],
+   "top": [
+    {
+     "label": "1\u202f594 | 3",
+     "count": 1,
+     "total_ms": 4997.878208,
+     "mean_us": 4997878.208
+    },
+    {
+     "label": "1\u202f594 | 1",
+     "count": 2,
+     "total_ms": 0.63375,
+     "mean_us": 316.875
+    }
+   ]
+  },
+  "gpu-performance-state-intervals": {
+   "rows": 3,
+   "span_ms": 5000.392833,
+   "busy_ms": 4998.511958,
+   "busy_pct": 99.96238545524689,
+   "gaps": 1,
+   "gap_median_us": 1880.875,
+   "gap_total_ms": 1.880875,
+   "label_keys": [
+    "gpu-performance-state",
+    "string",
+    "boolean",
+    "narrative",
+    "gpu-event-name"
+   ],
+   "top": [
+    {
+     "label": "Maximum | M3 Max | Yes",
+     "count": 1,
+     "total_ms": 4997.878208,
+     "mean_us": 4997878.208
+    },
+    {
+     "label": "Minimum | M3 Max | Yes",
+     "count": 2,
+     "total_ms": 0.63375,
+     "mean_us": 316.875
+    }
+   ]
+  },
+  "gpu-shader-profiler-interval": {
+   "rows": 44,
+   "span_ms": 0.089083,
+   "busy_ms": 0.040666,
+   "busy_pct": 45.6495627673069,
+   "gaps": 5,
+   "gap_median_us": 8.875,
+   "gap_total_ms": 0.049875,
+   "label_keys": [
+    "uint64",
+    "uint32"
+   ],
+   "top": [
+    {
+     "label": "1\u202f099\u202f513\u202f767\u202f872 | 282080289",
+     "count": 2,
+     "total_ms": 0.019291,
+     "mean_us": 9.6455
+    },
+    {
+     "label": "1\u202f099\u202f513\u202f507\u202f904 | 282080289",
+     "count": 2,
+     "total_ms": 0.017792,
+     "mean_us": 8.896
+    },
+    {
+     "label": "1\u202f099\u202f547\u202f741\u202f248 | 282080289",
+     "count": 1,
+     "total_ms": 0.013375,
+     "mean_us": 13.375
+    },
+    {
+     "label": "1\u202f099\u202f513\u202f801\u202f344 | 282080289",
+     "count": 3,
+     "total_ms": 0.010376,
+     "mean_us": 3.4586666666666663
+    },
+    {
+     "label": "1\u202f099\u202f527\u202f743\u202f232 | 282080289",
+     "count": 2,
+     "total_ms": 0.008917,
+     "mean_us": 4.4585
+    },
+    {
+     "label": "1\u202f099\u202f833\u202f293\u202f632 | 282080289",
+     "count": 3,
+     "total_ms": 0.007375,
+     "mean_us": 2.4583333333333335
+    },
+    {
+     "label": "1\u202f099\u202f527\u202f700\u202f800 | 282080289",
+     "count": 3,
+     "total_ms": 0.007375,
+     "mean_us": 2.4583333333333335
+    },
+    {
+     "label": "1\u202f099\u202f527\u202f702\u202f272 | 282080289",
+     "count": 2,
+     "total_ms": 0.007375,
+     "mean_us": 3.6875
+    },
+    {
+     "label": "1\u202f099\u202f527\u202f699\u202f904 | 282080289",
+     "count": 2,
+     "total_ms": 0.005916,
+     "mean_us": 2.958
+    },
+    {
+     "label": "1\u202f099\u202f610\u202f963\u202f648 | 282080293",
+     "count": 1,
+     "total_ms": 0.005916,
+     "mean_us": 5.916
+    },
+    {
+     "label": "1\u202f099\u202f527\u202f706\u202f368 | 282080289",
+     "count": 3,
+     "total_ms": 0.004459,
+     "mean_us": 1.4863333333333333
+    },
+    {
+     "label": "1\u202f099\u202f511\u202f688\u202f768 | 282080291",
+     "count": 1,
+     "total_ms": 0.004458,
+     "mean_us": 4.458
+    },
+    {
+     "label": "1\u202f099\u202f527\u202f703\u202f808 | 282080289",
+     "count": 2,
+     "total_ms": 0.004417,
+     "mean_us": 2.2085
+    },
+    {
+     "label": "1\u202f099\u202f513\u202f760\u202f960 | 282080291",
+     "count": 1,
+     "total_ms": 0.003,
+     "mean_us": 3.0
+    },
+    {
+     "label": "1\u202f099\u202f814\u202f251\u202f712 | 282080291",
+     "count": 1,
+     "total_ms": 0.003,
+     "mean_us": 3.0
+    },
+    {
+     "label": "1\u202f099\u202f513\u202f733\u202f504 | 282080291",
+     "count": 1,
+     "total_ms": 0.003,
+     "mean_us": 3.0
+    },
+    {
+     "label": "1\u202f099\u202f511\u202f688\u202f768 | 282080293",
+     "count": 2,
+     "total_ms": 0.003,
+     "mean_us": 1.5
+    },
+    {
+     "label": "1\u202f099\u202f527\u202f705\u202f024 | 282080290",
+     "count": 1,
+     "total_ms": 0.002125,
+     "mean_us": 2.125
+    },
+    {
+     "label": "1\u202f099\u202f527\u202f703\u202f360 | 282080290",
+     "count": 1,
+     "total_ms": 0.002125,
+     "mean_us": 2.125
+    },
+    {
+     "label": "1\u202f099\u202f527\u202f744\u202f000 | 282080290",
+     "count": 1,
+     "total_ms": 0.0015,
+     "mean_us": 1.5
+    },
+    {
+     "label": "1\u202f099\u202f513\u202f733\u202f888 | 282080292",
+     "count": 1,
+     "total_ms": 0.0015,
+     "mean_us": 1.5
+    },
+    {
+     "label": "1\u202f099\u202f814\u202f251\u202f968 | 282080292",
+     "count": 1,
+     "total_ms": 0.0015,
+     "mean_us": 1.5
+    },
+    {
+     "label": "1\u202f099\u202f513\u202f523\u202f264 | 282080292",
+     "count": 1,
+     "total_ms": 0.0015,
+     "mean_us": 1.5
+    },
+    {
+     "label": "1\u202f099\u202f511\u202f689\u202f216 | 282080289",
+     "count": 1,
+     "total_ms": 0.0015,
+     "mean_us": 1.5
+    },
+    {
+     "label": "1\u202f099\u202f513\u202f759\u202f232 | 282080291",
+     "count": 1,
+     "total_ms": 0.0015,
+     "mean_us": 1.5
+    },
+    {
+     "label": "1\u202f099\u202f691\u202f014\u202f464 | 282080294",
+     "count": 1,
+     "total_ms": 0.0015,
+     "mean_us": 1.5
+    },
+    {
+     "label": "1\u202f099\u202f513\u202f742\u202f080 | 282080293",
+     "count": 1,
+     "total_ms": 0.0015,
+     "mean_us": 1.5
+    },
+    {
+     "label": "1\u202f099\u202f513\u202f772\u202f032 | 282080290",
+     "count": 1,
+     "total_ms": 0.001458,
+     "mean_us": 1.458
+    },
+    {
+     "label": "1\u202f099\u202f511\u202f690\u202f624 | 282080290",
+     "count": 1,
+     "total_ms": 0.001458,
+     "mean_us": 1.458
+    }
+   ]
+  },
+  "metal-application-command-buffer-submissions": {
+   "rows": 56,
+   "span_ms": 585.129,
+   "busy_ms": 3.530584,
+   "busy_pct": 0.6033855782229218,
+   "gaps": 55,
+   "gap_median_us": 9149.334,
+   "gap_total_ms": 581.598416,
+   "label_keys": [
+    "metal-event-name",
+    "metal-device-name",
+    "sentinel",
+    "uint32",
+    "process",
+    "thread",
+    "metal-event",
+    "narrative",
+    "render-buffer-depth",
+    "metal-command-buffer-id"
+   ],
+   "top": [
+    {
+     "label": "CommandBufferSubmission | M3 Max | ",
+     "count": 56,
+     "total_ms": 3.530584,
+     "mean_us": 63.046142857142854
+    }
+   ]
+  },
+  "metal-application-encoders-list": {
+   "rows": 116,
+   "span_ms": 585.101167,
+   "busy_ms": 3.513834,
+   "busy_pct": 0.6005515282111888,
+   "gaps": 115,
+   "gap_median_us": 3136.375,
+   "gap_total_ms": 581.587333,
+   "label_keys": [
+    "thread",
+    "process",
+    "metal-device-name",
+    "gpu-frame-number",
+    "metal-object-label",
+    "metal-event-name",
+    "metal-command-buffer-id"
+   ],
+   "top": [
+    {
+     "label": "Main Thread (0x36c5832) (python, pid: 56284) |  | M3 Max",
+     "count": 116,
+     "total_ms": 3.513834,
+     "mean_us": 30.291672413793105
+    }
+   ]
+  },
+  "metal-application-event-interval": {
+   "rows": 6492,
+   "span_ms": 8774.7015,
+   "busy_ms": 20.796936,
+   "busy_pct": 0.23701018205576566,
+   "gaps": 6487,
+   "gap_median_us": 94.833,
+   "gap_total_ms": 8753.904564,
+   "label_keys": [
+    "metal-nesting-level",
+    "metal-device-name",
+    "metal-event-name",
+    "process",
+    "thread",
+    "formatted-label",
+    "metal-workload-priority",
+    "render-buffer-depth",
+    "connection-uuid64"
+   ],
+   "top": [
+    {
+     "label": "0 | M3 Max | Completion Handlers",
+     "count": 6492,
+     "total_ms": 20.800228,
+     "mean_us": 3.203978434996919
+    }
+   ]
+  },
+  "metal-application-intervals": {
+   "rows": 184,
+   "span_ms": 585.129,
+   "busy_ms": 133.948916,
+   "busy_pct": 22.892202574133226,
+   "gaps": 54,
+   "gap_median_us": 6582.0625,
+   "gap_total_ms": 451.180084,
+   "label_keys": [
+    "process",
+    "metal-device-name",
+    "metal-nesting-level",
+    "formatted-label",
+    "metal-workload-priority",
+    "connection-uuid64",
+    "render-buffer-depth",
+    "thread",
+    "metal-event-name",
+    "metal-command-buffer-id"
+   ],
+   "top": [
+    {
+     "label": "python (56284) | M3 Max | 14",
+     "count": 55,
+     "total_ms": 133.937207,
+     "mean_us": 2435.221945454545
+    },
+    {
+     "label": "python (56284) | M3 Max | 15",
+     "count": 116,
+     "total_ms": 3.513834,
+     "mean_us": 30.291672413793105
+    },
+    {
+     "label": "python (56284) | M3 Max | 0",
+     "count": 6,
+     "total_ms": 0.772,
+     "mean_us": 128.66666666666669
+    },
+    {
+     "label": "python (56284) | M3 Max | 1",
+     "count": 6,
+     "total_ms": 0.737583,
+     "mean_us": 122.9305
+    },
+    {
+     "label": "python (56284) | M3 Max | 4",
+     "count": 1,
+     "total_ms": 0.01675,
+     "mean_us": 16.75
+    }
+   ]
+  },
+  "metal-current-allocated-size": {
+   "rows": 613,
+   "span_ms": 12969.476166,
+   "busy_ms": 6593.786496,
+   "busy_pct": 50.84080815296053,
+   "gaps": 43,
+   "gap_median_us": 3400.209,
+   "gap_total_ms": 6375.68967,
+   "label_keys": [
+    "process",
+    "size-in-bytes",
+    "formatted-label",
+    "render-buffer-depth"
+   ],
+   "top": [
+    {
+     "label": "python (56284) | 24,96 GiB | 24,96 GiB",
+     "count": 8,
+     "total_ms": 6209.115583,
+     "mean_us": 776139.447875
+    },
+    {
+     "label": "python (56284) | 24,94 GiB | 24,94 GiB",
+     "count": 482,
+     "total_ms": 442.782167,
+     "mean_us": 918.6352012448133
+    },
+    {
+     "label": "python (56284) | 24,95 GiB | 24,95 GiB",
+     "count": 123,
+     "total_ms": 141.756625,
+     "mean_us": 1152.492886178862
+    }
+   ]
+  },
+  "metal-driver-event-intervals": {
+   "rows": 2260,
+   "span_ms": 8773.991458,
+   "busy_ms": 94.542665,
+   "busy_pct": 1.0775331324695712,
+   "gaps": 2249,
+   "gap_median_us": 1392.166,
+   "gap_total_ms": 8679.448793,
+   "label_keys": [
+    "gpu-driver-name",
+    "metal-nesting-level",
+    "formatted-label",
+    "metal-workload-priority",
+    "connection-uuid64",
+    "render-buffer-depth",
+    "process",
+    "thread",
+    "metal-device-name",
+    "metal-command-buffer-id",
+    "sentinel"
+   ],
+   "top": [
+    {
+     "label": "Driver Processing | 0 | Wire 1,00 GiB System Memory (Success) (python (0x36c5958) (p",
+     "count": 4,
+     "total_ms": 15.136874,
+     "mean_us": 3784.2185
+    },
+    {
+     "label": "Driver Processing | 10 | Wire 1,00 GiB System Memory (Success) (python (0x36c5958) (p",
+     "count": 3,
+     "total_ms": 14.747709,
+     "mean_us": 4915.903
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 162,00 MiB System Memory (Success) (python (0x36c5b62) ",
+     "count": 11,
+     "total_ms": 8.223877,
+     "mean_us": 747.6251818181818
+    },
+    {
+     "label": "Driver Processing | 10 | Wire 883,41 MiB System Memory (Success) (python (0x36c5958) ",
+     "count": 1,
+     "total_ms": 7.338166,
+     "mean_us": 7338.166
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 656,00 MiB System Memory (Success) (python (0x36c5b62) ",
+     "count": 3,
+     "total_ms": 7.116042,
+     "mean_us": 2372.014
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 80,00 KiB System Memory (Success) (Brave Browser Helper",
+     "count": 1060,
+     "total_ms": 5.398535,
+     "mean_us": 5.092957547169812
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 8,00 MiB System Memory (Success) (com.apple.WebKit.GPU ",
+     "count": 47,
+     "total_ms": 4.585418,
+     "mean_us": 97.56208510638298
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 162,00 MiB System Memory (Success) (python (0x36c5958) ",
+     "count": 6,
+     "total_ms": 4.288958,
+     "mean_us": 714.8263333333334
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 1,00 GiB System Memory (Success) (python (0x36c5b62) (p",
+     "count": 1,
+     "total_ms": 3.601958,
+     "mean_us": 3601.958
+    },
+    {
+     "label": "Driver Processing | 10 | Wire 1,00 GiB System Memory (Success) (python (0x36c5b62) (p",
+     "count": 1,
+     "total_ms": 3.537291,
+     "mean_us": 3537.291
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 324,00 MiB System Memory (Success) (python (0x36c5b62) ",
+     "count": 2,
+     "total_ms": 2.733458,
+     "mean_us": 1366.729
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 656,00 MiB System Memory (Success) (python (0x36c5958) ",
+     "count": 1,
+     "total_ms": 2.530666,
+     "mean_us": 2530.666
+    },
+    {
+     "label": "Driver Processing | 10 | Wire 162,00 MiB System Memory (Success) (python (0x36c5958) ",
+     "count": 2,
+     "total_ms": 1.754167,
+     "mean_us": 877.0835
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 8,00 MiB System Memory (Success) (python (0x36c5b62) (p",
+     "count": 26,
+     "total_ms": 1.590873,
+     "mean_us": 61.187423076923075
+    },
+    {
+     "label": "Driver Processing | 10 | Wire 324,00 MiB System Memory (Success) (python (0x36c5b62) ",
+     "count": 1,
+     "total_ms": 1.420792,
+     "mean_us": 1420.792
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 324,00 MiB System Memory (Success) (python (0x36c5958) ",
+     "count": 1,
+     "total_ms": 1.245208,
+     "mean_us": 1245.208
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 20,25 MiB System Memory (Success) (python (0x36c5b62) (",
+     "count": 12,
+     "total_ms": 1.070999,
+     "mean_us": 89.24991666666668
+    },
+    {
+     "label": "Driver Processing | 10 | Wire 162,00 MiB System Memory (Success) (python (0x36c5b62) ",
+     "count": 1,
+     "total_ms": 0.93675,
+     "mean_us": 936.75
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 20,25 MiB System Memory (Success) (python (0x36c5958) (",
+     "count": 8,
+     "total_ms": 0.877083,
+     "mean_us": 109.635375
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 16,00 MiB System Memory (Success) (com.apple.WebKit.GPU",
+     "count": 2,
+     "total_ms": 0.731,
+     "mean_us": 365.5
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 8,00 MiB System Memory (Success) (python (0x36c5958) (p",
+     "count": 13,
+     "total_ms": 0.43225,
+     "mean_us": 33.25
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 32,00 KiB System Memory (Success) (Brave Browser Helper",
+     "count": 185,
+     "total_ms": 0.421038,
+     "mean_us": 2.275881081081081
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 128,00 KiB System Memory (Success) (com.apple.WebKit.GP",
+     "count": 132,
+     "total_ms": 0.303548,
+     "mean_us": 2.2996060606060604
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 128,00 KiB System Memory (Success) (ghostty (0x36c4b8c)",
+     "count": 128,
+     "total_ms": 0.265128,
+     "mean_us": 2.0713125
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 2,81 MiB System Memory (Success) (Brave Browser Helper ",
+     "count": 6,
+     "total_ms": 0.233249,
+     "mean_us": 38.874833333333335
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 2,02 MiB System Memory (Success) (Brave Browser Helper ",
+     "count": 7,
+     "total_ms": 0.228459,
+     "mean_us": 32.637
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 5,75 MiB System Memory (Success) (Brave Browser Helper ",
+     "count": 3,
+     "total_ms": 0.20425,
+     "mean_us": 68.08333333333333
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 2,62 MiB System Memory (Success) (Brave Browser Helper ",
+     "count": 6,
+     "total_ms": 0.203207,
+     "mean_us": 33.86783333333334
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 16,00 MiB System Memory (Success) (python (0x36c5b62) (",
+     "count": 1,
+     "total_ms": 0.1845,
+     "mean_us": 184.5
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 4,00 MiB System Memory (Success) (Brave Browser Helper ",
+     "count": 5,
+     "total_ms": 0.155665,
+     "mean_us": 31.133
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 576,00 KiB System Memory (Success) (python (0x36c5958) ",
+     "count": 33,
+     "total_ms": 0.149919,
+     "mean_us": 4.543
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 48,00 KiB System Memory (Success) (Brave Browser Helper",
+     "count": 57,
+     "total_ms": 0.133878,
+     "mean_us": 2.3487368421052635
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 3,47 MiB System Memory (Success) (ghostty (0x36c4b8c) (",
+     "count": 2,
+     "total_ms": 0.133334,
+     "mean_us": 66.667
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 10,12 MiB System Memory (Success) (python (0x36c5b62) (",
+     "count": 3,
+     "total_ms": 0.115668,
+     "mean_us": 38.556
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 16,00 KiB System Memory (Success) (python (0x36c5b62) (",
+     "count": 41,
+     "total_ms": 0.100913,
+     "mean_us": 2.4612926829268296
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 1,02 MiB System Memory (Success) (Brave Browser Helper ",
+     "count": 7,
+     "total_ms": 0.098708,
+     "mean_us": 14.101142857142857
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 32,00 KiB System Memory (Success) (com.apple.WebKit.GPU",
+     "count": 32,
+     "total_ms": 0.096749,
+     "mean_us": 3.02340625
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 8,06 MiB System Memory (Success) (Brave Browser Helper ",
+     "count": 1,
+     "total_ms": 0.095292,
+     "mean_us": 95.292
+    },
+    {
+     "label": "Driver Processing | 10 | Wire 8,00 MiB System Memory (Success) (com.apple.WebKit.GPU ",
+     "count": 1,
+     "total_ms": 0.094375,
+     "mean_us": 94.375
+    },
+    {
+     "label": "Driver Processing | 0 | Wire 64,00 KiB System Memory (Success) (Brave Browser Helper",
+     "count": 35,
+     "total_ms": 0.085249,
+     "mean_us": 2.4356857142857145
+    }
+   ]
+  },
+  "metal-driver-intervals": {
+   "rows": 165250,
+   "span_ms": 8777.9935,
+   "busy_ms": 4822.42436,
+   "busy_pct": 54.93766155101391,
+   "gaps": 6805,
+   "gap_median_us": 52.75,
+   "gap_total_ms": 3955.574182,
+   "label_keys": [
+    "gpu-driver-name",
+    "metal-object-label",
+    "metal-nesting-level",
+    "formatted-label",
+    "metal-workload-priority",
+    "connection-uuid64",
+    "render-buffer-depth",
+    "process",
+    "thread",
+    "metal-device-name",
+    "metal-command-buffer-id"
+   ],
+   "top": [
+    {
+     "label": "Driver Processing | Command Encoder | 1",
+     "count": 141334,
+     "total_ms": 3868.484722,
+     "mean_us": 27.371225055542194
+    },
+    {
+     "label": "Driver Processing | Command Buffer | 10",
+     "count": 895,
+     "total_ms": 3357.002594,
+     "mean_us": 3750.840887150838
+    },
+    {
+     "label": "Driver Processing | Command Buffer | 0",
+     "count": 7852,
+     "total_ms": 1572.451647,
+     "mean_us": 200.26128973509933
+    },
+    {
+     "label": "Driver Processing | Command Encoder | 11",
+     "count": 14844,
+     "total_ms": 951.819206,
+     "mean_us": 64.12147709512261
+    },
+    {
+     "label": "Driver Processing | Command Buffer | 20",
+     "count": 21,
+     "total_ms": 199.910459,
+     "mean_us": 9519.545666666667
+    },
+    {
+     "label": "Driver Processing | Command Encoder | 21",
+     "count": 304,
+     "total_ms": 152.954013,
+     "mean_us": 503.13820065789474
+    }
+   ]
+  },
+  "metal-gpu-intervals": {
+   "rows": 297126,
+   "span_ms": 8786.494957,
+   "busy_ms": 8791.636168,
+   "busy_pct": 100.05851264952817,
+   "gaps": 10,
+   "gap_median_us": 0.1665,
+   "gap_total_ms": 0.156582,
+   "label_keys": [
+    "gpu-channel-name",
+    "gpu-frame-number",
+    "sentinel",
+    "metal-nesting-level",
+    "formatted-label",
+    "gpu-state",
+    "connection-uuid64",
+    "render-buffer-depth",
+    "metal-device-name",
+    "metal-object-label",
+    "size-in-bytes",
+    "metal-command-buffer-id",
+    "uint64"
+   ],
+   "top": [
+    {
+     "label": "Fragment | Frame 5193 | ",
+     "count": 121,
+     "total_ms": 1054.015162,
+     "mean_us": 8710.869107438017
+    },
+    {
+     "label": "Vertex | Frame 5193 | ",
+     "count": 121,
+     "total_ms": 894.684578,
+     "mean_us": 7394.087421487603
+    },
+    {
+     "label": "Fragment | Frame 2711 | ",
+     "count": 121,
+     "total_ms": 862.075795,
+     "mean_us": 7124.593347107439
+    },
+    {
+     "label": "Fragment | Frame 2724 | ",
+     "count": 121,
+     "total_ms": 847.853452,
+     "mean_us": 7007.05332231405
+    },
+    {
+     "label": "Fragment | Frame 626 | ",
+     "count": 121,
+     "total_ms": 843.704587,
+     "mean_us": 6972.765181818182
+    },
+    {
+     "label": "Fragment | Frame 4868 | ",
+     "count": 121,
+     "total_ms": 818.549998,
+     "mean_us": 6764.876016528926
+    },
+    {
+     "label": "Fragment | Frame 5019 | ",
+     "count": 121,
+     "total_ms": 818.464923,
+     "mean_us": 6764.172917355371
+    },
+    {
+     "label": "Fragment | Frame 612 | ",
+     "count": 121,
+     "total_ms": 813.34583,
+     "mean_us": 6721.8663636363635
+    },
+    {
+     "label": "Fragment | Frame 5026 | ",
+     "count": 121,
+     "total_ms": 813.236204,
+     "mean_us": 6720.960363636364
+    },
+    {
+     "label": "Fragment | Frame 2675 | ",
+     "count": 121,
+     "total_ms": 811.343412,
+     "mean_us": 6705.317454545454
+    },
+    {
+     "label": "Fragment | Frame 4956 | ",
+     "count": 121,
+     "total_ms": 810.098954,
+     "mean_us": 6695.03267768595
+    },
+    {
+     "label": "Fragment | Frame 4914 | ",
+     "count": 121,
+     "total_ms": 806.118839,
+     "mean_us": 6662.139165289256
+    },
+    {
+     "label": "Fragment | Frame 5897 | ",
+     "count": 121,
+     "total_ms": 805.43063,
+     "mean_us": 6656.451487603305
+    },
+    {
+     "label": "Fragment | Frame 4935 | ",
+     "count": 121,
+     "total_ms": 801.033621,
+     "mean_us": 6620.112570247934
+    },
+    {
+     "label": "Fragment | Frame 549 | ",
+     "count": 127,
+     "total_ms": 800.097503,
+     "mean_us": 6299.980338582677
+    },
+    {
+     "label": "Fragment | Frame 5038 | ",
+     "count": 121,
+     "total_ms": 797.027205,
+     "mean_us": 6587.001694214876
+    },
+    {
+     "label": "Fragment | Frame 5399 | ",
+     "count": 121,
+     "total_ms": 795.232792,
+     "mean_us": 6572.171834710744
+    },
+    {
+     "label": "Fragment | Frame 486 | ",
+     "count": 121,
+     "total_ms": 793.948622,
+     "mean_us": 6561.558859504133
+    },
+    {
+     "label": "Fragment | Frame 1771 | ",
+     "count": 126,
+     "total_ms": 791.914666,
+     "mean_us": 6285.037031746032
+    },
+    {
+     "label": "Fragment | Frame 640 | ",
+     "count": 121,
+     "total_ms": 790.471492,
+     "mean_us": 6532.822247933884
+    },
+    {
+     "label": "Fragment | Frame 5110 | ",
+     "count": 121,
+     "total_ms": 781.738706,
+     "mean_us": 6460.650462809917
+    },
+    {
+     "label": "Fragment | Frame 5104 | ",
+     "count": 121,
+     "total_ms": 780.657408,
+     "mean_us": 6451.714115702479
+    },
+    {
+     "label": "Fragment | Frame 4998 | ",
+     "count": 121,
+     "total_ms": 779.337124,
+     "mean_us": 6440.80267768595
+    },
+    {
+     "label": "Fragment | Frame 700 | ",
+     "count": 121,
+     "total_ms": 778.233955,
+     "mean_us": 6431.685578512397
+    },
+    {
+     "label": "Fragment | Frame 5272 | ",
+     "count": 121,
+     "total_ms": 775.386244,
+     "mean_us": 6408.150776859504
+    },
+    {
+     "label": "Fragment | Frame 4991 | ",
+     "count": 121,
+     "total_ms": 773.740458,
+     "mean_us": 6394.549239669422
+    },
+    {
+     "label": "Fragment | Frame 493 | ",
+     "count": 127,
+     "total_ms": 772.218123,
+     "mean_us": 6080.457661417323
+    },
+    {
+     "label": "Vertex | Frame 2711 | ",
+     "count": 121,
+     "total_ms": 769.994834,
+     "mean_us": 6363.593669421488
+    },
+    {
+     "label": "Fragment | Frame 4977 | ",
+     "count": 121,
+     "total_ms": 769.189747,
+     "mean_us": 6356.94005785124
+    },
+    {
+     "label": "Fragment | Frame 5152 | ",
+     "count": 121,
+     "total_ms": 768.57792,
+     "mean_us": 6351.8836363636365
+    },
+    {
+     "label": "Fragment | Frame 4928 | ",
+     "count": 121,
+     "total_ms": 768.050208,
+     "mean_us": 6347.522380165289
+    },
+    {
+     "label": "Fragment | Frame 5320 | ",
+     "count": 121,
+     "total_ms": 767.159,
+     "mean_us": 6340.157024793389
+    },
+    {
+     "label": "Fragment | Frame 5005 | ",
+     "count": 121,
+     "total_ms": 766.701584,
+     "mean_us": 6336.376727272727
+    },
+    {
+     "label": "Fragment | Frame 5012 | ",
+     "count": 121,
+     "total_ms": 763.618998,
+     "mean_us": 6310.900809917355
+    },
+    {
+     "label": "Fragment | Frame 5068 | ",
+     "count": 121,
+     "total_ms": 761.453628,
+     "mean_us": 6293.005190082645
+    },
+    {
+     "label": "Fragment | Frame 5314 | ",
+     "count": 121,
+     "total_ms": 760.487373,
+     "mean_us": 6285.019611570248
+    },
+    {
+     "label": "Fragment | Frame 5080 | ",
+     "count": 121,
+     "total_ms": 759.093961,
+     "mean_us": 6273.503809917355
+    },
+    {
+     "label": "Fragment | Frame 406 | ",
+     "count": 121,
+     "total_ms": 756.504085,
+     "mean_us": 6252.099876033058
+    },
+    {
+     "label": "Fragment | Frame 444 | ",
+     "count": 121,
+     "total_ms": 752.246498,
+     "mean_us": 6216.91320661157
+    },
+    {
+     "label": "Vertex | Frame 5897 | ",
+     "count": 121,
+     "total_ms": 749.037753,
+     "mean_us": 6190.394652892562
+    }
+   ]
+  },
+  "metal-gpu-state-intervals": {
+   "rows": 587245,
+   "span_ms": 8785.048416,
+   "busy_ms": 8785.048416,
+   "busy_pct": 100.0,
+   "gaps": 0,
+   "gap_median_us": 0,
+   "gap_total_ms": 0.0,
+   "label_keys": [
+    "gpu-state",
+    "formatted-label",
+    "render-buffer-depth",
+    "uint32",
+    "metal-device-name"
+   ],
+   "top": [
+    {
+     "label": "Idle | Idle | 1000",
+     "count": 209258,
+     "total_ms": 5620.182767,
+     "mean_us": 26.85767218935477
+    },
+    {
+     "label": "Active | 1 channels active | 3",
+     "count": 290629,
+     "total_ms": 2644.706423,
+     "mean_us": 9.099939864913688
+    },
+    {
+     "label": "Active | 2 channels active | 3",
+     "count": 84396,
+     "total_ms": 496.856764,
+     "mean_us": 5.8872074979856865
+    },
+    {
+     "label": "Active | 3 channels active | 3",
+     "count": 2962,
+     "total_ms": 27.135494,
+     "mean_us": 9.161206617150574
+    }
+   ]
+  },
+  "metal-resource-allocations": {
+   "rows": 261,
+   "span_ms": 638.638499,
+   "busy_ms": 934.146751,
+   "busy_pct": 146.27160004646072,
+   "gaps": 7,
+   "gap_median_us": 5790.0,
+   "gap_total_ms": 54.575583,
+   "label_keys": [
+    "process",
+    "thread",
+    "gpu-hardware-trace",
+    "metal-object-label",
+    "sentinel",
+    "size-in-bytes",
+    "formatted-label",
+    "metal-device-name",
+    "gpu-memory-event-name",
+    "tagged-backtrace",
+    "metal-event"
+   ],
+   "top": [
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10c1d868",
+     "count": 30,
+     "total_ms": 566.746543,
+     "mean_us": 18891.551433333334
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10c19b3f",
+     "count": 47,
+     "total_ms": 514.497827,
+     "mean_us": 10946.762276595746
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a0fbd62e5",
+     "count": 21,
+     "total_ms": 481.365456,
+     "mean_us": 22922.16457142857
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10be89c4",
+     "count": 16,
+     "total_ms": 465.778085,
+     "mean_us": 29111.1303125
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10be445d",
+     "count": 3,
+     "total_ms": 464.279417,
+     "mean_us": 154759.80566666665
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10be5717",
+     "count": 4,
+     "total_ms": 446.251501,
+     "mean_us": 111562.87525
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10bdf1d9",
+     "count": 3,
+     "total_ms": 436.093208,
+     "mean_us": 145364.40266666666
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10bd8e7a",
+     "count": 7,
+     "total_ms": 436.083459,
+     "mean_us": 62297.637
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10be1513",
+     "count": 2,
+     "total_ms": 419.219917,
+     "mean_us": 209609.9585
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10bddf30",
+     "count": 4,
+     "total_ms": 417.955625,
+     "mean_us": 104488.90625
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10c006f5",
+     "count": 11,
+     "total_ms": 408.445831,
+     "mean_us": 37131.43918181818
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10be6864",
+     "count": 5,
+     "total_ms": 390.512623,
+     "mean_us": 78102.52459999999
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10be0289",
+     "count": 1,
+     "total_ms": 309.143833,
+     "mean_us": 309143.833
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10cefed9",
+     "count": 26,
+     "total_ms": 252.103209,
+     "mean_us": 9696.27726923077
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10bed25d",
+     "count": 6,
+     "total_ms": 190.736209,
+     "mean_us": 31789.368166666667
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10be78f5",
+     "count": 1,
+     "total_ms": 177.187666,
+     "mean_us": 177187.666
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10bdbe8b",
+     "count": 2,
+     "total_ms": 163.845916,
+     "mean_us": 81922.958
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d23d59",
+     "count": 12,
+     "total_ms": 140.361751,
+     "mean_us": 11696.812583333334
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d1e53f",
+     "count": 1,
+     "total_ms": 30.757708,
+     "mean_us": 30757.708
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10c1d88b",
+     "count": 1,
+     "total_ms": 29.268833,
+     "mean_us": 29268.833
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d25b08",
+     "count": 1,
+     "total_ms": 28.760083,
+     "mean_us": 28760.083
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d213db",
+     "count": 1,
+     "total_ms": 27.693583,
+     "mean_us": 27693.583
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10be25dd",
+     "count": 3,
+     "total_ms": 20.3545,
+     "mean_us": 6784.833333333333
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d1f0ac",
+     "count": 1,
+     "total_ms": 18.490791,
+     "mean_us": 18490.791
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d1fee9",
+     "count": 1,
+     "total_ms": 18.273542,
+     "mean_us": 18273.542
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d1f66b",
+     "count": 1,
+     "total_ms": 17.346041,
+     "mean_us": 17346.041
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d20cb0",
+     "count": 1,
+     "total_ms": 17.018708,
+     "mean_us": 17018.708
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d20612",
+     "count": 1,
+     "total_ms": 16.902833,
+     "mean_us": 16902.833
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d2501b",
+     "count": 1,
+     "total_ms": 16.063292,
+     "mean_us": 16063.292
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d253a0",
+     "count": 1,
+     "total_ms": 15.886708,
+     "mean_us": 15886.708
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d25728",
+     "count": 1,
+     "total_ms": 15.548,
+     "mean_us": 15548.0
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10c005e5",
+     "count": 1,
+     "total_ms": 10.365833,
+     "mean_us": 10365.833
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d1edd6",
+     "count": 1,
+     "total_ms": 8.379292,
+     "mean_us": 8379.292
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d20abc",
+     "count": 1,
+     "total_ms": 8.119792,
+     "mean_us": 8119.792
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d21a95",
+     "count": 1,
+     "total_ms": 7.864083,
+     "mean_us": 7864.083
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d21c68",
+     "count": 1,
+     "total_ms": 7.516917,
+     "mean_us": 7516.917
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d24e36",
+     "count": 1,
+     "total_ms": 7.471917,
+     "mean_us": 7471.917
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d21059",
+     "count": 1,
+     "total_ms": 7.462875,
+     "mean_us": 7462.875
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d1f49c",
+     "count": 1,
+     "total_ms": 7.339,
+     "mean_us": 7339.0
+    },
+    {
+     "label": "python (56284) | Main Thread (0x36c5832) (python, pid: 56284) | 0x1a10d21210",
+     "count": 1,
+     "total_ms": 7.232542,
+     "mean_us": 7232.542
+    }
+   ]
+  },
+  "metal-wired-sysmem-level-interval": {
+   "rows": 4743,
+   "span_ms": 9049.827458,
+   "busy_ms": 9049.827458,
+   "busy_pct": 100.0,
+   "gaps": 0,
+   "gap_median_us": 0,
+   "gap_total_ms": 0.0,
+   "label_keys": [
+    "size-in-bytes",
+    "render-buffer-depth",
+    "metal-device-name",
+    "narrative",
+    "metal-memory-level-event"
+   ],
+   "top": [
+    {
+     "label": "2,70 GiB | 1 | M3 Max",
+     "count": 650,
+     "total_ms": 2247.803833,
+     "mean_us": 3458.1597430769234
+    },
+    {
+     "label": "2,93 GiB | 1 | M3 Max",
+     "count": 739,
+     "total_ms": 1619.559835,
+     "mean_us": 2191.5559336941815
+    },
+    {
+     "label": "2,94 GiB | 1 | M3 Max",
+     "count": 305,
+     "total_ms": 851.024998,
+     "mean_us": 2790.2458950819673
+    },
+    {
+     "label": "2,71 GiB | 1 | M3 Max",
+     "count": 226,
+     "total_ms": 732.371626,
+     "mean_us": 3240.5824159292033
+    },
+    {
+     "label": "2,86 GiB | 1 | M3 Max",
+     "count": 214,
+     "total_ms": 622.064331,
+     "mean_us": 2906.842668224299
+    },
+    {
+     "label": "20,35 GiB | 1 | M3 Max",
+     "count": 104,
+     "total_ms": 349.823542,
+     "mean_us": 3363.687903846154
+    },
+    {
+     "label": "2,85 GiB | 1 | M3 Max",
+     "count": 128,
+     "total_ms": 313.348624,
+     "mean_us": 2448.036125
+    },
+    {
+     "label": "0 Bytes | 1 | M3 Max",
+     "count": 1,
+     "total_ms": 275.657833,
+     "mean_us": 275657.833
+    },
+    {
+     "label": "2,92 GiB | 1 | M3 Max",
+     "count": 303,
+     "total_ms": 263.788958,
+     "mean_us": 870.5906204620462
+    },
+    {
+     "label": "20,32 GiB | 1 | M3 Max",
+     "count": 69,
+     "total_ms": 249.783875,
+     "mean_us": 3620.05615942029
+    },
+    {
+     "label": "18,39 GiB | 1 | M3 Max",
+     "count": 61,
+     "total_ms": 245.987416,
+     "mean_us": 4032.5805901639346
+    },
+    {
+     "label": "3,08 GiB | 1 | M3 Max",
+     "count": 116,
+     "total_ms": 190.535583,
+     "mean_us": 1642.5481293103448
+    },
+    {
+     "label": "17,51 GiB | 1 | M3 Max",
+     "count": 103,
+     "total_ms": 179.028958,
+     "mean_us": 1738.1452233009709
+    },
+    {
+     "label": "2,91 GiB | 1 | M3 Max",
+     "count": 209,
+     "total_ms": 126.533041,
+     "mean_us": 605.4212488038278
+    },
+    {
+     "label": "15,10 GiB | 1 | M3 Max",
+     "count": 59,
+     "total_ms": 72.655334,
+     "mean_us": 1231.4463389830507
+    },
+    {
+     "label": "15,11 GiB | 1 | M3 Max",
+     "count": 38,
+     "total_ms": 68.412416,
+     "mean_us": 1800.3267368421052
+    },
+    {
+     "label": "17,52 GiB | 1 | M3 Max",
+     "count": 73,
+     "total_ms": 68.240917,
+     "mean_us": 934.8070821917808
+    },
+    {
+     "label": "15,08 GiB | 1 | M3 Max",
+     "count": 41,
+     "total_ms": 48.987542,
+     "mean_us": 1194.8180975609757
+    },
+    {
+     "label": "15,09 GiB | 1 | M3 Max",
+     "count": 34,
+     "total_ms": 36.703708,
+     "mean_us": 1079.5208235294117
+    },
+    {
+     "label": "12,28 GiB | 1 | M3 Max",
+     "count": 23,
+     "total_ms": 26.679584,
+     "mean_us": 1159.9819130434782
+    },
+    {
+     "label": "14,72 GiB | 1 | M3 Max",
+     "count": 12,
+     "total_ms": 16.617625,
+     "mean_us": 1384.8020833333333
+    },
+    {
+     "label": "18,37 GiB | 1 | M3 Max",
+     "count": 7,
+     "total_ms": 16.591125,
+     "mean_us": 2370.160714285714
+    },
+    {
+     "label": "10,82 GiB | 1 | M3 Max",
+     "count": 7,
+     "total_ms": 14.311917,
+     "mean_us": 2044.5595714285714
+    },
+    {
+     "label": "7,73 GiB | 1 | M3 Max",
+     "count": 7,
+     "total_ms": 14.092667,
+     "mean_us": 2013.238142857143
+    },
+    {
+     "label": "9,29 GiB | 1 | M3 Max",
+     "count": 7,
+     "total_ms": 13.432,
+     "mean_us": 1918.857142857143
+    },
+    {
+     "label": "2,84 GiB | 1 | M3 Max",
+     "count": 16,
+     "total_ms": 13.271002,
+     "mean_us": 829.437625
+    },
+    {
+     "label": "2,88 GiB | 1 | M3 Max",
+     "count": 16,
+     "total_ms": 13.21125,
+     "mean_us": 825.703125
+    },
+    {
+     "label": "4,74 GiB | 1 | M3 Max",
+     "count": 5,
+     "total_ms": 13.065917,
+     "mean_us": 2613.1834
+    },
+    {
+     "label": "9,73 GiB | 1 | M3 Max",
+     "count": 3,
+     "total_ms": 12.957417,
+     "mean_us": 4319.139
+    },
+    {
+     "label": "3,92 GiB | 1 | M3 Max",
+     "count": 6,
+     "total_ms": 12.66975,
+     "mean_us": 2111.625
+    },
+    {
+     "label": "17,40 GiB | 1 | M3 Max",
+     "count": 8,
+     "total_ms": 12.571333,
+     "mean_us": 1571.416625
+    },
+    {
+     "label": "16,43 GiB | 1 | M3 Max",
+     "count": 5,
+     "total_ms": 12.450167,
+     "mean_us": 2490.0334
+    },
+    {
+     "label": "12,17 GiB | 1 | M3 Max",
+     "count": 6,
+     "total_ms": 12.117541,
+     "mean_us": 2019.5901666666668
+    },
+    {
+     "label": "2,87 GiB | 1 | M3 Max",
+     "count": 23,
+     "total_ms": 12.117376,
+     "mean_us": 526.8424347826086
+    },
+    {
+     "label": "12,54 GiB | 1 | M3 Max",
+     "count": 5,
+     "total_ms": 12.060667,
+     "mean_us": 2412.1333999999997
+    },
+    {
+     "label": "14,90 GiB | 1 | M3 Max",
+     "count": 9,
+     "total_ms": 10.143416,
+     "mean_us": 1127.0462222222222
+    },
+    {
+     "label": "6,55 GiB | 1 | M3 Max",
+     "count": 10,
+     "total_ms": 10.108625,
+     "mean_us": 1010.8625
+    },
+    {
+     "label": "15,47 GiB | 1 | M3 Max",
+     "count": 5,
+     "total_ms": 8.724041,
+     "mean_us": 1744.8082
+    },
+    {
+     "label": "6,37 GiB | 1 | M3 Max",
+     "count": 5,
+     "total_ms": 8.662667,
+     "mean_us": 1732.5333999999998
+    },
+    {
+     "label": "9,65 GiB | 1 | M3 Max",
+     "count": 7,
+     "total_ms": 8.554916,
+     "mean_us": 1222.130857142857
+    }
+   ]
+  }
+ }
+}

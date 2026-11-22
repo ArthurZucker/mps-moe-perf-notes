@@ -1,0 +1,30 @@
+[gpu_lock] waited 0s, GPU busy 0% before the run
+/Users/arthurzucker/Work/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:70: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+W1122 19:21:35.205000 69904 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+W1122 19:21:35.294000 69904 torch/utils/_pytree.py:646] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1122 19:21:35.311000 69904 torch/utils/_pytree.py:646] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+Fetching 17 files:   0%|          | 0/17 [00:00<?, ?it/s]Fetching 17 files: 100%|██████████| 17/17 [00:00<00:00, 5510.29it/s]
+Kernel 'metal-moe-decode' variant 'torch-metal': not signed, so its integrity cannot be verified
+Kernel 'metal-moe-decode' variant 'torch-metal': the metadata does not record a digest, so its integrity cannot be verified
+Parse safetensors files:   0%|          | 0/1 [00:00<?, ?it/s]Parse safetensors files: 100%|██████████| 1/1 [00:01<00:00,  1.48s/it]Parse safetensors files: 100%|██████████| 1/1 [00:01<00:00,  1.48s/it]
+Loading weights:   0%|          | 0/1115 [00:00<?, ?it/s]Loading weights:   4%|▍         | 49/1115 [00:00<00:02, 434.88it/s]Loading weights:   8%|▊         | 93/1115 [00:00<00:03, 270.62it/s]Loading weights:  11%|█         | 125/1115 [00:00<00:03, 277.23it/s]Loading weights:  15%|█▍        | 167/1115 [00:00<00:03, 291.61it/s]Loading weights:  20%|█▉        | 218/1115 [00:00<00:02, 354.14it/s]Loading weights:  24%|██▍       | 265/1115 [00:00<00:02, 375.49it/s]Loading weights:  28%|██▊       | 316/1115 [00:00<00:01, 414.03it/s]Loading weights:  33%|███▎      | 363/1115 [00:00<00:01, 414.01it/s]Loading weights:  38%|███▊      | 420/1115 [00:01<00:01, 458.24it/s]Loading weights:  42%|████▏     | 468/1115 [00:01<00:01, 425.35it/s]Loading weights:  47%|████▋     | 525/1115 [00:01<00:01, 441.70it/s]Loading weights:  52%|█████▏    | 576/1115 [00:01<00:01, 459.04it/s]Loading weights:  56%|█████▌    | 623/1115 [00:01<00:01, 331.28it/s]Loading weights:  59%|█████▉    | 662/1115 [00:01<00:01, 267.24it/s]Loading weights:  62%|██████▏   | 694/1115 [00:02<00:01, 230.91it/s]Loading weights:  92%|█████████▏| 1021/1115 [00:02<00:00, 808.11it/s]Loading weights: 100%|██████████| 1115/1115 [00:02<00:00, 495.18it/s]
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Fetching 6 files: 100%|██████████| 6/6 [00:00<00:00, 3500.11it/s]
+W1122 19:22:10.572000 69904 torch/_inductor/cudagraph_utils.py:405] [0/0] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 19:22:35.556000 69904 torch/_inductor/cudagraph_utils.py:405] [0/1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 19:23:02.959000 69904 torch/_inductor/cudagraph_utils.py:405] [0/2] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 19:23:29.848000 69904 torch/_inductor/cudagraph_utils.py:405] [0/3] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+== prev-rev [component]: host step 18.06 ms | GPU in segments 16.34 ms/token | GPU idle between segments 1.74 ms/token | 428 segments/token
+   experts                            7.41 ms/token  (45.3%)
+   qkv_proj                           2.19 ms/token  (13.4%)
+   attn_inputs                        1.56 ms/token  ( 9.6%)
+   pre_attn                           1.54 ms/token  ( 9.4%)
+   pre_mlp                            0.93 ms/token  ( 5.7%)
+   o_proj                             0.90 ms/token  ( 5.5%)
+   router                             0.68 ms/token  ( 4.2%)
+   attention                          0.59 ms/token  ( 3.6%)
+   post_mlp_conv                      0.31 ms/token  ( 1.9%)
+   post_attn_conv                     0.22 ms/token  ( 1.4%)
+   GPU idle by what precedes it (ms/token): {'after post_mlp_conv': 1.36, 'after post_attn_conv': 0.079, 'after experts': 0.059, 'after router': 0.055, 'after qkv_proj': 0.05, 'after pre_mlp': 0.035}
+   largest gaps (us): [(3944, 'after post_attn_conv (layer 3)'), (2582, 'after post_mlp_conv (layer 23)'), (2129, 'after post_mlp_conv (layer 23)'), (2093, 'after post_mlp_conv (layer 23)'), (2045, 'after post_mlp_conv (layer 23)'), (1786, 'after post_mlp_conv (layer 23)')]
+   per layer (ms/token, loop layers 6-17 run 3x): {0: 0.31, 1: 0.3, 2: 0.3, 3: 0.3, 4: 0.29, 5: 0.31, 6: 1.02, 7: 1.01, 8: 1.01, 9: 1.01, 10: 1.01, 11: 1.05, 12: 1.02, 13: 1.02, 14: 1.02, 15: 1.02, 16: 1.02, 17: 1.06, 18: 0.31, 19: 0.31, 20: 0.4, 21: 0.4, 22: 0.41, 23: 0.46}
