@@ -173,3 +173,7 @@ Result: greedy 48.5 tok/s vs lookup-k4 22.4 tok/s; 1.69 accepted drafts per veri
 Blockers: (1) Inkling still writes a thinking preamble at reasoning effort 0, so lookup rarely matches; (2) the verify path graph-breaks
 in every layer and the conv states change shape while the past is recorded (4 -> 4 + K + 1), so it can't use the tuned decode graph.
 Locals' 2x needs near-verbatim tool output plus an engine-level verify; neither applies to transformers generate here.
+
+### E14 (queued, needs AC) exact path without MPSGraph mm: every batch-1 bf16 nn.Linear as a custom kernel
+Tests the PyTorch-issue claim that MPSGraph ops cost an encoder break each (+1.5 us in the microbench; 209-353 per token on the exact path).
+Run: cd benchmark_v2/inkling2_metal/hillclimb && ./queue.sh exact-mm exact-bmvall exact-mm

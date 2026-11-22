@@ -84,6 +84,66 @@ def group_siblings(model):
     return groups
 
 
+BMV_SOURCE = """
+#include <metal_stdlib>
+using namespace metal;
+// y[row] = W[row, :] . x: one simdgroup per row, 8 per threadgroup, 16-byte loads, fp32 accumulation
+template <typename T>
+kernel void bmv(device const T* w, device const T* x, device T* y, constant int& N, constant int& K,
+                uint tg [[threadgroup_position_in_grid]], uint sg [[simdgroup_index_in_threadgroup]],
+                uint lane [[thread_index_in_simdgroup]]) {
+    const int row = tg * 8 + int(sg);
+    if (row >= N) return;
+    device const T* wr = w + (long)row * K;
+    float acc = 0.0f;
+    for (int k = int(lane) * 8; k < K; k += 256) {
+        acc += dot(float4(*(device const vec<T, 4>*)(wr + k)), float4(*(device const vec<T, 4>*)(x + k)));
+        acc += dot(float4(*(device const vec<T, 4>*)(wr + k + 4)), float4(*(device const vec<T, 4>*)(x + k + 4)));
+    }
+    acc = simd_sum(acc);
+    if (lane == 0) y[row] = T(acc);
+}
+template [[host_name("bmv_bfloat")]] kernel void bmv<bfloat>(device const bfloat*, device const bfloat*, device bfloat*,
+    constant int&, constant int&, uint, uint, uint);
+template [[host_name("bmv_half")]] kernel void bmv<half>(device const half*, device const half*, device half*,
+    constant int&, constant int&, uint, uint, uint);
+"""
+
+
+def install_bmv_linear():
+    """Lever HC_BMV_ALL: batch-1 bf16 / fp16 bias-free nn.Linear calls on MPS run a compile_shader matvec registered as a
+    torch op (with a fake), so the compiled decode graph has custom kernels where it had MPSGraph `mm` ops, each of which
+    ends the stream's kernel coalescing and opens a new encoder."""
+    import torch
+    from torch import nn
+
+    lib = torch.mps.compile_shader(BMV_SOURCE)
+    names = {torch.bfloat16: "bmv_bfloat", torch.float16: "bmv_half"}
+
+    def impl(x, w):
+        n, k = w.shape
+        y = x.new_empty(*x.shape[:-1], n)
+        getattr(lib, names[x.dtype])(w, x.contiguous(), y, n, k, threads=-(-n // 8) * 256, group_size=256)
+        return y
+
+    ops = torch.library.Library("hc_bmv", "DEF")
+    ops.define("bmv(Tensor x, Tensor w) -> Tensor")
+    ops.impl("bmv", impl, "MPS")
+    torch.library.register_fake("hc_bmv::bmv")(lambda x, w: x.new_empty(*x.shape[:-1], w.shape[0]))
+    install_bmv_linear.lib = ops  # keep the registration alive
+    forward = nn.Linear.forward
+
+    def linear(self, x):
+        if (
+            x.device.type == "mps" and self.bias is None and x.dtype in names and self.weight.dtype == x.dtype
+            and x.numel() == self.in_features and self.in_features % 8 == 0
+        ):  # fmt: skip
+            return torch.ops.hc_bmv.bmv(x, self.weight)
+        return forward(self, x)
+
+    nn.Linear.forward = linear
+
+
 def main(path):
     cfg = json.load(open(path))
     os.environ.update({k: str(v) for k, v in cfg.get("env", {}).items()})
@@ -108,6 +168,8 @@ def main(path):
 
         forward = metal_quantization.MetalFp4Experts.forward
         metal_quantization.MetalFp4Experts.forward = lambda self, h, i, w: forward(self, h, i.int(), w.float())
+    if os.environ.get("HC_BMV_ALL") == "1":  # E14: every batch-1 bf16 nn.Linear as a custom kernel (no MPSGraph mm breaks)
+        install_bmv_linear()
     if os.environ.get("HC_NO_KV_GROUP") == "1":  # control for E3: only the query-side sibling group
         from transformers.integrations import metal_quantization
 
