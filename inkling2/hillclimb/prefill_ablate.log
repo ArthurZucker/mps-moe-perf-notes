@@ -1,0 +1,13 @@
+[gpu_lock] waited 0s, GPU busy 0% before the run
+[512 1/6] without none             1548 ms (saves      +0) | elapsed 7s
+[512 2/6] without experts           755 ms (saves    +793) | elapsed 10s
+[512 3/6] without attention        1389 ms (saves    +159) | elapsed 16s
+[512 4/6] without dense_4bit       1506 ms (saves     +41) | elapsed 22s
+[512 5/6] without attn_res         1465 ms (saves     +83) | elapsed 28s
+[512 6/6] without message_gate     1485 ms (saves     +63) | elapsed 34s
+[2048 1/6] without none             8618 ms (saves      +0) | elapsed 68s
+[2048 2/6] without experts          5970 ms (saves   +2649) | elapsed 92s
+[2048 3/6] without attention        4444 ms (saves   +4174) | elapsed 110s
+[2048 4/6] without dense_4bit       8205 ms (saves    +413) | elapsed 143s
+[2048 5/6] without attn_res         8934 ms (saves    -315) | elapsed 179s
+[2048 6/6] without message_gate     9145 ms (saves    -526) | elapsed 215s

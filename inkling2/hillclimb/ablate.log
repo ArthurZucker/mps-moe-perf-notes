@@ -1,0 +1,37 @@
+[gpu_lock] waited 0s, GPU busy 0% before the run
+/Users/arthurzucker/Work/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:70: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+W1122 10:42:41.070000 11049 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+W1122 10:42:41.144000 11049 torch/utils/_pytree.py:646] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1122 10:42:41.159000 11049 torch/utils/_pytree.py:646] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+Fetching 15 files:   0%|          | 0/15 [00:00<?, ?it/s]Fetching 15 files: 100%|██████████| 15/15 [00:00<00:00, 4318.09it/s]
+Kernel 'metal-moe-decode' variant 'torch-metal': not signed, so its integrity cannot be verified
+Kernel 'metal-moe-decode' variant 'torch-metal': the metadata does not record a digest, so its integrity cannot be verified
+Parse safetensors files:   0%|          | 0/1 [00:00<?, ?it/s]Parse safetensors files: 100%|██████████| 1/1 [00:01<00:00,  1.05s/it]Parse safetensors files: 100%|██████████| 1/1 [00:01<00:00,  1.05s/it]
+Loading weights:   0%|          | 0/1115 [00:00<?, ?it/s]Loading weights:   4%|▍         | 49/1115 [00:00<00:02, 461.31it/s]Loading weights:   9%|▊         | 96/1115 [00:00<00:03, 301.85it/s]Loading weights:  12%|█▏        | 130/1115 [00:00<00:03, 293.06it/s]Loading weights:  15%|█▍        | 167/1115 [00:00<00:03, 311.25it/s]Loading weights:  21%|██        | 233/1115 [00:00<00:02, 378.10it/s]Loading weights:  27%|██▋       | 297/1115 [00:00<00:01, 413.04it/s]Loading weights:  32%|███▏      | 354/1115 [00:00<00:01, 455.36it/s]Loading weights:  36%|███▌      | 401/1115 [00:01<00:01, 431.02it/s]Loading weights:  41%|████▏     | 461/1115 [00:01<00:01, 458.87it/s]Loading weights:  47%|████▋     | 525/1115 [00:01<00:01, 466.57it/s]Loading weights:  52%|█████▏    | 581/1115 [00:01<00:01, 450.60it/s]Loading weights:  56%|█████▌    | 627/1115 [00:01<00:01, 359.68it/s]Loading weights:  60%|█████▉    | 666/1115 [00:01<00:01, 289.66it/s]Loading weights:  63%|██████▎   | 699/1115 [00:02<00:01, 250.27it/s]Loading weights:  93%|█████████▎| 1040/1115 [00:02<00:00, 868.58it/s]Loading weights: 100%|██████████| 1115/1115 [00:02<00:00, 520.11it/s]
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Fetching 6 files: 100%|██████████| 6/6 [00:00<00:00, 3058.19it/s]
+W1122 10:43:10.269000 11049 torch/_inductor/cudagraph_utils.py:405] [0/0] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 10:43:30.992000 11049 torch/_inductor/cudagraph_utils.py:405] [0/1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 10:43:48.219000 11049 torch/_inductor/cudagraph_utils.py:405] [0/2] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+[1/8] without none           17.74 ms/token (saves  +0.00) | elapsed 66s
+W1122 10:44:13.571000 11049 torch/_inductor/cudagraph_utils.py:405] [0/0] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 10:44:33.223000 11049 torch/_inductor/cudagraph_utils.py:405] [0/1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+[2/8] without experts         8.29 ms/token (saves  +9.46) | elapsed 109s
+W1122 10:44:57.859000 11049 torch/_inductor/cudagraph_utils.py:405] [0/0] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 10:45:19.321000 11049 torch/_inductor/cudagraph_utils.py:405] [0/1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+[3/8] without router         16.95 ms/token (saves  +0.79) | elapsed 158s
+W1122 10:45:45.779000 11049 torch/_inductor/cudagraph_utils.py:405] [0/0] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 10:46:05.920000 11049 torch/_inductor/cudagraph_utils.py:405] [0/1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+[4/8] without attention      16.82 ms/token (saves  +0.93) | elapsed 205s
+W1122 10:46:35.300000 11049 torch/_inductor/cudagraph_utils.py:405] [0/0] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 10:46:58.391000 11049 torch/_inductor/cudagraph_utils.py:405] [0/1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+[5/8] without attn_res       17.07 ms/token (saves  +0.67) | elapsed 257s
+W1122 10:47:25.192000 11049 torch/_inductor/cudagraph_utils.py:405] [0/0] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 10:47:45.556000 11049 torch/_inductor/cudagraph_utils.py:405] [0/1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+[6/8] without message_gate   16.28 ms/token (saves  +1.46) | elapsed 304s
+W1122 10:48:12.055000 11049 torch/_inductor/cudagraph_utils.py:405] [0/0] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 10:48:32.616000 11049 torch/_inductor/cudagraph_utils.py:405] [0/1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+[7/8] without short_conv     17.42 ms/token (saves  +0.32) | elapsed 352s
+W1122 10:48:56.068000 11049 torch/_inductor/cudagraph_utils.py:405] [0/0] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 10:49:12.662000 11049 torch/_inductor/cudagraph_utils.py:405] [0/1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+[8/8] without dense_4bit     10.37 ms/token (saves  +7.37) | elapsed 389s

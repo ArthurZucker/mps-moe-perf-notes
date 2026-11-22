@@ -1,0 +1,24 @@
+[gpu_lock] waited 0s, GPU busy 0% before the run
+/Users/arthurzucker/Work/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:70: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+W1122 11:02:03.728000 61190 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+W1122 11:02:03.812000 61190 torch/utils/_pytree.py:646] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1122 11:02:03.826000 61190 torch/utils/_pytree.py:646] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+Fetching 15 files:   0%|          | 0/15 [00:00<?, ?it/s]Fetching 15 files: 100%|██████████| 15/15 [00:00<00:00, 3188.13it/s]
+Kernel 'metal-moe-decode' variant 'torch-metal': not signed, so its integrity cannot be verified
+Kernel 'metal-moe-decode' variant 'torch-metal': the metadata does not record a digest, so its integrity cannot be verified
+Parse safetensors files:   0%|          | 0/1 [00:00<?, ?it/s]Parse safetensors files: 100%|██████████| 1/1 [00:01<00:00,  1.43s/it]Parse safetensors files: 100%|██████████| 1/1 [00:01<00:00,  1.43s/it]
+Loading weights:   0%|          | 0/1115 [00:00<?, ?it/s]Loading weights:   4%|▍         | 49/1115 [00:00<00:02, 456.58it/s]Loading weights:   9%|▊         | 95/1115 [00:00<00:03, 296.48it/s]Loading weights:  11%|█▏        | 128/1115 [00:00<00:03, 286.48it/s]Loading weights:  15%|█▍        | 167/1115 [00:00<00:03, 310.03it/s]Loading weights:  21%|██        | 233/1115 [00:00<00:02, 380.38it/s]Loading weights:  27%|██▋       | 297/1115 [00:00<00:01, 419.80it/s]Loading weights:  33%|███▎      | 363/1115 [00:00<00:01, 449.35it/s]Loading weights:  38%|███▊      | 429/1115 [00:01<00:01, 470.80it/s]Loading weights:  44%|████▍     | 493/1115 [00:01<00:01, 478.31it/s]Loading weights:  50%|█████     | 559/1115 [00:01<00:01, 484.59it/s]Loading weights:  55%|█████▍    | 608/1115 [00:01<00:01, 439.82it/s]Loading weights:  59%|█████▊    | 653/1115 [00:01<00:01, 351.84it/s]Loading weights:  62%|██████▏   | 691/1115 [00:01<00:01, 287.79it/s]Loading weights:  69%|██████▊   | 765/1115 [00:01<00:00, 378.38it/s]Loading weights:  98%|█████████▊| 1091/1115 [00:02<00:00, 1019.81it/s]Loading weights: 100%|██████████| 1115/1115 [00:02<00:00, 535.34it/s] 
+grouped 24 attention projection groups
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Fetching 6 files: 100%|██████████| 6/6 [00:00<00:00, 2110.34it/s]
+W1122 11:02:22.164000 61190 torch/_inductor/cudagraph_utils.py:405] [0/0] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 11:02:31.981000 61190 torch/_inductor/cudagraph_utils.py:405] [0/1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 11:02:43.755000 61190 torch/_inductor/cudagraph_utils.py:405] [0/2] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 11:02:54.535000 61190 torch/_inductor/cudagraph_utils.py:405] [0/3] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+[1/6] 57.8 tok/s
+[2/6] 57.6 tok/s
+[3/6] 57.4 tok/s
+[4/6] 57.7 tok/s
+[5/6] 57.4 tok/s
+[6/6] 57.3 tok/s
+{"config": "grp-4bit", "time": "2026-11-22 11:03:10", "decode_tok_s": 57.49233406328999, "samples": [57.81, 57.58, 57.4, 57.71, 57.38, 57.3], "gpu_busy_before": 0, "gpu_busy_after_pct": 100, "ac": true, "throttled": false, "void": false, "looping_output": false, "text_head": "<|message_model|><|content_thinking|>The user wants a short story about a lighthouse keeper. This is a creative writing "}

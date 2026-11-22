@@ -1,0 +1,8 @@
+[gpu_lock] waited 0s, GPU busy 9% before the run
+[1/6] copy-edit greedy   41.0 tok/s  exact_vs_greedy=None | elapsed 74s
+[2/6] prose     greedy   42.6 tok/s  exact_vs_greedy=None | elapsed 93s
+[3/6] copy-edit lookup   17.3 tok/s  exact_vs_greedy=False | elapsed 217s
+[4/6] prose     lookup   10.4 tok/s  exact_vs_greedy=False | elapsed 292s
+[5/6] copy-edit dspark   31.5 tok/s  exact_vs_greedy=False | elapsed 327s
+[6/6] prose     dspark   13.4 tok/s  exact_vs_greedy=False | elapsed 386s
+'<|message_model|><|content_thinking|>The user wants me to rewrite the code exactly, only renaming `input` to `hidden_states`. Output only the code.\n\nI need to be careful: rename the parameter `input` '

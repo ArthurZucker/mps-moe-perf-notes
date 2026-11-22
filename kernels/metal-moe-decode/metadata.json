@@ -1,0 +1,10 @@
+{
+  "name": "metal-moe-decode",
+  "id": "metal_moe_decode",
+  "version": 1,
+  "license": "Apache-2.0",
+  "python-depends": [],
+  "backend": {
+    "type": "metal"
+  }
+}

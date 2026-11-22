@@ -1,0 +1,23 @@
+[gpu_lock] waited 0s, GPU busy 0% before the run
+/Users/arthurzucker/Work/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:70: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+W1122 11:50:29.656000 86730 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+W1122 11:50:29.742000 86730 torch/utils/_pytree.py:646] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1122 11:50:29.757000 86730 torch/utils/_pytree.py:646] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+Fetching 15 files:   0%|          | 0/15 [00:00<?, ?it/s]Fetching 15 files:   7%|▋         | 1/15 [00:00<00:07,  1.76it/s]Fetching 15 files:  47%|████▋     | 7/15 [00:00<00:00, 12.82it/s]Fetching 15 files:  67%|██████▋   | 10/15 [00:01<00:00,  9.38it/s]Fetching 15 files: 100%|██████████| 15/15 [00:01<00:00, 15.09it/s]Fetching 15 files: 100%|██████████| 15/15 [00:01<00:00, 11.89it/s]
+Kernel 'metal-moe-decode' variant 'torch-metal': not signed, so its integrity cannot be verified
+Kernel 'metal-moe-decode' variant 'torch-metal': the metadata does not record a digest, so its integrity cannot be verified
+Parse safetensors files:   0%|          | 0/1 [00:00<?, ?it/s]Parse safetensors files: 100%|██████████| 1/1 [00:01<00:00,  1.11s/it]Parse safetensors files: 100%|██████████| 1/1 [00:01<00:00,  1.11s/it]
+Loading weights:   0%|          | 0/1115 [00:00<?, ?it/s]Loading weights:   4%|▍         | 49/1115 [00:00<00:02, 477.37it/s]Loading weights:   9%|▊         | 97/1115 [00:00<00:03, 315.27it/s]Loading weights:  12%|█▏        | 132/1115 [00:00<00:03, 304.88it/s]Loading weights:  15%|█▍        | 167/1115 [00:00<00:02, 317.87it/s]Loading weights:  21%|██        | 233/1115 [00:00<00:02, 388.74it/s]Loading weights:  26%|██▋       | 294/1115 [00:00<00:01, 452.60it/s]Loading weights:  31%|███       | 341/1115 [00:00<00:01, 425.24it/s]Loading weights:  36%|███▌      | 397/1115 [00:00<00:01, 445.28it/s]Loading weights:  41%|████▏     | 461/1115 [00:01<00:01, 456.34it/s]Loading weights:  47%|████▋     | 525/1115 [00:01<00:01, 466.16it/s]Loading weights:  52%|█████▏    | 581/1115 [00:01<00:01, 456.96it/s]Loading weights:  56%|█████▌    | 627/1115 [00:01<00:01, 374.54it/s]Loading weights:  60%|█████▉    | 667/1115 [00:01<00:01, 303.48it/s]Loading weights:  63%|██████▎   | 701/1115 [00:01<00:01, 267.89it/s]Loading weights:  94%|█████████▍| 1049/1115 [00:02<00:00, 922.97it/s]Loading weights: 100%|██████████| 1115/1115 [00:02<00:00, 537.26it/s]
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Fetching 6 files: 100%|██████████| 6/6 [00:00<00:00, 3960.63it/s]
+W1122 11:50:59.384000 86730 torch/_inductor/cudagraph_utils.py:405] [0/0] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 11:51:18.529000 86730 torch/_inductor/cudagraph_utils.py:405] [0/1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 11:51:40.535000 86730 torch/_inductor/cudagraph_utils.py:405] [0/2] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 11:52:01.537000 86730 torch/_inductor/cudagraph_utils.py:405] [0/3] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+[1/6] 58.4 tok/s
+[2/6] 58.4 tok/s
+[3/6] 58.3 tok/s
+[4/6] 58.2 tok/s
+[5/6] 57.7 tok/s
+[6/6] 57.8 tok/s
+{"config": "nocasts", "time": "2026-11-22 11:52:17", "decode_tok_s": 58.24983934645265, "samples": [58.39, 58.39, 58.33, 58.17, 57.7, 57.77], "gpu_busy_before": 0, "gpu_busy_after_pct": 100, "ac": true, "throttled": false, "void": false, "looping_output": false, "text_head": "<|message_model|><|content_thinking|>The user wants a short story about a lighthouse keeper. This is a creative writing "}

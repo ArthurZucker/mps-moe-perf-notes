@@ -1,0 +1,22 @@
+[gpu_lock] waited 0s, GPU busy 0% before the run
+/Users/arthurzucker/Work/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:70: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+W1122 11:06:13.566000 71765 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+W1122 11:06:13.661000 71765 torch/utils/_pytree.py:646] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1122 11:06:13.677000 71765 torch/utils/_pytree.py:646] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+Fetching 15 files:   0%|          | 0/15 [00:00<?, ?it/s]Fetching 15 files: 100%|██████████| 15/15 [00:00<00:00, 2529.84it/s]
+Kernel 'metal-moe-decode' variant 'torch-metal': not signed, so its integrity cannot be verified
+Kernel 'metal-moe-decode' variant 'torch-metal': the metadata does not record a digest, so its integrity cannot be verified
+Parse safetensors files:   0%|          | 0/1 [00:00<?, ?it/s]Parse safetensors files: 100%|██████████| 1/1 [00:01<00:00,  1.14s/it]Parse safetensors files: 100%|██████████| 1/1 [00:01<00:00,  1.14s/it]
+Loading weights:   0%|          | 0/1115 [00:00<?, ?it/s]Loading weights:   4%|▍         | 49/1115 [00:00<00:02, 477.07it/s]Loading weights:   9%|▊         | 97/1115 [00:00<00:03, 316.69it/s]Loading weights:  12%|█▏        | 132/1115 [00:00<00:03, 304.89it/s]Loading weights:  15%|█▍        | 167/1115 [00:00<00:03, 314.32it/s]Loading weights:  21%|██        | 229/1115 [00:00<00:02, 408.81it/s]Loading weights:  24%|██▍       | 273/1115 [00:00<00:02, 385.97it/s]Loading weights:  30%|██▉       | 329/1115 [00:00<00:01, 418.34it/s]Loading weights:  35%|███▌      | 395/1115 [00:00<00:01, 486.37it/s]Loading weights:  40%|████      | 446/1115 [00:01<00:01, 451.16it/s]Loading weights:  44%|████▍     | 493/1115 [00:01<00:01, 448.32it/s]Loading weights:  50%|█████     | 559/1115 [00:01<00:01, 467.80it/s]Loading weights:  54%|█████▍    | 607/1115 [00:01<00:01, 423.59it/s]Loading weights:  58%|█████▊    | 651/1115 [00:01<00:01, 334.38it/s]Loading weights:  62%|██████▏   | 688/1115 [00:01<00:01, 275.29it/s]Loading weights:  70%|██████▉   | 777/1115 [00:01<00:00, 400.09it/s]Loading weights: 100%|██████████| 1115/1115 [00:02<00:00, 1066.33it/s]Loading weights: 100%|██████████| 1115/1115 [00:02<00:00, 532.97it/s] 
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]Fetching 6 files: 100%|██████████| 6/6 [00:00<00:00, 1184.39it/s]
+W1122 11:06:32.162000 71765 torch/_inductor/cudagraph_utils.py:405] [0/0] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 11:06:42.574000 71765 torch/_inductor/cudagraph_utils.py:405] [0/1] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+W1122 11:06:54.994000 71765 torch/_inductor/cudagraph_utils.py:405] [0/2] [__cudagraphs] skipping cudagraphs due to skipping cudagraphs due to multiple devices: device(type='mps', index=0)
+[1/6] 55.7 tok/s
+[2/6] 55.6 tok/s
+[3/6] 55.7 tok/s
+[4/6] 55.8 tok/s
+[5/6] 55.7 tok/s
+[6/6] 55.5 tok/s
+{"config": "base-4bit", "time": "2026-11-22 11:07:11", "decode_tok_s": 55.70869618014153, "samples": [55.73, 55.6, 55.74, 55.76, 55.69, 55.51], "gpu_busy_before": 0, "gpu_busy_after_pct": 100, "ac": true, "throttled": false, "void": false, "looping_output": false, "text_head": "<|message_model|><|content_thinking|>The user wants a short story about a lighthouse keeper. This is a creative writing "}
