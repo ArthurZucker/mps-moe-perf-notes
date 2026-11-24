@@ -118,6 +118,22 @@ host work has to move off the critical path.
 All hashes identical: 4-bit quality is memory-budget independent. The 96 GiB row turns
 MTP off (all experts in the main pool leaves no extension), hence lower than 64 GiB.
 
+
+## 6b. 32 GB setting sweep (JITEngine)
+
+All at 29.8 GiB, MTP on where the plan allows, 512-token benchmark:
+
+| setting | decode tok/s | note |
+|---|---:|---|
+| default grouped / pack16 | 28.85-30.88 | baseline |
+| `--expert-pool-evict decay32` | 28.79 | no change |
+| `--moe-kernel stock` | n/a | changes the plan: pack16 off, pool 5,217, MTP off; not comparable |
+| `--compute-dtype bfloat16 --residual-dtype bfloat16` | 29.04 | output hash changes to `e729588572024827`; rejected |
+
+The default remains the best. bf16 compute is not a free win: it changes the output and
+does not improve decode. The 32 GB limit is host/cache work plus the 24.8 ms non-stall
+path, not the miss bandwidth.
+
 ## 7. 32 GB, 50+ tok/s (2.5-bit GGUF, not transformers)
 
 `webmp3/Sakura-Qwen3.8-Flash-Next-Swift-2.5bit-352E-32GB-GGUF` + shared MTP Q4_K_M on

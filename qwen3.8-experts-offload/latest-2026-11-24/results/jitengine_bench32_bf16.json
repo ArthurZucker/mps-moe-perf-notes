@@ -1,0 +1,74 @@
+{
+  "config": {
+    "url": "http://127.0.0.1:8080",
+    "endpoint": "chat",
+    "prompt_format": "text",
+    "model": "<work>/jitengine/Qwen3.8-Flash-Next-4bit",
+    "model_path": "<work>/jitengine/Qwen3.8-Flash-Next-4bit",
+    "mode": "interactive",
+    "concurrency": 1,
+    "max_tokens": 512,
+    "temperature": 0.0,
+    "top_p": 0.95,
+    "top_k": 40,
+    "seed": null,
+    "task_seed": 0,
+    "heldout": false,
+    "repeats": 1,
+    "warmup": true,
+    "tasks": [
+      "dedent"
+    ],
+    "prefix_tokens": 2582,
+    "prompt_tokens": [
+      2952
+    ]
+  },
+  "headline_name": "decode_tok_per_sec",
+  "headline": 29.03773916110975,
+  "measured": 29.03773916110975,
+  "valid": true,
+  "problems": [],
+  "warnings": [],
+  "aggregate_tok_per_sec_median": 18.460631655103086,
+  "decode_tok_per_sec_median": 29.03773916110975,
+  "ttft_s_median": 10.101238416042179,
+  "num_failed": 0,
+  "server_peak_footprint_gb": 31.3102244,
+  "server_lifetime_peak_footprint_gb": 31.331801432,
+  "swap_used_mb": [
+    316.31,
+    316.31
+  ],
+  "repeats_detail": [
+    {
+      "wall_s": 27.73469562502578,
+      "total_output_tokens": 512,
+      "aggregate_tps": 18.460631655103086,
+      "completed": 1,
+      "failed": 0,
+      "ttft_p50": 10.101238416042179,
+      "ttft_p95": 10.101238416042179,
+      "decode_tps_mean": 29.03773916110975,
+      "decode_tps_p50": 29.03773916110975,
+      "mean_output_len": 512.0,
+      "distinct_outputs": 1,
+      "streams": [
+        {
+          "task": "dedent",
+          "ttft_s": 10.101238416042179,
+          "total_s": 27.733465124852955,
+          "chunks": 512,
+          "usage_tokens": 512,
+          "retok_tokens": 512,
+          "output_tokens": 512,
+          "decode_tps": 29.03773916110975,
+          "finish_reason": "length",
+          "text_sha": "e729588572024827",
+          "max_gap_s": 0.15026895888149738,
+          "error": null
+        }
+      ]
+    }
+  ]
+}

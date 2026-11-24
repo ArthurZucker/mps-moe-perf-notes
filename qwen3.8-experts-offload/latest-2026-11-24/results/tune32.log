@@ -1,0 +1,15 @@
+=== base  ===
+[rep 0] wall=28.61s out=512 agg=17.90 tok/s decode/stream p50=28.85032172230902 ttft p50=10.860979415941983 failed=0 distinct=1/1
+Completed/failed:  1 / 0
+Aggregate tok/s:   17.90  (median 17.90)
+Decode tok/s p50:  28.85  (median 28.85)
+decode_tok_per_sec = 28.85
+=== decay --expert-pool-evict decay32 ===
+[rep 0] wall=28.63s out=512 agg=17.88 tok/s decode/stream p50=28.79309894671382 ttft p50=10.84438233403489 failed=0 distinct=1/1
+Completed/failed:  1 / 0
+Aggregate tok/s:   17.88  (median 17.88)
+Decode tok/s p50:  28.79  (median 28.79)
+decode_tok_per_sec = 28.79
+=== moestock --moe-kernel stock ===
+[warmup] 0.01s ttft=None err=ConnectError: All connection attempts failed
+warmup request failed: ConnectError: All connection attempts failed

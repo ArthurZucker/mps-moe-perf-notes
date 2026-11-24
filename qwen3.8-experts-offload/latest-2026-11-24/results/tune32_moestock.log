@@ -1,0 +1,18 @@
+[jitengine-qwen3.8-flash-next-m4pro] unified memory 512.00 GiB, engine budget 29.80 GiB
+[engine] kernel self-checks vs stock MLX on this device: {'dense_kernel': True, 'grouped_qmv_u2': True, 'moe_fused': True, 'hc_kernel': True, 'gdn_fused': True, 'qmv_multi_v': True, 'gdn_kernel': True, 'gdn_pair': True, 'sdpa_decode_masked': True, 'sdpa_decode_masked2': True, 'attn_fused': True, 'indexer_fused': True, 'indexer_prefill': True}
+[engine] This build was tuned on a 48 GB M4 Pro (applegpu_g16s). It runs on this M3 Ultra (applegpu_g15d): every kernel check passed. Speed will differ from the published numbers.
+[engine] plan budget 29.80 GiB: dense 2.578 (embedding streamed, cache 0.014) + state 0.220 (2 rows) + kv 0.350 + store 0.547 + reserve 4.765 + staging 0.000 + pool 14.926 (5217 of 24576 experts, 21.23%, off) = 29.370 GiB
+[engine] embed_tokens streamed from the checkpoint: 248320 rows x 1600 B = 0.370 GiB not resident, an LRU of 8192 rows (15.2 MB charged)
+[loader] prefix='language_model.'; 2615 dense tensors, 2.539 GiB (432 expert tensors, 384 PLE shard tensors never referenced); reading...
+[engine] MTP off: 6780 single-row expert slots (need 9000) and an extension of 1563 (the head needs 602 + 64)
+[engine] extension: 1563 slots single-row, 700 while several rows decode
+[engine] fused decode: hc 48/48, gdn 36, moe 48, spec 48, lookahead off
+[engine] GDN lazy rollback state: off, 0 DeltaNet layers (no verify pass: MTP off)
+[engine] state plan: 2 slots x 112.6 MiB recurrent = 0.22 GiB max, KV budget 376 MB (6800 positions), prefix store 587 MB, grid 2048 / min divergence 256
+[req] id= kind=generate prompt=3 cached=0 prefill=2 prefill_ms=7730 first_token_ms=25928 decode_steps=2 decode_ms=18200 step_ms=9099.8 completion=2 finish=length queue_ms=0
+[req] id= kind=generate prompt=2 cached=0 prefill=1 prefill_ms=8842 first_token_ms=17551 decode_steps=1 decode_ms=8709 step_ms=8709.3 completion=1 finish=length queue_ms=0
+[engine] expert pool: 6780 slots (27.59% of 24576; annex 0 borrowed while one row decodes), landing=direct, seeded 5184 records (14.83 GiB)
+[engine] ready in 46.4s; active memory 21.99 GiB
+[server] jitengine-qwen3.8-flash-next-m4pro serving <work>/jitengine/Qwen3.8-Flash-Next-4bit on http://127.0.0.1:8080 (graceful shutdown on SIGTERM+SIGINT)
+[server] signal 15: draining open streams, then stopping
+[server] stopped; 0 stream(s) still open after the grace period
