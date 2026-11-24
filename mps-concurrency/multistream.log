@@ -1,0 +1,5 @@
+torch 2.15.0, size 1048576, 100 dependent steps per branch
+serial 2 branches:     5.02 ms
+ 2 streams:     4.95 ms  speedup 0.91x  exact=True
+ 4 streams:     9.46 ms  speedup 0.46x  exact=True
+ 8 streams:    19.42 ms  speedup 0.23x  exact=True

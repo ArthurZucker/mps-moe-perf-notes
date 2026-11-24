@@ -1,0 +1,18 @@
+=== size 4096
+torch 2.15.0, size 4096, 500 dependent steps per branch
+serial 2 branches:     8.88 ms
+ 2 streams:     9.24 ms  speedup 1.05x  exact=True
+ 4 streams:    19.01 ms  speedup 0.44x  exact=True
+ 8 streams:    34.07 ms  speedup 0.25x  exact=True
+=== size 65536
+torch 2.15.0, size 65536, 500 dependent steps per branch
+serial 2 branches:     9.94 ms
+ 2 streams:     9.83 ms  speedup 0.98x  exact=True
+ 4 streams:    18.31 ms  speedup 0.51x  exact=True
+ 8 streams:    37.27 ms  speedup 0.25x  exact=True
+=== size 1048576
+torch 2.15.0, size 1048576, 500 dependent steps per branch
+serial 2 branches:    20.98 ms
+ 2 streams:    21.74 ms  speedup 0.96x  exact=True
+ 4 streams:    41.83 ms  speedup 0.51x  exact=True
+ 8 streams:    84.06 ms  speedup 0.24x  exact=True

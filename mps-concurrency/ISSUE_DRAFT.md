@@ -56,3 +56,12 @@ Related: #206006 (host-signalled events: the host <-> GPU side of avoiding seria
 Full notes and data: https://github.com/ArthurZucker/mps-moe-perf-notes
 
 cc @kulinseth @malfet @DenisVieriu97 @jhavukainen @aditvenk @Isalia20
+
+
+## Follow-up (2026-11-24): multi-stream does not overlap eager kernels on torch 2.15
+
+`multistream.py` forks real `torch.mps.Stream` queues with explicit events (C++ event ops;
+the Python guard only allows the default stream). Two dependent chains at 4K/64K/1M:
+2 streams = 0.96-1.05x, 4 streams = ~0.5x, 8 streams = ~0.25x, outputs exact. So separate
+queues do not overlap; the concurrent-encoder path above is still the lever, and it needs
+the per-resource barrier design (or indirect command buffers) that pytorch#189785 lacked.
