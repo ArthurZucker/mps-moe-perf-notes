@@ -68,14 +68,19 @@ and the offload table bookkeeping. That needs a host-side profile before more ke
 Instrumented `store.stats()` around a 254-token decode (`profile_decode.py`). The three
 components sum to the wall exactly, so nothing is hidden:
 
-| component | 16 GiB | 40 GiB |
-|---|---:|---:|
-| host sync — routing D2H round trip, 48x/token | 39.00 | 34.72 |
-| host wait — blocking on expert reads | 42.65 | 20.68 |
-| residual — GPU compute + python | 55.58 | 46.50 |
-| **wall** | **137.23** | **101.89** |
-| tok/s | 7.29 | 9.81 |
-| hit rate | 91.2% | 96.9% |
+| component | 16 GiB cold | 16 GiB warm | 40 GiB | 64 GiB |
+|---|---:|---:|---:|---:|
+| host sync — routing D2H round trip, 48x/token | 39.00 | 32.94 | 34.72 | 32.92 |
+| host wait — blocking on expert reads | 42.65 | 8.86 | 20.68 | 5.27 |
+| residual — GPU compute + python | 55.58 | 51.80 | 46.50 | 45.02 |
+| **wall** | **137.23** | **93.61** | **101.89** | **83.21** |
+| tok/s | 7.29 | 10.68 | 9.81 | 12.02 |
+| hit rate | 91.2% | 91.8% | 96.9% | 97.0% |
+
+`host sync` is **constant at 32.9-39.0 ms/token from 16 to 64 GiB** — it is a fixed
+per-layer latency, not a function of cache size or bytes. `residual` falls 55.58 -> 45.02
+as the cache grows, so ~7.6 ms of it is offload-side GPU work (table copies, pass 2); the
+remaining ~45 ms is model compute + python.
 
 ms/token. The 16 GiB row sums to 137.23 exactly.
 
@@ -88,6 +93,24 @@ it barely moves when the cache grows (39.00 -> 34.72). Every layer does
 so the host blocks on a pipeline drain 48 times per token, and the expert reads
 (42.65 ms) cannot overlap that same layer's GPU work. The 48 serialized round trips are
 the wall; the SSD feeds them and is never the limit.
+
+### Per-layer, events off (ms/token, 254 tokens)
+
+The 32.76 ms of sync is spread evenly over all 48 layers, and the 12 `full_attention`
+layers (3, 7, 11, ... 47) cost **twice** the 36 `linear_attention` layers:
+
+| layer group | layers | sync ms/token each |
+|---|---|---|
+| `full_attention` | 3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47 | 1.05 - 1.08 |
+| `linear_attention` | the other 36 | 0.52 - 0.56 |
+| all 48 | | sum **32.76** |
+
+Per-layer sum: 32.76 sync + 9.20 read wait = 41.96 ms/token, against the store totals of
+32.73 + 9.20. There is no hot layer: the cost is one round trip per layer, 48 times.
+
+Caveat on the read-wait column: these runs had the checkpoint warm in the page cache, so
+wait fell from 42.65 (first, cold run) to 9.20 ms/token. Reads matter even less than the
+cold number suggested, and the cold number is the honest one for a fresh process.
 
 ## Ablations (each outside the ~15% run-to-run noise band)
 
@@ -122,6 +145,14 @@ Events off: the host components are *added* to the GPU time (39.00 + 42.65 + 55.
 GPU work, so the wall becomes `max(host, GPU)` instead of `host + GPU`. Host and GPU are
 almost perfectly balanced, which is why the gain is 2.5x and why the next lever after
 this is reducing both together, not either one alone.
+
+## Not measured: GPU kernel time vs python
+
+`torch.profiler` in torch 2.15 exposes CPU/CUDA/HPU/MTIA/XPU activities but **no MPS
+activity**, and `torch.mps.profiler` emits OS signposts that need Instruments/xctrace to
+read. So the ~45 ms "GPU + python" residual is reported as one bucket, bounded by the
+64 GiB run above, and not split into kernel vs dispatch. That is a tooling gap, not an
+unexplored lever: the wall itself (host sync) is already isolated by ablation.
 
 ## What to fix
 
