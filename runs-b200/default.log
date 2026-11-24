@@ -1,0 +1,56 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 23 files:   0%|          | 0/23 [00:00<?, ?it/s]Fetching 23 files: 100%|██████████| 23/23 [00:00<00:00, 1114.36it/s]
+Qwen/Qwen3-30B-A3B: experts 54.0 GiB, rest 2.9 GiB (0s)
+[1/4] full | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/531 [00:00<?, ?it/s]Loading weights:   1%|          | 4/531 [00:00<00:59,  8.87it/s]Loading weights:   1%|          | 5/531 [00:00<01:36,  5.43it/s]Loading weights:   3%|▎         | 16/531 [00:01<00:27, 18.57it/s]Loading weights:   5%|▍         | 26/531 [00:01<00:18, 26.94it/s]Loading weights:   6%|▌         | 30/531 [00:03<01:14,  6.70it/s]Loading weights:   7%|▋         | 38/531 [00:03<00:54,  9.07it/s]Loading weights:   9%|▉         | 49/531 [00:05<00:58,  8.20it/s]Loading weights:  11%|█         | 59/531 [00:05<00:40, 11.63it/s]Loading weights:  12%|█▏        | 62/531 [00:05<00:41, 11.42it/s]Loading weights:  13%|█▎        | 71/531 [00:06<00:34, 13.18it/s]Loading weights:  15%|█▌        | 81/531 [00:06<00:25, 17.94it/s]Loading weights:  16%|█▌        | 84/531 [00:07<00:30, 14.52it/s]Loading weights:  19%|█▉        | 103/531 [00:07<00:14, 29.58it/s]Loading weights:  21%|██        | 111/531 [00:07<00:15, 26.88it/s]Loading weights:  24%|██▎       | 125/531 [00:07<00:13, 29.99it/s]Loading weights:  28%|██▊       | 147/531 [00:08<00:10, 37.40it/s]Loading weights:  30%|██▉       | 158/531 [00:08<00:11, 33.77it/s]Loading weights:  31%|███       | 163/531 [00:08<00:12, 30.32it/s]Loading weights:  34%|███▍      | 180/531 [00:09<00:11, 30.05it/s]Loading weights:  35%|███▍      | 184/531 [00:09<00:12, 27.36it/s]Loading weights:  36%|███▌      | 192/531 [00:11<00:23, 14.46it/s]Loading weights:  38%|███▊      | 203/531 [00:11<00:16, 19.70it/s]Loading weights:  40%|████      | 214/531 [00:11<00:12, 26.32it/s]Loading weights:  43%|████▎     | 228/531 [00:11<00:08, 37.60it/s]Loading weights:  44%|████▍     | 236/531 [00:11<00:07, 37.07it/s]Loading weights:  47%|████▋     | 247/531 [00:11<00:06, 42.61it/s]Loading weights:  50%|█████     | 268/531 [00:12<00:05, 46.91it/s]Loading weights: 100%|██████████| 531/531 [00:12<00:00, 42.96it/s]
+  loaded in 22s
+    prompt 1/4: 19.06 tok/s
+    prompt 2/4: 34.09 tok/s
+    prompt 3/4: 34.38 tok/s
+    prompt 4/4: 34.41 tok/s
+  RESULT {"prefill_tok_s": 904.3718854844552, "decode_tok_s": 34.249759786344306, "decode_tok_s_per_prompt": [19.06, 34.09, 34.38, 34.41], "decode_ms_median": 29.19728506822139, "sustained_tok_s": null, "prefill_stats": {}, "config": "full", "load_s": 21.60648709104862, "device": "cuda", "peak_gib": 57.65568923950195, "same_tokens_as_first": 128}
+[2/4] ours:0.5 | elapsed 0.8m | eta ~2m
+  FAILED ours:0.5: ImportError: Streaming experts on CUDA needs safetensors' prefetch loader: `pip install 'safetensors>=0.9'`
+  File "/home/arthur/mps-moe-perf-notes/qwen3.8-experts-offload/bench_experts_offload.py", line 159, in load
+    model = AutoModelForCausalLM.from_pretrained(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/models/auto/auto_factory.py", line 406, in from_pretrained
+    return model_class.from_pretrained(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_utils.py", line 4423, in from_pretrained
+    apply_experts_offload(model, offloaded_experts, device, convert_file_size_to_int(budget))
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 1025, in apply_experts_offload
+    store = ExpertsOffloadStore(device, cache_bytes, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 179, in __init__
+    raise ImportError(
+ImportError: Streaming experts on CUDA needs safetensors' prefetch loader: `pip install 'safetensors>=0.9'`
+
+[3/4] ours:0.25 | elapsed 0.8m | eta ~1m
+  FAILED ours:0.25: ImportError: Streaming experts on CUDA needs safetensors' prefetch loader: `pip install 'safetensors>=0.9'`
+  File "/home/arthur/mps-moe-perf-notes/qwen3.8-experts-offload/bench_experts_offload.py", line 159, in load
+    model = AutoModelForCausalLM.from_pretrained(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/models/auto/auto_factory.py", line 406, in from_pretrained
+    return model_class.from_pretrained(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_utils.py", line 4423, in from_pretrained
+    apply_experts_offload(model, offloaded_experts, device, convert_file_size_to_int(budget))
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 1025, in apply_experts_offload
+    store = ExpertsOffloadStore(device, cache_bytes, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 179, in __init__
+    raise ImportError(
+ImportError: Streaming experts on CUDA needs safetensors' prefetch loader: `pip install 'safetensors>=0.9'`
+
+[4/4] accelerate:0.25 | elapsed 0.8m | eta ~0m
+Loading weights:   0%|          | 0/531 [00:00<?, ?it/s]Loading weights:   1%|          | 4/531 [00:00<00:53,  9.87it/s]Loading weights:   1%|          | 5/531 [00:00<01:34,  5.59it/s]Loading weights:   3%|▎         | 16/531 [00:01<00:37, 13.62it/s]Loading weights:   5%|▍         | 26/531 [00:02<00:39, 12.94it/s]Loading weights:   5%|▌         | 28/531 [00:02<00:54,  9.18it/s]Loading weights:  11%|█▏        | 60/531 [00:02<00:14, 32.96it/s]Loading weights:  15%|█▌        | 81/531 [00:03<00:09, 46.72it/s]Loading weights:  18%|█▊        | 93/531 [00:03<00:07, 54.94it/s]Loading weights:  26%|██▌       | 136/531 [00:03<00:03, 100.04it/s]Loading weights:  29%|██▉       | 153/531 [00:03<00:05, 73.89it/s] Loading weights:  31%|███▏      | 166/531 [00:03<00:05, 69.86it/s]Loading weights:  33%|███▎      | 177/531 [00:04<00:05, 64.34it/s]Loading weights:  35%|███▌      | 186/531 [00:04<00:05, 58.16it/s]Loading weights:  37%|███▋      | 194/531 [00:04<00:06, 51.74it/s]Loading weights:  38%|███▊      | 203/531 [00:04<00:06, 48.24it/s]Loading weights:  40%|████      | 214/531 [00:05<00:06, 48.42it/s]Loading weights:  42%|████▏     | 225/531 [00:05<00:06, 48.60it/s]Loading weights:  44%|████▍     | 236/531 [00:05<00:06, 48.57it/s]Loading weights:  47%|████▋     | 247/531 [00:05<00:05, 48.55it/s]Loading weights:  49%|████▊     | 258/531 [00:06<00:05, 48.48it/s]Loading weights:  51%|█████     | 269/531 [00:06<00:05, 48.30it/s]Loading weights:  53%|█████▎    | 280/531 [00:06<00:05, 48.23it/s]Loading weights:  55%|█████▍    | 291/531 [00:06<00:05, 47.97it/s]Loading weights:  57%|█████▋    | 302/531 [00:06<00:04, 47.81it/s]Loading weights:  59%|█████▉    | 313/531 [00:07<00:04, 47.62it/s]Loading weights:  61%|██████    | 324/531 [00:07<00:04, 47.68it/s]Loading weights:  63%|██████▎   | 335/531 [00:07<00:04, 47.61it/s]Loading weights:  65%|██████▌   | 346/531 [00:07<00:03, 47.35it/s]Loading weights:  67%|██████▋   | 357/531 [00:08<00:03, 47.11it/s]Loading weights:  69%|██████▉   | 368/531 [00:08<00:03, 46.67it/s]Loading weights:  71%|███████▏  | 379/531 [00:08<00:03, 46.33it/s]Loading weights:  73%|███████▎  | 390/531 [00:08<00:03, 46.28it/s]Loading weights:  76%|███████▌  | 401/531 [00:09<00:02, 46.29it/s]Loading weights:  78%|███████▊  | 412/531 [00:09<00:02, 46.48it/s]Loading weights:  80%|███████▉  | 423/531 [00:09<00:02, 46.82it/s]Loading weights:  82%|████████▏ | 434/531 [00:09<00:02, 46.49it/s]Loading weights:  84%|████████▍ | 445/531 [00:10<00:01, 46.21it/s]Loading weights:  86%|████████▌ | 456/531 [00:10<00:01, 45.96it/s]Loading weights:  88%|████████▊ | 467/531 [00:10<00:01, 46.09it/s]Loading weights:  90%|█████████ | 478/531 [00:10<00:01, 46.11it/s]Loading weights:  92%|█████████▏| 489/531 [00:10<00:00, 46.24it/s]Loading weights:  94%|█████████▍| 500/531 [00:11<00:00, 46.26it/s]Loading weights:  96%|█████████▌| 511/531 [00:11<00:00, 46.22it/s]Loading weights:  98%|█████████▊| 522/531 [00:11<00:00, 46.38it/s]Loading weights: 100%|██████████| 531/531 [00:11<00:00, 45.51it/s]
+Some parameters are on the meta device because they were offloaded to the cpu.
+  loaded in 14s
+    prompt 1/4: 0.22 tok/s
+    prompt 2/4: 0.19 tok/s
+    prompt 3/4: 0.19 tok/s
+    prompt 4/4: 0.19 tok/s
+  RESULT {"prefill_tok_s": 187.70434129644687, "decode_tok_s": 0.18923154239051101, "decode_tok_s_per_prompt": [0.22, 0.19, 0.19, 0.19], "decode_ms_median": 5284.531253972091, "sustained_tok_s": null, "prefill_stats": {}, "config": "accelerate:0.25", "load_s": 14.325524252955802, "device": "cuda", "peak_gib": 15.881040573120117, "same_tokens_as_first": 16}
+done in 7.1m

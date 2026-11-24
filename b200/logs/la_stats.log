@@ -1,0 +1,45 @@
+== 2026-11-23T03:20:20-08:00 GPU1 idle; python la_stats.py
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  55%|█████▍    | 78/142 [00:00<00:00, 561.21it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 899.38it/s]
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<03:04,  6.99it/s]Loading weights:  68%|██████▊   | 923/1359 [00:09<00:03, 129.50it/s]Loading weights:  92%|█████████▏| 1244/1359 [00:10<00:00, 186.67it/s]Loading weights: 100%|██████████| 1359/1359 [00:10<00:00, 133.50it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+lookahead=False: misses/token 92.7  (routes/token 472)
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:10<03:24,  6.31it/s]Loading weights:  63%|██████▎   | 857/1359 [00:10<00:04, 109.53it/s]Loading weights: 100%|██████████| 1359/1359 [00:11<00:00, 120.07it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Traceback (most recent call last):
+  File "/home/arthur/mps-moe-perf-notes/b200/la_stats.py", line 16, in <module>
+    model = AutoModelForCausalLM.from_pretrained(path, device_map={"": "cuda", **{f"model.layers.{i}.mlp.experts": "cpu" for i in range(n)}}, dtype=torch.bfloat16)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/models/auto/auto_factory.py", line 406, in from_pretrained
+    return model_class.from_pretrained(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_utils.py", line 4475, in from_pretrained
+    accelerate_dispatch(model, hf_quantizer, device_map, offload_folder, disk_offload_index, offload_buffers)
+  File "/home/arthur/tf-pr50997/src/transformers/integrations/accelerate.py", line 430, in accelerate_dispatch
+    dispatch_model(model, **device_map_kwargs)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/accelerate/big_modeling.py", line 430, in dispatch_model
+    attach_align_device_hook_on_blocks(
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/accelerate/hooks.py", line 662, in attach_align_device_hook_on_blocks
+    add_hook_to_module(module, hook)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/accelerate/hooks.py", line 176, in add_hook_to_module
+    module = hook.init_hook(module)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/accelerate/hooks.py", line 301, in init_hook
+    set_module_tensor_to_device(module, name, self.execution_device, tied_params_map=self.tied_params_map)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/accelerate/utils/modeling.py", line 334, in set_module_tensor_to_device
+    new_value = old_value.to(device, non_blocking=non_blocking)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 800.00 MiB. GPU 0 has a total capacity of 178.35 GiB of which 173.81 MiB is free. Including non-PyTorch memory, this process has 178.01 GiB memory in use. Of the allocated memory 177.17 GiB is allocated by PyTorch, and 16.25 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+== 2026-11-23T03:22:25-08:00 exit 1; other processes on GPU at end: 0

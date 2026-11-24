@@ -1,0 +1,14 @@
+== 2026-11-23T23:30:14-08:00 GPU6 idle; python stamps2.py
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 20/1359 [00:00<00:08, 158.71it/s]Loading weights:   3%|▎         | 36/1359 [00:00<00:11, 111.00it/s]Loading weights:   4%|▎         | 50/1359 [00:00<00:12, 106.27it/s]Loading weights:   5%|▌         | 68/1359 [00:11<05:47,  3.71it/s] Loading weights:  28%|██▊       | 385/1359 [00:12<00:24, 39.68it/s]Loading weights:  35%|███▌      | 477/1359 [00:12<00:16, 52.60it/s]Loading weights:  37%|███▋      | 506/1359 [00:12<00:15, 55.55it/s]Loading weights:  39%|███▉      | 530/1359 [00:14<00:20, 40.81it/s]Loading weights:  40%|████      | 546/1359 [00:15<00:20, 39.70it/s]Loading weights:  57%|█████▋    | 777/1359 [00:15<00:05, 112.00it/s]Loading weights:  60%|██████    | 818/1359 [00:17<00:07, 71.15it/s] Loading weights:  74%|███████▎  | 1001/1359 [00:20<00:05, 62.36it/s]Loading weights: 100%|██████████| 1359/1359 [00:20<00:00, 66.03it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+full 'Write a Python function that p': per token 8.77 ms = layer0 MoE 0.05 + layers 1..47 6.65 + layer47 end -> next layer0 router 2.07 ms
+full 'Explain the causes of the Fren': per token 8.78 ms = layer0 MoE 0.05 + layers 1..47 6.65 + layer47 end -> next layer0 router 2.08 ms
+== 2026-11-23T23:34:56-08:00 exit 0; other processes on GPU at end: 0

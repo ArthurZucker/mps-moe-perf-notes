@@ -1,0 +1,18 @@
+== 2026-11-23T10:09:35-08:00 GPU1 idle; python mtp/mtp_accept.py 128
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   2%|▏         | 22/1359 [00:00<00:14, 95.04it/s]Loading weights:   3%|▎         | 45/1359 [00:00<00:12, 104.43it/s]Loading weights:   4%|▍         | 60/1359 [00:00<00:11, 116.91it/s]Loading weights:   5%|▌         | 73/1359 [00:10<05:20,  4.01it/s] Loading weights:  27%|██▋       | 362/1359 [00:11<00:24, 39.93it/s]Loading weights:  31%|███       | 416/1359 [00:11<00:20, 45.14it/s]Loading weights:  34%|███▎      | 457/1359 [00:12<00:18, 47.96it/s]Loading weights:  35%|███▍      | 473/1359 [00:12<00:18, 48.58it/s]Loading weights:  41%|████      | 552/1359 [00:13<00:11, 73.24it/s]Loading weights:  42%|████▏     | 574/1359 [00:13<00:09, 78.83it/s]Loading weights:  44%|████▎     | 594/1359 [00:13<00:09, 83.70it/s]Loading weights:  46%|████▌     | 620/1359 [00:15<00:20, 36.78it/s]Loading weights:  62%|██████▏   | 838/1359 [00:16<00:05, 99.78it/s]Loading weights:  63%|██████▎   | 856/1359 [00:16<00:05, 84.37it/s]Loading weights:  64%|██████▍   | 871/1359 [00:17<00:08, 59.71it/s]Loading weights:  72%|███████▏  | 979/1359 [00:18<00:04, 83.79it/s]Loading weights:  80%|████████  | 1090/1359 [00:18<00:02, 134.24it/s]Loading weights:  86%|████████▋ | 1174/1359 [00:18<00:01, 165.00it/s]Loading weights:  89%|████████▉ | 1214/1359 [00:19<00:01, 122.63it/s]Loading weights:  95%|█████████▍| 1286/1359 [00:20<00:00, 118.79it/s]Loading weights:  96%|█████████▋| 1310/1359 [00:20<00:00, 125.44it/s]Loading weights: 100%|██████████| 1359/1359 [00:20<00:00, 66.50it/s] 
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+main layer types: ['indexed_attention', 'linear_attention']
+mtp load: missing [] unexpected []
+prompt done: shift0 97/127, shift1 97/127
+prompt done: shift0 217/254, shift1 217/254
+prompt done: shift0 320/381, shift1 319/381
+prompt done: shift0 425/508, shift1 424/508
+MTP depth-1 acceptance (positions t+0): 0.837
+MTP depth-1 acceptance (positions t+1): 0.835
+== 2026-11-23T10:10:56-08:00 exit 0; other processes on GPU at end: 0

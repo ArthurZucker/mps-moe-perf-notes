@@ -1,0 +1,21 @@
+== 2026-11-23T13:10:02-08:00 GPU1 idle; python mtp/mtp_engine.py 2 128 --decode-linears --mode max-autotune
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 20/1359 [00:00<00:19, 67.58it/s]Loading weights:   3%|▎         | 46/1359 [00:00<00:14, 87.85it/s]Loading weights:   5%|▌         | 68/1359 [00:10<04:18,  4.99it/s]Loading weights:  20%|██        | 277/1359 [00:10<00:32, 33.38it/s]Loading weights:  23%|██▎       | 308/1359 [00:13<00:39, 26.35it/s]Loading weights:  41%|████      | 554/1359 [00:13<00:11, 70.81it/s]Loading weights:  48%|████▊     | 646/1359 [00:14<00:09, 75.86it/s]Loading weights:  52%|█████▏    | 711/1359 [00:15<00:08, 75.34it/s]Loading weights:  56%|█████▌    | 758/1359 [00:16<00:10, 57.88it/s]Loading weights:  68%|██████▊   | 922/1359 [00:18<00:05, 75.22it/s]Loading weights:  78%|███████▊  | 1058/1359 [00:21<00:04, 61.69it/s]Loading weights: 100%|██████████| 1359/1359 [00:21<00:00, 64.39it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+{'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+   per step ms: {'drafts': 1.01, 'verify': 16.08, 'sync': 0.03, 'rollback': 1.38, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 125.0 tok/s, 2.33 tokens/step, acceptance 0.664, identical to eager spec for 80/128
+   per step ms: {'drafts': 1.1, 'verify': 16.4, 'sync': 0.03, 'rollback': 1.49, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 146.5 tok/s, 2.78 tokens/step, acceptance 0.902, identical to eager spec for 128/128
+   per step ms: {'drafts': 1.04, 'verify': 16.22, 'sync': 0.03, 'rollback': 1.43, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 137.0 tok/s, 2.56 tokens/step, acceptance 0.790, identical to eager spec for 14/128
+   per step ms: {'drafts': 1.03, 'verify': 16.15, 'sync': 0.03, 'rollback': 1.4, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 126.7 tok/s, 2.37 tokens/step, acceptance 0.685, identical to eager spec for 128/128
+== 2026-11-23T13:15:21-08:00 exit 0; other processes on GPU at end: 0

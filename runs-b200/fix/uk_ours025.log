@@ -1,0 +1,45 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  77%|███████▋  | 109/142 [00:00<00:00, 1062.19it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 1132.81it/s]
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/2] full | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|          | 15/1359 [00:00<00:49, 27.06it/s]Loading weights:   1%|          | 15/1359 [00:12<00:49, 27.06it/s]Loading weights:   5%|▌         | 68/1359 [00:13<04:26,  4.85it/s]Loading weights:  32%|███▏      | 437/1359 [00:13<00:20, 44.04it/s]Loading weights:  39%|███▉      | 535/1359 [00:16<00:19, 42.50it/s]Loading weights:  53%|█████▎    | 725/1359 [00:16<00:09, 69.39it/s]Loading weights:  58%|█████▊    | 787/1359 [00:16<00:07, 74.08it/s]Loading weights:  61%|██████    | 831/1359 [00:17<00:06, 78.83it/s]Loading weights:  64%|██████▎   | 865/1359 [00:17<00:06, 74.97it/s]Loading weights:  65%|██████▌   | 890/1359 [00:18<00:06, 76.29it/s]Loading weights:  67%|██████▋   | 910/1359 [00:19<00:08, 53.75it/s]Loading weights:  75%|███████▍  | 1019/1359 [00:19<00:03, 92.99it/s]Loading weights:  78%|███████▊  | 1059/1359 [00:21<00:05, 59.54it/s]Loading weights:  90%|█████████ | 1225/1359 [00:21<00:01, 125.84it/s]Loading weights:  94%|█████████▍| 1283/1359 [00:22<00:00, 93.45it/s] Loading weights: 100%|██████████| 1359/1359 [00:22<00:00, 60.62it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Fetching 334 files:   0%|          | 0/334 [00:00<?, ?it/s]Fetching 334 files:  39%|███▉      | 130/334 [00:00<00:00, 1266.01it/s]Fetching 334 files:  77%|███████▋  | 257/334 [00:00<00:00, 1089.65it/s]Fetching 334 files: 100%|██████████| 334/334 [00:00<00:00, 1187.86it/s]
+Fetching 334 files:   0%|          | 0/334 [00:00<?, ?it/s]Fetching 334 files:  45%|████▍     | 149/334 [00:00<00:00, 1440.24it/s]Fetching 334 files:  88%|████████▊ | 294/334 [00:00<00:00, 1104.87it/s]Fetching 334 files: 100%|██████████| 334/334 [00:00<00:00, 1138.89it/s]
+WARNING:kernels._versions:You are using version 4 of 'kernels-community/mamba-ssm', but version 5 is available.
+Fetching 42 files:   0%|          | 0/42 [00:00<?, ?it/s]Fetching 42 files: 100%|██████████| 42/42 [00:00<00:00, 1179.25it/s]
+WARNING:kernels._versions:You are using version 4 of 'kernels-community/mamba-ssm', but version 5 is available.
+Fetching 42 files:   0%|          | 0/42 [00:00<?, ?it/s]Fetching 42 files: 100%|██████████| 42/42 [00:00<00:00, 1058.74it/s]
+Fetching 334 files:   0%|          | 0/334 [00:00<?, ?it/s]Fetching 334 files:  30%|██▉       | 100/334 [00:00<00:00, 989.52it/s]Fetching 334 files:  60%|█████▉    | 199/334 [00:00<00:00, 858.70it/s]Fetching 334 files:  97%|█████████▋| 325/334 [00:00<00:00, 1019.04it/s]Fetching 334 files: 100%|██████████| 334/334 [00:00<00:00, 1008.07it/s]
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 749.75it/s]
+  loaded in 35s
+    prompt 1/4: 13.55 tok/s
+    prompt 2/4: 13.55 tok/s
+    prompt 3/4: 13.6 tok/s
+    prompt 4/4: 13.56 tok/s
+  RESULT {"prefill_tok_s": 91.9424820686293, "decode_tok_s": 13.559716045576323, "decode_tok_s_per_prompt": [13.55, 13.55, 13.6, 13.56], "decode_ms_median": 73.74785700812936, "sustained_tok_s": null, "prefill_stats": {}, "config": "full", "load_s": 35.08745170896873, "device": "cuda", "peak_gib": 120.8061728477478, "same_tokens_as_first": 128}
+[2/2] ours:0.25+compile | elapsed 1.5m | eta ~1m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:10<03:15,  6.59it/s]Loading weights:  64%|██████▎   | 864/1359 [00:10<00:04, 114.64it/s]Loading weights: 100%|██████████| 1359/1359 [00:11<00:00, 122.67it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  loaded in 15s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+    prompt 1/4: 5.15 tok/s
+    prompt 2/4: 3.74 tok/s
+    prompt 3/4: 2.67 tok/s
+    prompt 4/4: 2.86 tok/s
+  RESULT {"prefill_tok_s": 36.33708873051833, "decode_tok_s": 3.36186548588859, "decode_tok_s_per_prompt": [5.15, 3.74, 2.67, 2.86], "decode_ms_median": 297.453899984248, "sustained_tok_s": null, "prefill_stats": {"slots": 6662, "hits": 1820, "misses": 16157, "reads": 22361, "covered": 15786, "sync_seconds": 21.32021033973433, "wait_seconds": 0.2825828278437257}, "per_token": {"misses": 85.451171875, "hit_rate": 0.835360392567115, "reads": 145.572265625, "covered": 0.5663184841489337, "sync_ms": 44.75098582838655, "wait_ms": 118.1177486573688}, "slots": 6662, "config": "ours:0.25+compile", "load_s": 14.608807981945574, "device": "cuda", "peak_gib": 76.91452550888062, "same_tokens_as_first": 79}
+done in 9.0m

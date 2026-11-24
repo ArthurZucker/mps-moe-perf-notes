@@ -1,0 +1,21 @@
+== 2026-11-23T17:50:48-08:00 GPU6 idle; python mtp/mtp_engine.py 2 128 --decode-linears --mode max-autotune
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   2%|▏         | 22/1359 [00:00<00:14, 93.57it/s]Loading weights:   3%|▎         | 43/1359 [00:00<00:16, 82.01it/s]Loading weights:   5%|▌         | 68/1359 [00:13<05:45,  3.74it/s]Loading weights:  35%|███▍      | 475/1359 [00:14<00:19, 44.96it/s]Loading weights:  39%|███▉      | 529/1359 [00:14<00:17, 46.77it/s]Loading weights:  43%|████▎     | 589/1359 [00:15<00:15, 50.88it/s]Loading weights:  49%|████▉     | 666/1359 [00:16<00:10, 64.30it/s]Loading weights:  51%|█████     | 692/1359 [00:17<00:14, 46.16it/s]Loading weights:  64%|██████▎   | 864/1359 [00:19<00:07, 66.66it/s]Loading weights:  74%|███████▎  | 1002/1359 [00:19<00:03, 101.48it/s]Loading weights:  77%|███████▋  | 1042/1359 [00:19<00:03, 100.85it/s]Loading weights:  79%|███████▉  | 1073/1359 [00:20<00:02, 101.99it/s]Loading weights:  81%|████████  | 1098/1359 [00:20<00:03, 86.47it/s] Loading weights:  84%|████████▍ | 1147/1359 [00:21<00:02, 100.75it/s]Loading weights:  86%|████████▌ | 1168/1359 [00:21<00:02, 94.92it/s] Loading weights:  88%|████████▊ | 1201/1359 [00:22<00:02, 73.22it/s]Loading weights:  94%|█████████▍| 1282/1359 [00:22<00:00, 110.93it/s]Loading weights:  97%|█████████▋| 1314/1359 [00:22<00:00, 91.38it/s] Loading weights: 100%|██████████| 1359/1359 [00:22<00:00, 59.12it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+{'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+   per step ms: {'drafts': 1.0, 'verify': 14.96, 'sync': 0.03, 'rollback': 1.39, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 133.1 tok/s, 2.33 tokens/step, acceptance 0.664, identical to eager spec for 80/128
+   per step ms: {'drafts': 1.11, 'verify': 15.58, 'sync': 0.03, 'rollback': 1.56, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 152.3 tok/s, 2.78 tokens/step, acceptance 0.902, identical to eager spec for 128/128
+   per step ms: {'drafts': 1.08, 'verify': 15.22, 'sync': 0.04, 'rollback': 1.64, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 126.9 tok/s, 2.33 tokens/step, acceptance 0.655, identical to eager spec for 14/128
+   per step ms: {'drafts': 1.45, 'verify': 16.43, 'sync': 0.05, 'rollback': 2.03, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 123.4 tok/s, 2.46 tokens/step, acceptance 0.740, identical to eager spec for 128/128
+== 2026-11-23T17:58:10-08:00 exit 0; other processes on GPU at end: 0

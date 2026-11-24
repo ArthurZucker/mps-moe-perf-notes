@@ -1,0 +1,53 @@
+== 2026-11-23T21:42:30-08:00 GPU5 idle; python prof_decode.py --gemv --mode max-autotune --inductor combo_kernels=True --tokens 32 --trace /raid/arthur/trace_full.json
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   2%|▏         | 21/1359 [00:00<00:07, 177.75it/s]Loading weights:   3%|▎         | 39/1359 [00:00<00:12, 104.21it/s]Loading weights:   4%|▍         | 51/1359 [00:00<00:23, 56.78it/s] Loading weights:   5%|▌         | 68/1359 [00:13<06:56,  3.10it/s]Loading weights:  35%|███▍      | 471/1359 [00:16<00:24, 36.31it/s]Loading weights:  53%|█████▎    | 724/1359 [00:18<00:12, 50.24it/s]Loading weights:  76%|███████▌  | 1035/1359 [00:19<00:03, 87.43it/s]Loading weights:  80%|███████▉  | 1082/1359 [00:19<00:03, 85.06it/s]Loading weights:  82%|████████▏ | 1116/1359 [00:20<00:02, 86.85it/s]Loading weights:  86%|████████▋ | 1174/1359 [00:21<00:02, 78.68it/s]Loading weights:  88%|████████▊ | 1194/1359 [00:21<00:02, 78.23it/s]Loading weights:  97%|█████████▋| 1314/1359 [00:21<00:00, 116.55it/s]Loading weights:  99%|█████████▊| 1340/1359 [00:22<00:00, 115.89it/s]Loading weights: 100%|██████████| 1359/1359 [00:22<00:00, 61.56it/s] 
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/profiler/profiler.py:224: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+inductor combo_kernels = True
+kernelize_decode_linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+memory: allocated 120.3 GiB, peak 124.7 GiB, reserved 125.1 GiB
+decode median 8.02 ms/token -> 124.7 tok/s (min 7.95 max 9.02)
+text: The salt had long since claimed Elias’s skin, turning it the color of driftwood, and the wind had carved lines into his face that mirrored the jagged cliffs
+GPU kernel time 16.88 ms/token (incl. 1 prefill amortized over 33), kernels/token 1740
+  experts triton (prefill)       9.740 ms/tok     2.9/tok
+  triton fused                   3.718 ms/tok   993.0/tok
+  other                          1.621 ms/tok   322.6/tok
+  cuBLAS dense                   0.845 ms/tok   215.3/tok
+  topk/sort                      0.681 ms/tok   121.8/tok
+  conv                           0.121 ms/tok    37.0/tok
+  attention                      0.120 ms/tok    23.6/tok
+  memcpy                         0.035 ms/tok    23.4/tok
+  9.740 ms/tok     2.9/tok  _gather_qmv_kernel
+  0.627 ms/tok   187.2/tok  void gemv_block_kernel<1>(__nv_bfloat16 const*, uint4 const*, __nv_bfloat16 const*, __nv_bfloat16*, int, int, long)
+  0.565 ms/tok    34.9/tok  triton_red_fused_mm_t_view_16
+  0.561 ms/tok    46.5/tok  void (anonymous namespace)::tc6::kernel<640, 10>(__nv_bfloat16 const*, uint4*, __nv_bfloat16*, __nv_bfloat16*, (anonymou
+  0.481 ms/tok    46.5/tok  void (anonymous namespace)::tc6::kernel<2560, 1>(__nv_bfloat16 const*, uint4*, __nv_bfloat16*, __nv_bfloat16*, (anonymou
+  0.479 ms/tok    34.9/tok  triton_red_fused__to_copy__unsafe_view_add_mean_mm_mul_pow_rsqrt_sigmoid_slice_t_transpose_view_zeros_like_23
+  0.382 ms/tok    58.2/tok  void at::native::sbtopk::gatherTopK<float, unsigned int, 1, false>(at::cuda::detail::TensorInfo<float const, unsigned in
+  0.370 ms/tok    34.9/tok  triton_red_fused__to_copy__unsafe_view_add_clone_copy__div_exp_expand_mm_mul_neg_rsqrt_select_sigmoid_silu_slice_softplu
+  0.309 ms/tok    94.1/tok  triton_per_fused_div_mm_silu_slice_t_view_12
+  0.246 ms/tok    58.2/tok  void at::native::bitonicSortKVInPlace<-2, -1, 16, 16, float, long, at::native::GTOp<float, true>, unsigned int>(at::cuda
+  0.215 ms/tok    46.5/tok  triton_per_fused_29
+  0.187 ms/tok     1.0/tok  triton_red_fused_mm_t_57
+  0.169 ms/tok    46.5/tok  triton_red_fused_28
+  0.162 ms/tok    11.6/tok  triton_red_fused_mm_t_view_43
+  0.140 ms/tok    92.1/tok  triton_poi_fused__unsafe_view_mean_mm_mul_sigmoid_view_27
+  0.117 ms/tok    35.9/tok  void at::native::(anonymous namespace)::conv_depthwise2d_forward_kernel_generic<c10::BFloat16, int>(torch::headeronly::d
+  0.105 ms/tok    34.9/tok  triton_poi_fused_copy_copy__slice_18
+  0.104 ms/tok    11.6/tok  triton_red_fused__unsafe_view_clone_mm_mul_sigmoid_slice_split_t_transpose_view_53
+  0.096 ms/tok    12.0/tok  fmha_cutlassF_bf16_aligned_32x128_gmem_sm80(PyTorchMemEffAttention::AttentionKernel<cutlass::bfloat16_t, cutlass::arch::
+  0.091 ms/tok    43.6/tok  triton_red_fused__to_copy__unsafe_view_add_div_mean_mm_mul_pow_sigmoid_slice_unsqueeze_view_42
+  0.076 ms/tok     2.9/tok  void cutlass::Kernel2<cutlass_80_wmma_tensorop_bf16_s161616gemm_bf16_32x32_128x2_tn_align2>(cutlass_80_wmma_tensorop_bf1
+  0.076 ms/tok    45.6/tok  triton_poi_fused__to_copy_add_mean_mul_pow_rsqrt_view_38
+  0.075 ms/tok    44.6/tok  triton_poi_fused__to_copy__unsafe_view_add_div_mean_mm_mul_pow_rsqrt_sigmoid_slice_unsqueeze_view_41
+  0.070 ms/tok    44.6/tok  triton_red_fused__to_copy__unsafe_view_add_div_mean_mm_mul_pow_sigmoid_slice_unsqueeze_view_40
+  0.066 ms/tok    46.5/tok  triton_poi_fused__to_copy_clamp_div_lt_mul_qmv4_tc6_silu_split_view_31
+== 2026-11-23T21:45:19-08:00 exit 0; other processes on GPU at end: 0

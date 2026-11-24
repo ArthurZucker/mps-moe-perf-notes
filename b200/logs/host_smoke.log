@@ -1,0 +1,40 @@
+== 2026-11-23T05:49:04-08:00 GPU1 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --decode-linears --out /tmp/claude-150039/hs.jsonl --new-tokens 32 --configs gpu-nola:0.25,gpu-nola-host:0.25
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/2] gpu-nola:0.25 | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<02:54,  7.42it/s]Loading weights:  70%|██████▉   | 947/1359 [00:09<00:03, 136.92it/s]Loading weights:  93%|█████████▎| 1259/1359 [00:09<00:00, 197.62it/s]Loading weights: 100%|██████████| 1359/1359 [00:09<00:00, 139.98it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+  loaded in 59s
+    prompt 1/4: 14.95 tok/s
+    prompt 2/4: 14.91 tok/s
+    prompt 3/4: 14.91 tok/s
+    prompt 4/4: 14.89 tok/s
+  RESULT {"prefill_tok_s": 82.68988140210367, "decode_tok_s": 14.921524269664472, "decode_tok_s_per_prompt": [14.95, 14.91, 14.91, 14.89], "decode_ms_median": 67.01728201005608, "sustained_tok_s": null, "prefill_stats": {}, "config": "gpu-nola:0.25", "load_s": 59.215473251999356, "device": "cuda", "peak_gib": 120.27381992340088, "same_tokens_as_first": 32}
+[2/2] gpu-nola-host:0.25 | elapsed 1.5m | eta ~1m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<02:59,  7.19it/s]Loading weights:  72%|███████▏  | 980/1359 [00:09<00:02, 142.74it/s]Loading weights: 100%|██████████| 1359/1359 [00:09<00:00, 136.63it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+  loaded in 54s
+    prompt 1/4: 11.75 tok/s
+    prompt 2/4: 8.44 tok/s
+    prompt 3/4: 13.95 tok/s
+    prompt 4/4: 13.96 tok/s
+  RESULT {"prefill_tok_s": 82.38521968711605, "decode_tok_s": 13.077360566506195, "decode_tok_s_per_prompt": [11.75, 8.44, 13.95, 13.96], "decode_ms_median": 76.46802999079227, "sustained_tok_s": null, "prefill_stats": {}, "config": "gpu-nola-host:0.25", "load_s": 54.440497721894644, "device": "cuda", "peak_gib": 137.54218435287476, "same_tokens_as_first": 32}
+done in 2.9m
+== 2026-11-23T05:52:20-08:00 exit 0; other processes on GPU at end: 0

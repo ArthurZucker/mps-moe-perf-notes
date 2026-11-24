@@ -1,0 +1,538 @@
+== 2026-11-23T10:29:47-08:00 GPU1 idle; python mtp/mtp_engine.py 2 128 --decode-linears --mode max-autotune
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 20/1359 [00:00<00:06, 199.52it/s]Loading weights:   3%|▎         | 40/1359 [00:00<00:23, 56.13it/s] Loading weights:   5%|▌         | 68/1359 [00:14<05:47,  3.71it/s]Loading weights:  47%|████▋     | 642/1359 [00:15<00:13, 53.33it/s]Loading weights:  60%|█████▉    | 811/1359 [00:16<00:07, 71.65it/s]Loading weights:  62%|██████▏   | 846/1359 [00:16<00:06, 73.98it/s]Loading weights:  64%|██████▍   | 873/1359 [00:16<00:06, 75.42it/s]Loading weights:  66%|██████▌   | 894/1359 [00:16<00:06, 75.80it/s]Loading weights:  67%|██████▋   | 917/1359 [00:17<00:05, 76.28it/s]Loading weights:  69%|██████▉   | 936/1359 [00:17<00:05, 79.21it/s]Loading weights:  70%|███████   | 956/1359 [00:18<00:06, 61.38it/s]Loading weights:  76%|███████▌  | 1034/1359 [00:18<00:03, 94.54it/s]Loading weights:  78%|███████▊  | 1062/1359 [00:18<00:02, 106.55it/s]Loading weights:  79%|███████▉  | 1080/1359 [00:18<00:02, 104.48it/s]Loading weights:  81%|████████  | 1096/1359 [00:19<00:03, 71.05it/s] Loading weights:  84%|████████▍ | 1146/1359 [00:19<00:02, 95.35it/s]Loading weights:  86%|████████▋ | 1174/1359 [00:20<00:03, 55.47it/s]Loading weights:  95%|█████████▌| 1292/1359 [00:21<00:00, 92.69it/s]Loading weights: 100%|██████████| 1359/1359 [00:21<00:00, 63.15it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/select_algorithm.py:3686: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  current_out_size = out_base.storage().size()
+Autotune Choices Stats:
+{"num_choices": 19, "num_triton_choices": 18, "best_kernel": "mm", "best_time": 0.01027199998497963, "best_triton_pos": 1, "best_triton_time": 0.012032000347971916, "best_triton_kernel": "triton_mm_4", "best_triton_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2"}
+AUTOTUNE mm(4x2560, 2560x2560)
+strides: [2560, 1], [1, 2560]
+dtypes: torch.bfloat16, torch.bfloat16
+  mm 0.0103 ms 100.0% 
+  triton_mm_4 0.0120 ms 85.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_8 0.0121 ms 84.7% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_12 0.0152 ms 67.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_17 0.0162 ms 63.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  triton_mm_16 0.0183 ms 56.1% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=8
+  triton_mm_3 0.0205 ms 50.2% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_2 0.0222 ms 46.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_1 0.0223 ms 46.1% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+  triton_mm_7 0.0224 ms 45.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+SingleProcess AUTOTUNE benchmarking takes 0.1690 seconds and 0.0047 seconds precompiling for 19 choices
+Autotune Choices Stats:
+{"num_choices": 12, "num_triton_choices": 11, "best_kernel": "mm", "best_time": 0.008799999952316284, "best_triton_pos": 1, "best_triton_time": 0.009119999594986439, "best_triton_kernel": "triton_mm_20", "best_triton_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2"}
+AUTOTUNE mm(26x128, 128x4)
+strides: [128, 1], [1, 128]
+dtypes: torch.float32, torch.float32
+  mm 0.0088 ms 100.0% 
+  triton_mm_20 0.0091 ms 96.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_28 0.0091 ms 96.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_25 0.0093 ms 94.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=2
+  triton_mm_24 0.0094 ms 93.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=2
+  triton_mm_19 0.0100 ms 87.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+  triton_mm_21 0.0101 ms 87.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_26 0.0101 ms 87.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=2
+  triton_mm_27 0.0101 ms 87.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=2
+  triton_mm_23 0.0101 ms 87.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+SingleProcess AUTOTUNE benchmarking takes 0.0994 seconds and 0.0003 seconds precompiling for 12 choices
+Autotune Choices Stats:
+{"num_choices": 27, "num_triton_choices": 18, "best_kernel": "decompose_k_mm_20_split_2", "best_kernel_desc": "k_split=20", "best_time": 0.009247999638319016, "best_triton_pos": 9, "best_triton_time": 0.02643200010061264, "best_triton_kernel": "triton_mm_7977", "best_triton_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2"}
+AUTOTUNE mm(3x10240, 10240x320)
+strides: [10240, 1], [1, 10240]
+dtypes: torch.bfloat16, torch.bfloat16
+  decompose_k_mm_20_split_2 0.0092 ms 100.0% k_split=20
+  decompose_k_mm_32_split_7 0.0102 ms 90.6% k_split=32
+  mm 0.0110 ms 84.0% 
+  decompose_k_mm_8_split_5 0.0110 ms 84.0% k_split=8
+  decompose_k_mm_4_split_4 0.0110 ms 83.8% k_split=4
+  decompose_k_mm_16_split_6 0.0111 ms 83.5% k_split=16
+  decompose_k_mm_10_split_1 0.0111 ms 83.3% k_split=10
+  decompose_k_mm_5_split_0 0.0111 ms 83.0% k_split=5
+  decompose_k_mm_2_split_3 0.0143 ms 64.7% k_split=2
+  triton_mm_7977 0.0264 ms 35.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+SingleProcess AUTOTUNE benchmarking takes 4.4746 seconds and 0.0002 seconds precompiling for 27 choices
+Autotune Choices Stats:
+{"num_choices": 19, "num_triton_choices": 18, "best_kernel": "mm", "best_time": 0.01836800016462803, "best_triton_pos": 1, "best_triton_time": 0.02844800055027008, "best_triton_kernel": "triton_mm_37", "best_triton_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4"}
+AUTOTUNE mm(3x10240, 10240x324)
+strides: [10240, 1], [1, 10240]
+dtypes: torch.bfloat16, torch.bfloat16
+  mm 0.0184 ms 100.0% 
+  triton_mm_37 0.0284 ms 64.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_33 0.0285 ms 64.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_41 0.0367 ms 50.1% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_46 0.0440 ms 41.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  triton_mm_45 0.0492 ms 37.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=8
+  triton_mm_32 0.0633 ms 29.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_31 0.0696 ms 26.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_36 0.0736 ms 25.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_30 0.0768 ms 23.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+SingleProcess AUTOTUNE benchmarking takes 0.3502 seconds and 0.0002 seconds precompiling for 19 choices
+Autotune Choices Stats:
+{"num_choices": 19, "num_triton_choices": 18, "best_kernel": "mm", "best_time": 0.007903999648988247, "best_triton_pos": 1, "best_triton_time": 0.00800000037997961, "best_triton_kernel": "triton_mm_49", "best_triton_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4"}
+AUTOTUNE mm(3x320, 320x10240)
+strides: [320, 1], [1, 320]
+dtypes: torch.bfloat16, torch.bfloat16
+  mm 0.0079 ms 100.0% 
+  triton_mm_49 0.0080 ms 98.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_59 0.0080 ms 98.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=False, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_51 0.0080 ms 98.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=False, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_63 0.0081 ms 98.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=8
+  triton_mm_54 0.0081 ms 97.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_55 0.0081 ms 97.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=64, EVEN_K=False, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_64 0.0081 ms 97.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=False, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  triton_mm_61 0.0083 ms 95.7% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_48 0.0089 ms 88.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=False, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+SingleProcess AUTOTUNE benchmarking takes 0.1567 seconds and 0.0002 seconds precompiling for 19 choices
+Autotune Choices Stats:
+{"num_choices": 19, "num_triton_choices": 18, "best_kernel": "triton_mm_77", "best_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4", "best_time": 0.024351999163627625, "best_triton_pos": 0}
+AUTOTUNE mm(3x2560, 2560x16480)
+strides: [2560, 1], [1, 2560]
+dtypes: torch.bfloat16, torch.bfloat16
+  triton_mm_77 0.0244 ms 100.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_82 0.0244 ms 99.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  mm 0.0244 ms 99.7% 
+  triton_mm_73 0.0244 ms 99.7% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_69 0.0245 ms 99.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_81 0.0265 ms 92.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=8
+  triton_mm_66 0.0316 ms 77.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+  triton_mm_72 0.0327 ms 74.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_67 0.0347 ms 70.2% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_76 0.0347 ms 70.1% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+SingleProcess AUTOTUNE benchmarking takes 0.2183 seconds and 0.0002 seconds precompiling for 19 choices
+Autotune Choices Stats:
+{"num_choices": 19, "num_triton_choices": 18, "best_kernel": "mm", "best_time": 0.014527999795973301, "best_triton_pos": 1, "best_triton_time": 0.020320000126957893, "best_triton_kernel": "triton_mm_87", "best_triton_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2"}
+AUTOTUNE mm(3x6144, 6144x2560)
+strides: [6144, 1], [1, 6144]
+dtypes: torch.bfloat16, torch.bfloat16
+  mm 0.0145 ms 100.0% 
+  triton_mm_87 0.0203 ms 71.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_91 0.0203 ms 71.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_95 0.0264 ms 55.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_100 0.0285 ms 51.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  triton_mm_99 0.0326 ms 44.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=8
+  triton_mm_86 0.0428 ms 33.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_85 0.0469 ms 30.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_90 0.0480 ms 30.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_84 0.0490 ms 29.7% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+SingleProcess AUTOTUNE benchmarking takes 0.2842 seconds and 0.0002 seconds precompiling for 19 choices
+Autotune Choices Stats:
+{"num_choices": 19, "num_triton_choices": 18, "best_kernel": "mm", "best_time": 0.010048000141978264, "best_triton_pos": 1, "best_triton_time": 0.010048000141978264, "best_triton_kernel": "triton_mm_141", "best_triton_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2"}
+AUTOTUNE mm(3x2560, 2560x512)
+strides: [2560, 1], [1, 2560]
+dtypes: torch.bfloat16, torch.bfloat16
+  mm 0.0100 ms 100.0% 
+  triton_mm_141 0.0100 ms 100.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_145 0.0121 ms 82.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_154 0.0143 ms 70.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  triton_mm_153 0.0161 ms 62.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=8
+  triton_mm_149 0.0162 ms 61.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_140 0.0194 ms 51.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_139 0.0204 ms 49.2% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_138 0.0205 ms 49.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+  triton_mm_144 0.0214 ms 47.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+SingleProcess AUTOTUNE benchmarking takes 0.2024 seconds and 0.0002 seconds precompiling for 19 choices
+Autotune Choices Stats:
+{"num_choices": 19, "num_triton_choices": 18, "best_kernel": "triton_mm_159", "best_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2", "best_time": 0.018271999433636665, "best_triton_pos": 0}
+AUTOTUNE mm(3x2560, 2560x10240)
+strides: [2560, 1], [1, 2560]
+dtypes: torch.bfloat16, torch.bfloat16
+  triton_mm_159 0.0183 ms 100.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_163 0.0183 ms 99.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  mm 0.0193 ms 94.7% 
+  triton_mm_167 0.0193 ms 94.7% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_172 0.0194 ms 94.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  triton_mm_171 0.0223 ms 81.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=8
+  triton_mm_156 0.0265 ms 69.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+  triton_mm_162 0.0284 ms 64.2% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_157 0.0285 ms 64.2% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_158 0.0285 ms 64.2% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+SingleProcess AUTOTUNE benchmarking takes 0.2092 seconds and 0.0002 seconds precompiling for 19 choices
+Autotune Choices Stats:
+{"num_choices": 19, "num_triton_choices": 18, "best_kernel": "triton_mm_177", "best_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2", "best_time": 0.011264000087976456, "best_triton_pos": 0}
+AUTOTUNE mm(3x2560, 2560x1281)
+strides: [2560, 1], [1, 2560]
+dtypes: torch.bfloat16, torch.bfloat16
+  triton_mm_177 0.0113 ms 100.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_181 0.0121 ms 92.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_185 0.0142 ms 79.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_190 0.0154 ms 73.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  triton_mm_189 0.0163 ms 69.2% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=8
+  mm 0.0172 ms 65.3% 
+  triton_mm_176 0.0203 ms 55.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_175 0.0215 ms 52.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_174 0.0223 ms 50.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+  triton_mm_180 0.0224 ms 50.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+SingleProcess AUTOTUNE benchmarking takes 0.2055 seconds and 0.0002 seconds precompiling for 19 choices
+Autotune Choices Stats:
+{"num_choices": 19, "num_triton_choices": 18, "best_kernel": "mm", "best_time": 0.007968000136315823, "best_triton_pos": 1, "best_triton_time": 0.007968000136315823, "best_triton_kernel": "triton_mm_195", "best_triton_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2"}
+AUTOTUNE mm(3x640, 640x2560)
+strides: [640, 1], [1, 640]
+dtypes: torch.bfloat16, torch.bfloat16
+  mm 0.0080 ms 100.0% 
+  triton_mm_195 0.0080 ms 100.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_199 0.0080 ms 99.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_203 0.0081 ms 98.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_207 0.0090 ms 88.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=8
+  triton_mm_194 0.0092 ms 86.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_208 0.0092 ms 86.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  triton_mm_202 0.0100 ms 79.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_205 0.0100 ms 79.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_192 0.0101 ms 79.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+SingleProcess AUTOTUNE benchmarking takes 0.1620 seconds and 0.0002 seconds precompiling for 19 choices
+Autotune Choices Stats:
+{"num_choices": 19, "num_triton_choices": 18, "best_kernel": "mm", "best_time": 0.011103999800980091, "best_triton_pos": 1, "best_triton_time": 0.012095999903976917, "best_triton_kernel": "triton_mm_213", "best_triton_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2"}
+AUTOTUNE mm(3x2560, 2560x2560)
+strides: [2560, 1], [1, 2560]
+dtypes: torch.bfloat16, torch.bfloat16
+  mm 0.0111 ms 100.0% 
+  triton_mm_213 0.0121 ms 91.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_217 0.0121 ms 91.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_221 0.0162 ms 68.7% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_226 0.0162 ms 68.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  triton_mm_225 0.0182 ms 60.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=8
+  triton_mm_212 0.0204 ms 54.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_211 0.0223 ms 49.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_210 0.0224 ms 49.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+  triton_mm_216 0.0226 ms 49.2% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+SingleProcess AUTOTUNE benchmarking takes 0.2061 seconds and 0.0002 seconds precompiling for 19 choices
+Autotune Choices Stats:
+{"num_choices": 19, "num_triton_choices": 18, "best_kernel": "triton_mm_595", "best_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4", "best_time": 0.02143999934196472, "best_triton_pos": 0}
+AUTOTUNE mm(3x2560, 2560x13952)
+strides: [2560, 1], [1, 2560]
+dtypes: torch.bfloat16, torch.bfloat16
+  triton_mm_595 0.0214 ms 100.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_591 0.0224 ms 95.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_599 0.0224 ms 95.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_604 0.0224 ms 95.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  mm 0.0235 ms 91.4% 
+  triton_mm_603 0.0244 ms 87.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=8
+  triton_mm_588 0.0296 ms 72.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+  triton_mm_594 0.0306 ms 70.1% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_589 0.0325 ms 65.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_598 0.0325 ms 65.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+SingleProcess AUTOTUNE benchmarking takes 0.2149 seconds and 0.0002 seconds precompiling for 19 choices
+Autotune Choices Stats:
+{"num_choices": 12, "num_triton_choices": 11, "best_kernel": "mm", "best_time": 0.008031999692320824, "best_triton_pos": 1, "best_triton_time": 0.008063999935984612, "best_triton_kernel": "triton_mm_615", "best_triton_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2"}
+AUTOTUNE mm(12x128, 128x26)
+strides: [128, 1], [1, 128]
+dtypes: torch.float32, torch.float32
+  mm 0.0080 ms 100.0% 
+  triton_mm_615 0.0081 ms 99.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_611 0.0081 ms 99.2% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=2
+  triton_mm_607 0.0082 ms 97.7% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_612 0.0089 ms 90.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=2
+  triton_mm_606 0.0091 ms 88.1% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+  triton_mm_613 0.0092 ms 86.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=2
+  triton_mm_614 0.0100 ms 80.2% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=2
+  triton_mm_608 0.0100 ms 79.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_610 0.0101 ms 79.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+SingleProcess AUTOTUNE benchmarking takes 0.1003 seconds and 0.0002 seconds precompiling for 12 choices
+Autotune Choices Stats:
+{"num_choices": 19, "num_triton_choices": 18, "best_kernel": "triton_mm_8021", "best_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4", "best_time": 0.1984959989786148, "best_triton_pos": 0}
+AUTOTUNE mm(3x2560, 2560x248320)
+strides: [2560, 1], [1, 2560]
+dtypes: torch.bfloat16, torch.bfloat16
+  triton_mm_8021 0.1985 ms 100.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_8017 0.1985 ms 100.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_8026 0.2006 ms 98.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  mm 0.2026 ms 98.0% 
+  triton_mm_8013 0.2047 ms 97.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_8010 0.2149 ms 92.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+  triton_mm_8025 0.2191 ms 90.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=8
+  triton_mm_8016 0.2213 ms 89.7% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_8020 0.2304 ms 86.2% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_8011 0.2354 ms 84.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+SingleProcess AUTOTUNE benchmarking takes 0.6012 seconds and 0.0001 seconds precompiling for 19 choices
+{'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+Traceback (most recent call last):
+  File "/home/arthur/mps-moe-perf-notes/b200/mtp/mtp_engine.py", line 195, in <module>
+    for _ in range(2): generate(ids, 64, comp)  # warm / capture
+                       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/mps-moe-perf-notes/b200/mtp/mtp_engine.py", line 174, in generate
+    mlogits, last = (t.clone() for t in fm[a + 1](R_BUF[:, : a + 1].clone(), g[:, : a + 1].contiguous(), mcache))
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 1024, in compile_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 2316, in __call__
+    result = self._torchdynamo_orig_backend(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 2052, in __call__
+    result = self._inner_convert(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 729, in __call__
+    result = _compile(
+             ^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1890, in _compile
+    raise InternalTorchDynamoError(
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1827, in _compile
+    guarded_code, tracer_output = compile_inner(code, one_graph, hooks)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_utils_internal.py", line 96, in wrapper_function
+    return function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1500, in compile_inner
+    return _compile_inner(code, one_graph, hooks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1534, in _compile_inner
+    dynamo_output = compile_frame(
+                    ^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1408, in compile_frame
+    bytecode, tracer_output = transform_code_object(code, transform)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/bytecode_transformation.py", line 1608, in transform_code_object
+    tracer_output = transformations(instructions, code_options)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1380, in transform
+    tracer_output = trace_frame(
+                    ^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 341, in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 863, in trace_frame
+    run_tracer()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 844, in run_tracer
+    tracer.run()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1794, in run
+    while self.step():
+          ^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1459, in step
+    self.dispatch_table[inst.opcode](self, inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1001, in wrapper
+    return inner_fn(self, inst)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4093, in CALL
+    self._call(inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4084, in _call
+    self.call_function(fn, args, kwargs)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1360, in call_function
+    self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/lazy.py", line 294, in realize_and_forward
+    return getattr(self.realize(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/nn_module.py", line 1146, in call_function
+    return variables.UserFunctionVariable(fn, source=source).call_function(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 691, in call_function
+    return super().call_function(tx, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 403, in call_function
+    return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1387, in inline_user_function_return
+    return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5668, in inline_call
+    return tracer.inline_call_()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5882, in inline_call_
+    self.run()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1794, in run
+    while self.step():
+          ^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1459, in step
+    self.dispatch_table[inst.opcode](self, inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1001, in wrapper
+    return inner_fn(self, inst)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 2792, in CALL_FUNCTION_EX
+    self.call_function(fn, argsvars.items, kwargsvars)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1360, in call_function
+    self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/lazy.py", line 294, in realize_and_forward
+    return getattr(self.realize(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 691, in call_function
+    return super().call_function(tx, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 403, in call_function
+    return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1387, in inline_user_function_return
+    return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5668, in inline_call
+    return tracer.inline_call_()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5882, in inline_call_
+    self.run()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1794, in run
+    while self.step():
+          ^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1459, in step
+    self.dispatch_table[inst.opcode](self, inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1001, in wrapper
+    return inner_fn(self, inst)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4093, in CALL
+    self._call(inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4084, in _call
+    self.call_function(fn, args, kwargs)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1360, in call_function
+    self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/lazy.py", line 294, in realize_and_forward
+    return getattr(self.realize(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/nn_module.py", line 1146, in call_function
+    return variables.UserFunctionVariable(fn, source=source).call_function(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 691, in call_function
+    return super().call_function(tx, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 403, in call_function
+    return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1387, in inline_user_function_return
+    return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5668, in inline_call
+    return tracer.inline_call_()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5882, in inline_call_
+    self.run()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1794, in run
+    while self.step():
+          ^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1459, in step
+    self.dispatch_table[inst.opcode](self, inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1001, in wrapper
+    return inner_fn(self, inst)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4093, in CALL
+    self._call(inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4084, in _call
+    self.call_function(fn, args, kwargs)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1360, in call_function
+    self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/lazy.py", line 294, in realize_and_forward
+    return getattr(self.realize(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/nn_module.py", line 1146, in call_function
+    return variables.UserFunctionVariable(fn, source=source).call_function(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 691, in call_function
+    return super().call_function(tx, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 403, in call_function
+    return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1387, in inline_user_function_return
+    return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5668, in inline_call
+    return tracer.inline_call_()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5882, in inline_call_
+    self.run()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1794, in run
+    while self.step():
+          ^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1459, in step
+    self.dispatch_table[inst.opcode](self, inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1001, in wrapper
+    return inner_fn(self, inst)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4093, in CALL
+    self._call(inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4084, in _call
+    self.call_function(fn, args, kwargs)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1360, in call_function
+    self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/misc.py", line 1340, in call_function
+    return self.obj.call_method(tx, self.name, list(args), kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/dicts.py", line 604, in call_method
+    if args[0] not in self:
+       ^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/dicts.py", line 260, in __contains__
+    and not isinstance(self.items[Hashable(vt)], variables.DeletedVariable)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/base.py", line 264, in __instancecheck__
+    return instance.lazy_isinstance(self)  # pyrefly: ignore[missing-attribute]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/lazy.py", line 108, in lazy_isinstance
+    return type.__instancecheck__(cls, self.realize())
+                                       ^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/lazy.py", line 102, in realize
+    self._cache.realize()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/lazy.py", line 43, in realize
+    self.vt = builder.VariableBuilder(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/builder.py", line 489, in __call__
+    return self._call_impl(value)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/builder.py", line 525, in _call_impl
+    vt = self._wrap(value)
+         ^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/builder.py", line 773, in _wrap
+    return type_dispatch(self, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/builder.py", line 2434, in wrap_tensor
+    example_value = wrap_to_fake_tensor_and_record(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/builder.py", line 3990, in wrap_to_fake_tensor_and_record
+    return _wrap_to_fake_tensor_and_record_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/builder.py", line 4048, in _wrap_to_fake_tensor_and_record_impl
+    fake_e = wrap_fake_exception(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/utils.py", line 3102, in wrap_fake_exception
+    return fn()
+           ^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/builder.py", line 4049, in <lambda>
+    lambda: tx.fake_mode.from_tensor(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_subclasses/fake_tensor.py", line 3150, in from_tensor
+    return self.fake_tensor_converter.from_real_tensor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_subclasses/fake_tensor.py", line 425, in from_real_tensor
+    out = self.meta_converter(
+          ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_subclasses/meta_utils.py", line 2102, in __call__
+    t_desc = self.describer.describe_tensor(t, trace=trace)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_subclasses/meta_utils.py", line 316, in describe_tensor
+    storage = self.describe_storage(t.untyped_storage(), trace=trace)
+                                    ^^^^^^^^^^^^^^^^^^^
+torch._dynamo.exc.InternalTorchDynamoError: RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/home/arthur/mps-moe-perf-notes/b200/mtp/mtp_engine.py", line 92, in mtp_rows
+    out = mtp.layers[0](Rm, position_embeddings=pe, attention_mask=mask, past_key_values=mcache)
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_layers.py", line 121, in forward_with_checkpointing
+    return forward(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1267, in forward
+    hidden_states, hyper_input, injection_weights = self.attn_hyper_connection(hidden_states)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 998, in forward
+    hyper_input_normed = self.hc_norm(hyper_input)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 161, in forward
+    return output.type_as(x). To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.
+
+from user code:
+   File "/home/arthur/mps-moe-perf-notes/b200/mtp/mtp_engine.py", line 92, in mtp_rows
+    out = mtp.layers[0](Rm, position_embeddings=pe, attention_mask=mask, past_key_values=mcache)
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_layers.py", line 121, in forward_with_checkpointing
+    return forward(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1267, in forward
+    hidden_states, hyper_input, injection_weights = self.attn_hyper_connection(hidden_states)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 999, in forward
+    input_mix_weight = F.silu(self.input_mix_weight_down(hyper_input_normed) / self.hc_count)
+  File "/home/arthur/tf-pr50997/src/transformers/integrations/cuda_decode_linear.py", line 26, in forward
+    if self.state.get("input") is not x:
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+== 2026-11-23T10:34:08-08:00 exit 1; other processes on GPU at end: 0

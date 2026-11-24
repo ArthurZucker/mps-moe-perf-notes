@@ -1,0 +1,24 @@
+== 2026-11-23T05:39:37-08:00 GPU5 idle; python mtp_test.py
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|          | 7/1359 [00:00<01:08, 19.74it/s]Loading weights:   1%|          | 16/1359 [00:00<00:59, 22.47it/s]Loading weights:   5%|▌         | 68/1359 [00:11<03:46,  5.71it/s]Loading weights:  23%|██▎       | 307/1359 [00:11<00:29, 36.27it/s]Loading weights:  27%|██▋       | 361/1359 [00:15<00:37, 26.42it/s]Loading weights:  54%|█████▎    | 730/1359 [00:16<00:08, 72.25it/s]Loading weights:  56%|█████▋    | 767/1359 [00:16<00:07, 76.81it/s]Loading weights:  62%|██████▏   | 838/1359 [00:17<00:07, 72.67it/s]Loading weights:  63%|██████▎   | 862/1359 [00:17<00:06, 74.90it/s]Loading weights:  72%|███████▏  | 980/1359 [00:20<00:06, 55.83it/s]Loading weights:  95%|█████████▍| 1286/1359 [00:21<00:00, 119.39it/s]Loading weights:  97%|█████████▋| 1317/1359 [00:21<00:00, 116.84it/s]Loading weights: 100%|██████████| 1359/1359 [00:21<00:00, 62.65it/s] 
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Traceback (most recent call last):
+  File "/home/arthur/mps-moe-perf-notes/b200/mtp_test.py", line 19, in <module>
+    out = model.generate(ids, max_new_tokens=N, min_new_tokens=N, do_sample=False, use_mtp=True, num_assistant_tokens=k, return_dict_in_generate=True)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/generation/utils.py", line 2814, in generate
+    self._validate_generation_mode(generation_mode, generation_config, generation_mode_kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/generation/utils.py", line 1891, in _validate_generation_mode
+    raise ValueError(
+ValueError: assisted generation is not supported with stateful models, such as Qwen4ExpForCausalLM
+num_mtp_layers: None mtp_num_hidden_layers: 1
+plain eager: 14.5 tok/s
+== 2026-11-23T05:40:20-08:00 exit 0; other processes on GPU at end: 1

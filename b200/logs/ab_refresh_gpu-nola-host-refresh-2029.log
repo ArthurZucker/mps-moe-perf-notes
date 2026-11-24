@@ -1,0 +1,42 @@
+== 2026-11-23T08:02:32-08:00 GPU1 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --decode-linears --mode max-autotune --combo --out runs.jsonl --configs gpu-nola:0.25,gpu-nola-host-refresh:0.25+compile
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/2] gpu-nola:0.25 | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<02:56,  7.33it/s]Loading weights: 100%|██████████| 1359/1359 [00:09<00:00, 145.71it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+  loaded in 56s
+    prompt 1/4: 14.59 tok/s
+    prompt 2/4: 14.56 tok/s
+    prompt 3/4: 14.83 tok/s
+    prompt 4/4: 14.83 tok/s
+  RESULT {"prefill_tok_s": 82.67493983032526, "decode_tok_s": 14.65146851499357, "decode_tok_s_per_prompt": [14.59, 14.56, 14.83, 14.83], "decode_ms_median": 68.25254403520375, "sustained_tok_s": null, "prefill_stats": {}, "config": "gpu-nola:0.25", "load_s": 55.95841025002301, "device": "cuda", "peak_gib": 120.27381992340088, "same_tokens_as_first": 128}
+[2/2] gpu-nola-host-refresh:0.25+compile | elapsed 1.9m | eta ~2m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<02:57,  7.26it/s]Loading weights: 100%|██████████| 1359/1359 [00:09<00:00, 144.34it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+  loaded in 56s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+    prompt 1/4: 71.25 tok/s
+    prompt 2/4: 68.0 tok/s
+    prompt 3/4: 68.84 tok/s
+    prompt 4/4: 69.31 tok/s
+  RESULT {"prefill_tok_s": 80.61325789039562, "decode_tok_s": 69.47337681073444, "decode_tok_s_per_prompt": [71.25, 68.0, 68.84, 69.31], "decode_ms_median": 14.394003082998097, "sustained_tok_s": null, "prefill_stats": {}, "config": "gpu-nola-host-refresh:0.25+compile", "load_s": 55.74319167097565, "device": "cuda", "peak_gib": 137.55256032943726, "same_tokens_as_first": 128}
+done in 9.6m
+== 2026-11-23T08:12:39-08:00 exit 0; other processes on GPU at end: 1

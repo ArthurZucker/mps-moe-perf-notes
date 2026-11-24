@@ -1,0 +1,50 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  78%|███████▊  | 111/142 [00:00<00:00, 1088.49it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 1166.43it/s]
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/1] full+compile | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 19/1359 [00:00<00:08, 155.92it/s]Loading weights:   3%|▎         | 35/1359 [00:00<00:23, 55.33it/s] Loading weights:   3%|▎         | 45/1359 [00:00<00:25, 51.10it/s]Loading weights:   4%|▍         | 52/1359 [00:01<00:36, 35.64it/s]Loading weights:   4%|▍         | 52/1359 [00:13<00:36, 35.64it/s]Loading weights:   5%|▌         | 68/1359 [00:14<08:10,  2.63it/s]Loading weights:  20%|██        | 278/1359 [00:15<00:47, 22.76it/s]Loading weights:  26%|██▌       | 351/1359 [00:15<00:31, 31.58it/s]Loading weights:  28%|██▊       | 387/1359 [00:16<00:28, 33.65it/s]Loading weights:  33%|███▎      | 443/1359 [00:16<00:20, 45.49it/s]Loading weights:  35%|███▍      | 471/1359 [00:16<00:18, 49.24it/s]Loading weights:  36%|███▋      | 493/1359 [00:17<00:23, 36.97it/s]Loading weights:  47%|████▋     | 642/1359 [00:18<00:08, 84.40it/s]Loading weights:  49%|████▉     | 667/1359 [00:20<00:13, 49.51it/s]Loading weights:  64%|██████▎   | 866/1359 [00:20<00:04, 108.81it/s]Loading weights:  66%|██████▌   | 898/1359 [00:21<00:06, 76.42it/s] Loading weights:  76%|███████▌  | 1033/1359 [00:22<00:02, 121.21it/s]Loading weights:  79%|███████▊  | 1069/1359 [00:22<00:02, 117.12it/s]Loading weights:  81%|████████  | 1097/1359 [00:22<00:02, 112.16it/s]Loading weights:  82%|████████▏ | 1120/1359 [00:22<00:02, 107.64it/s]Loading weights:  84%|████████▎ | 1138/1359 [00:23<00:02, 85.92it/s] Loading weights:  85%|████████▍ | 1152/1359 [00:23<00:02, 78.48it/s]Loading weights:  90%|████████▉ | 1223/1359 [00:23<00:01, 126.85it/s]Loading weights:  91%|█████████▏| 1243/1359 [00:24<00:01, 86.23it/s] Loading weights:  97%|█████████▋| 1312/1359 [00:25<00:00, 102.37it/s]Loading weights: 100%|██████████| 1359/1359 [00:25<00:00, 54.22it/s] 
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Fetching 334 files:   0%|          | 0/334 [00:00<?, ?it/s]Fetching 334 files:  16%|█▌        | 54/334 [00:00<00:00, 539.62it/s]Fetching 334 files:  55%|█████▍    | 183/334 [00:00<00:00, 969.10it/s]Fetching 334 files:  88%|████████▊ | 293/334 [00:00<00:00, 1027.87it/s]Fetching 334 files: 100%|██████████| 334/334 [00:00<00:00, 992.72it/s] 
+Fetching 334 files:   0%|          | 0/334 [00:00<?, ?it/s]Fetching 334 files:  25%|██▌       | 84/334 [00:00<00:00, 812.66it/s]Fetching 334 files:  64%|██████▍   | 215/334 [00:00<00:00, 1094.11it/s]Fetching 334 files: 100%|██████████| 334/334 [00:00<00:00, 1097.20it/s]
+WARNING:kernels._versions:You are using version 4 of 'kernels-community/mamba-ssm', but version 5 is available.
+Fetching 42 files:   0%|          | 0/42 [00:00<?, ?it/s]Fetching 42 files: 100%|██████████| 42/42 [00:00<00:00, 1016.74it/s]
+WARNING:kernels._versions:You are using version 4 of 'kernels-community/mamba-ssm', but version 5 is available.
+Fetching 42 files:   0%|          | 0/42 [00:00<?, ?it/s]Fetching 42 files: 100%|██████████| 42/42 [00:00<00:00, 1064.75it/s]
+Fetching 334 files:   0%|          | 0/334 [00:00<?, ?it/s]Fetching 334 files:  18%|█▊        | 59/334 [00:00<00:00, 439.21it/s]Fetching 334 files:  43%|████▎     | 144/334 [00:00<00:00, 648.88it/s]Fetching 334 files:  72%|███████▏  | 241/334 [00:00<00:00, 746.67it/s]Fetching 334 files: 100%|██████████| 334/334 [00:00<00:00, 800.12it/s]
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files:  29%|██▊       | 2/7 [00:00<00:00,  8.91it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00,  9.82it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00,  9.71it/s]
+  loaded in 40s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+  FAILED full+compile: RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1619, in forward
+    outputs: MoeModelOutputWithPast = self.model(
+  File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/utils/output_capturing.py", line 361, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1418, in forward
+    position_ids = torch.cat([indexer_cache.indexer_position_ids, position_ids], dim=-1). To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 705, in get_non_cudagraph_inps
+    and t.untyped_storage().data_ptr() not in existing_path_data_ptrs
+        ^^^^^^^^^^^^^^^^^^^
+RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1619, in forward
+    outputs: MoeModelOutputWithPast = self.model(
+  File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/utils/output_capturing.py", line 361, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1418, in forward
+    position_ids = torch.cat([indexer_cache.indexer_position_ids, position_ids], dim=-1). To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.
+
+done in 4.9m

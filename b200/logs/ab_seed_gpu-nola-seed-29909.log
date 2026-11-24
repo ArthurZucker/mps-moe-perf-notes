@@ -1,0 +1,82 @@
+== 2026-11-23T04:44:27-08:00 GPU1 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --decode-linears --mode max-autotune --combo --out runs.jsonl --configs gpu-nola:0.25,gpu-nola-seed:0.25+compile
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Traceback (most recent call last):
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpx2/_transports/default.py", line 95, in map_httpcore_exceptions
+    yield
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpx2/_transports/default.py", line 242, in handle_request
+    resp = self._pool.handle_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpcore2/_sync/connection_pool.py", line 243, in handle_request
+    raise exc from None
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpcore2/_sync/connection_pool.py", line 225, in handle_request
+    response = connection.handle_request(pool_request.request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpcore2/_sync/connection.py", line 98, in handle_request
+    return self._connection.handle_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpcore2/_sync/http11.py", line 125, in handle_request
+    raise exc
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpcore2/_sync/http11.py", line 97, in handle_request
+    ) = self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpcore2/_sync/http11.py", line 167, in _receive_response_headers
+    event = self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpcore2/_sync/http11.py", line 212, in _receive_event
+    raise RemoteProtocolError(msg)
+httpcore2.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/arthur/mps-moe-perf-notes/b200/bench.py", line 89, in <module>
+    path = snapshot_download(
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 276, in _inner
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/huggingface_hub/_snapshot_download.py", line 279, in snapshot_download
+    repo_info = api.repo_info(repo_id=repo_id, repo_type=repo_type, revision=revision)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/huggingface_hub/hf_api.py", line 3535, in repo_info
+    return method(
+           ^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 89, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/huggingface_hub/hf_api.py", line 3214, in model_info
+    r = get_session().get(path, headers=headers, timeout=timeout, params=params)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpx2/_client.py", line 1107, in get
+    return self.request(
+           ^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpx2/_client.py", line 791, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpx2/_client.py", line 974, in send
+    response = self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpx2/_client.py", line 1002, in _send_handling_auth
+    response = self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpx2/_client.py", line 1037, in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpx2/_client.py", line 1070, in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpx2/_transports/default.py", line 241, in handle_request
+    with map_httpcore_exceptions():
+  File "/usr/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/httpx2/_transports/default.py", line 112, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx2.RemoteProtocolError: Server disconnected without sending a response.
+== 2026-11-23T04:44:30-08:00 exit 1; other processes on GPU at end: 0

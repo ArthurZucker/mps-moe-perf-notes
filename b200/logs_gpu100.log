@@ -1,0 +1,24 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  69%|██████▉   | 98/142 [00:00<00:00, 953.12it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 963.37it/s]
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/1] gpu:1.0+compile | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:11<03:33,  6.05it/s]Loading weights:  96%|█████████▌| 1305/1359 [00:11<00:00, 160.79it/s]Loading weights: 100%|██████████| 1359/1359 [00:11<00:00, 119.24it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97}
+  loaded in 61s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+    prompt 1/4: 71.67 tok/s
+    prompt 2/4: 72.69 tok/s
+    prompt 3/4: 81.03 tok/s
+    prompt 4/4: 83.94 tok/s
+  RESULT {"prefill_tok_s": 82.68853683054424, "decode_tok_s": 79.91304828513387, "decode_tok_s_per_prompt": [71.67, 72.69, 81.03, 83.94], "decode_ms_median": 12.513600988313556, "sustained_tok_s": null, "prefill_stats": {}, "config": "gpu:1.0+compile", "load_s": 61.335008432972245, "device": "cuda", "peak_gib": 130.64282608032227, "same_tokens_as_first": 128}
+done in 7.8m

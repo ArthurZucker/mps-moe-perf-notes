@@ -1,0 +1,24 @@
+== 2026-11-23T10:16:23-08:00 GPU1 idle; python mtp/mtp_spec.py 2 96
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 20/1359 [00:00<00:07, 188.73it/s]Loading weights:   3%|▎         | 39/1359 [00:00<00:22, 59.49it/s] Loading weights:   5%|▌         | 68/1359 [00:12<05:02,  4.27it/s]Loading weights:  39%|███▉      | 533/1359 [00:17<00:22, 37.28it/s]Loading weights:  76%|███████▌  | 1035/1359 [00:19<00:04, 72.97it/s]Loading weights:  77%|███████▋  | 1050/1359 [00:20<00:04, 67.55it/s]Loading weights: 100%|██████████| 1359/1359 [00:20<00:00, 66.38it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+[reject] K=2: identical to greedy for 96/96 tokens; 1.01 tokens/step; eager 11.9 tok/s
+[oracle] K=2: identical to greedy for 96/96 tokens; 3.00 tokens/step; eager 32.5 tok/s
+[mtp] K=2: identical to greedy for 85/96 tokens; 2.18 tokens/step; eager 23.8 tok/s
+   greedy: '\n\nHe was a man of routine. Wake at four. Check the oil. Polish the glass' 
+   spec  : '\n\nHe was a man of routine. Coffee at dawn. Logbook at noon. Lamp check'
+[reject] K=2: identical to greedy for 13/96 tokens; 1.01 tokens/step; eager 12.0 tok/s
+   greedy: ' 1700s. It wasn’t just a country; it was a pressure cooker waiting' 
+   spec  : ' 1700s. It’s not just a country; it’s a pressure cooker about'
+[oracle] K=2: identical to greedy for 13/96 tokens; 1.28 tokens/step; eager 15.1 tok/s
+   greedy: ' 1700s. It wasn’t just a country; it was a pressure cooker waiting' 
+   spec  : ' 1700s. It’s not just a country; it’s a pressure cooker about'
+[mtp] K=2: identical to greedy for 13/96 tokens; 2.53 tokens/step; eager 27.6 tok/s
+   greedy: ' 1700s. It wasn’t just a country; it was a pressure cooker waiting' 
+   spec  : ' 1700s. It’s not just a country; it’s a pressure cooker about'
+== 2026-11-23T10:17:46-08:00 exit 0; other processes on GPU at end: 0

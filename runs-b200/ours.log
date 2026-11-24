@@ -1,0 +1,77 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 23 files:   0%|          | 0/23 [00:00<?, ?it/s]Fetching 23 files: 100%|██████████| 23/23 [00:00<00:00, 1232.14it/s]
+Qwen/Qwen3-30B-A3B: experts 54.0 GiB, rest 2.9 GiB (0s)
+[1/4] ours:0.5 | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/531 [00:00<?, ?it/s]Loading weights:   1%|          | 3/531 [00:00<00:00, 3938.31it/s]
+  FAILED ours:0.5: ValueError: Streamed experts read each expert as one row of a stacked bank, but `model.layers.0.mlp.experts.down_proj` would have to be converted (WeightConverter: [MergeModulelist(dim=0)], quantize on load: False) or quantized on every read. Load the model once and save it in the transformers format: `model.save_pretrained(path, save_original_format=False)`, then stream from `path`.
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_utils.py", line 4453, in from_pretrained
+    loading_info, disk_offload_index = cls._load_pretrained_model(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_utils.py", line 4608, in _load_pretrained_model
+    loading_info, disk_offload_index = convert_and_load_state_dict_in_model(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/core_model_loading.py", line 1815, in convert_and_load_state_dict_in_model
+    experts_offload.add_reader(first_param_name, mapping, mapping.collected_tensors, hf_quantizer)
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 293, in add_reader
+    self.readers.setdefault(module_name, []).append(_ExpertReader(target_name, mapping, reads, hf_quantizer))
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 935, in __init__
+    raise ValueError(
+ValueError: Streamed experts read each expert as one row of a stacked bank, but `model.layers.0.mlp.experts.down_proj` would have to be converted (WeightConverter: [MergeModulelist(dim=0)], quantize on load: False) or quantized on every read. Load the model once and save it in the transformers format: `model.save_pretrained(path, save_original_format=False)`, then stream from `path`.
+
+[2/4] ours:0.25 | elapsed 0.1m | eta ~0m
+Loading weights:   0%|          | 0/531 [00:00<?, ?it/s]Loading weights:   1%|          | 3/531 [00:00<00:00, 2901.96it/s]
+  FAILED ours:0.25: ValueError: Streamed experts read each expert as one row of a stacked bank, but `model.layers.0.mlp.experts.down_proj` would have to be converted (WeightConverter: [MergeModulelist(dim=0)], quantize on load: False) or quantized on every read. Load the model once and save it in the transformers format: `model.save_pretrained(path, save_original_format=False)`, then stream from `path`.
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_utils.py", line 4453, in from_pretrained
+    loading_info, disk_offload_index = cls._load_pretrained_model(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_utils.py", line 4608, in _load_pretrained_model
+    loading_info, disk_offload_index = convert_and_load_state_dict_in_model(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/core_model_loading.py", line 1815, in convert_and_load_state_dict_in_model
+    experts_offload.add_reader(first_param_name, mapping, mapping.collected_tensors, hf_quantizer)
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 293, in add_reader
+    self.readers.setdefault(module_name, []).append(_ExpertReader(target_name, mapping, reads, hf_quantizer))
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 935, in __init__
+    raise ValueError(
+ValueError: Streamed experts read each expert as one row of a stacked bank, but `model.layers.0.mlp.experts.down_proj` would have to be converted (WeightConverter: [MergeModulelist(dim=0)], quantize on load: False) or quantized on every read. Load the model once and save it in the transformers format: `model.save_pretrained(path, save_original_format=False)`, then stream from `path`.
+
+[3/4] ours:0.5+compile | elapsed 0.1m | eta ~0m
+Loading weights:   0%|          | 0/531 [00:00<?, ?it/s]Loading weights:   1%|          | 3/531 [00:00<00:00, 10979.85it/s]
+  FAILED ours:0.5+compile: ValueError: Streamed experts read each expert as one row of a stacked bank, but `model.layers.0.mlp.experts.down_proj` would have to be converted (WeightConverter: [MergeModulelist(dim=0)], quantize on load: False) or quantized on every read. Load the model once and save it in the transformers format: `model.save_pretrained(path, save_original_format=False)`, then stream from `path`.
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_utils.py", line 4453, in from_pretrained
+    loading_info, disk_offload_index = cls._load_pretrained_model(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_utils.py", line 4608, in _load_pretrained_model
+    loading_info, disk_offload_index = convert_and_load_state_dict_in_model(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/core_model_loading.py", line 1815, in convert_and_load_state_dict_in_model
+    experts_offload.add_reader(first_param_name, mapping, mapping.collected_tensors, hf_quantizer)
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 293, in add_reader
+    self.readers.setdefault(module_name, []).append(_ExpertReader(target_name, mapping, reads, hf_quantizer))
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 935, in __init__
+    raise ValueError(
+ValueError: Streamed experts read each expert as one row of a stacked bank, but `model.layers.0.mlp.experts.down_proj` would have to be converted (WeightConverter: [MergeModulelist(dim=0)], quantize on load: False) or quantized on every read. Load the model once and save it in the transformers format: `model.save_pretrained(path, save_original_format=False)`, then stream from `path`.
+
+[4/4] ours:0.25+compile | elapsed 0.2m | eta ~0m
+Loading weights:   0%|          | 0/531 [00:00<?, ?it/s]Loading weights:   1%|          | 3/531 [00:00<00:00, 18027.09it/s]
+  FAILED ours:0.25+compile: ValueError: Streamed experts read each expert as one row of a stacked bank, but `model.layers.0.mlp.experts.down_proj` would have to be converted (WeightConverter: [MergeModulelist(dim=0)], quantize on load: False) or quantized on every read. Load the model once and save it in the transformers format: `model.save_pretrained(path, save_original_format=False)`, then stream from `path`.
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_utils.py", line 4453, in from_pretrained
+    loading_info, disk_offload_index = cls._load_pretrained_model(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_utils.py", line 4608, in _load_pretrained_model
+    loading_info, disk_offload_index = convert_and_load_state_dict_in_model(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/core_model_loading.py", line 1815, in convert_and_load_state_dict_in_model
+    experts_offload.add_reader(first_param_name, mapping, mapping.collected_tensors, hf_quantizer)
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 293, in add_reader
+    self.readers.setdefault(module_name, []).append(_ExpertReader(target_name, mapping, reads, hf_quantizer))
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 935, in __init__
+    raise ValueError(
+ValueError: Streamed experts read each expert as one row of a stacked bank, but `model.layers.0.mlp.experts.down_proj` would have to be converted (WeightConverter: [MergeModulelist(dim=0)], quantize on load: False) or quantized on every read. Load the model once and save it in the transformers format: `model.save_pretrained(path, save_original_format=False)`, then stream from `path`.
+
+done in 0.2m

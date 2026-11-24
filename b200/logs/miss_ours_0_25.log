@@ -1,0 +1,22 @@
+== 2026-11-23T09:10:32-08:00 GPU1 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --decode-linears --out /tmp/claude-150039/miss.jsonl --configs ours:0.25
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/1] ours:0.25 | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:08<02:49,  7.61it/s]Loading weights:  78%|███████▊  | 1062/1359 [00:09<00:01, 163.64it/s]Loading weights: 100%|██████████| 1359/1359 [00:09<00:00, 143.90it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears (['fuse', 'gemv', 'router']): {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+  loaded in 20s
+    prompt 1/4: 3.9 tok/s
+    prompt 2/4: 1.98 tok/s
+    prompt 3/4: 2.02 tok/s
+    prompt 4/4: 2.0 tok/s
+  RESULT {"prefill_tok_s": 33.53819380585777, "decode_tok_s": 2.1602270520436186, "decode_tok_s_per_prompt": [3.9, 1.98, 2.02, 2.0], "decode_ms_median": 462.914302945137, "sustained_tok_s": null, "prefill_stats": {"slots": 6662, "hits": 1817, "misses": 16138, "reads": 22369, "covered": 15765, "sync_seconds": 22.85480677615851, "wait_seconds": 1.2483188258484006}, "per_token": {"misses": 84.40625, "hit_rate": 0.8373675337186898, "reads": 148.953125, "covered": 0.5651147723065532, "sync_ms": 74.11380734743034, "wait_ms": 126.00593143383776}, "slots": 6662, "config": "ours:0.25", "load_s": 19.957746670930646, "device": "cuda", "peak_gib": 80.83775424957275, "same_tokens_as_first": 128}
+done in 5.1m
+== 2026-11-23T09:15:42-08:00 exit 0; other processes on GPU at end: 1

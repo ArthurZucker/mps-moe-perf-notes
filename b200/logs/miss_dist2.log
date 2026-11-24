@@ -1,0 +1,17 @@
+== 2026-11-24T00:40:47-08:00 GPU5 idle; python miss_dist2.py
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:08<02:46,  7.75it/s]Loading weights: 100%|██████████| 1359/1359 [00:08<00:00, 154.12it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+frac 0.25: decode calls 12096 (~252 tokens), misses/token 93.6, per layer mean 1.95
+misses per layer-call histogram: {0: 3026, 1: 3161, 2: 2348, 3: 1458, 4: 847, 5: 543, 6: 285, 7: 159, 8: 100, 9: 69, 10: 100}
+top-4: V1 router(l+1)(x_moe_l) covers 0.23 of misses | V2 router(l+1)(mlp_hc(l+1)(streams in)) covers 0.28
+top-6: V1 router(l+1)(x_moe_l) covers 0.35 of misses | V2 router(l+1)(mlp_hc(l+1)(streams in)) covers 0.45
+top-10: V1 router(l+1)(x_moe_l) covers 0.54 of misses | V2 router(l+1)(mlp_hc(l+1)(streams in)) covers 0.75
+top-16: V1 router(l+1)(x_moe_l) covers 0.70 of misses | V2 router(l+1)(mlp_hc(l+1)(streams in)) covers 0.89
+== 2026-11-24T00:42:23-08:00 exit 0; other processes on GPU at end: 0

@@ -1,0 +1,50 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  58%|█████▊    | 82/142 [00:00<00:00, 663.63it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 980.48it/s]
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/1] ours:0.25+compile | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   4%|▍         | 61/1359 [00:00<00:02, 462.99it/s]Loading weights:   4%|▍         | 61/1359 [00:14<00:02, 462.99it/s]Loading weights:   5%|▌         | 68/1359 [00:15<06:36,  3.25it/s] Loading weights: 100%|██████████| 1359/1359 [00:15<00:00, 88.56it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Fetching 334 files:   0%|          | 0/334 [00:00<?, ?it/s]Fetching 334 files:  15%|█▍        | 50/334 [00:00<00:00, 373.56it/s]Fetching 334 files:  26%|██▋       | 88/334 [00:01<00:04, 59.95it/s] Fetching 334 files:  32%|███▏      | 106/334 [00:01<00:05, 44.68it/s]Fetching 334 files:  35%|███▌      | 117/334 [00:02<00:05, 42.47it/s]Fetching 334 files:  37%|███▋      | 125/334 [00:02<00:05, 39.41it/s]Fetching 334 files:  40%|███▉      | 132/334 [00:02<00:05, 36.86it/s]Fetching 334 files:  41%|████      | 137/334 [00:02<00:05, 36.94it/s]Fetching 334 files:  43%|████▎     | 142/334 [00:03<00:05, 35.61it/s]Fetching 334 files:  44%|████▍     | 147/334 [00:03<00:05, 31.59it/s]Fetching 334 files:  46%|████▌     | 153/334 [00:03<00:05, 35.05it/s]Fetching 334 files:  47%|████▋     | 157/334 [00:03<00:05, 31.37it/s]Fetching 334 files:  49%|████▊     | 162/334 [00:03<00:05, 31.91it/s]Fetching 334 files:  50%|████▉     | 166/334 [00:03<00:05, 31.80it/s]Fetching 334 files:  51%|█████     | 170/334 [00:04<00:05, 31.37it/s]Fetching 334 files:  52%|█████▏    | 174/334 [00:04<00:05, 31.29it/s]Fetching 334 files:  53%|█████▎    | 178/334 [00:04<00:05, 30.51it/s]Fetching 334 files:  54%|█████▍    | 182/334 [00:04<00:04, 31.56it/s]Fetching 334 files:  56%|█████▌    | 186/334 [00:04<00:04, 30.38it/s]Fetching 334 files:  57%|█████▋    | 190/334 [00:04<00:04, 32.01it/s]Fetching 334 files:  58%|█████▊    | 194/334 [00:04<00:04, 28.83it/s]Fetching 334 files:  60%|█████▉    | 199/334 [00:04<00:04, 32.91it/s]Fetching 334 files:  61%|██████    | 203/334 [00:05<00:04, 27.24it/s]Fetching 334 files:  62%|██████▏   | 208/334 [00:05<00:04, 30.95it/s]Fetching 334 files:  63%|██████▎   | 212/334 [00:05<00:04, 27.84it/s]Fetching 334 files:  65%|██████▍   | 217/334 [00:05<00:04, 28.16it/s]Fetching 334 files:  66%|██████▌   | 221/334 [00:05<00:03, 30.01it/s]Fetching 334 files:  67%|██████▋   | 225/334 [00:05<00:03, 30.99it/s]Fetching 334 files:  69%|██████▊   | 229/334 [00:06<00:03, 30.23it/s]Fetching 334 files:  70%|██████▉   | 233/334 [00:06<00:03, 28.92it/s]Fetching 334 files:  71%|███████▏  | 238/334 [00:06<00:02, 32.21it/s]Fetching 334 files:  72%|███████▏  | 242/334 [00:06<00:03, 30.55it/s]Fetching 334 files:  74%|███████▍  | 247/334 [00:06<00:02, 34.13it/s]Fetching 334 files:  75%|███████▌  | 251/334 [00:06<00:02, 29.59it/s]Fetching 334 files:  77%|███████▋  | 256/334 [00:06<00:02, 31.33it/s]Fetching 334 files:  78%|███████▊  | 260/334 [00:07<00:02, 29.68it/s]Fetching 334 files:  79%|███████▉  | 265/334 [00:07<00:02, 27.69it/s]Fetching 334 files:  81%|████████  | 270/334 [00:07<00:01, 32.18it/s]Fetching 334 files:  82%|████████▏ | 274/334 [00:07<00:02, 28.72it/s]Fetching 334 files:  84%|████████▍ | 280/334 [00:07<00:01, 32.86it/s]Fetching 334 files:  85%|████████▌ | 284/334 [00:07<00:01, 30.38it/s]Fetching 334 files:  87%|████████▋ | 289/334 [00:08<00:01, 27.14it/s]Fetching 334 files:  89%|████████▊ | 296/334 [00:08<00:01, 35.30it/s]Fetching 334 files:  90%|█████████ | 301/334 [00:08<00:01, 32.02it/s]Fetching 334 files:  91%|█████████▏| 305/334 [00:08<00:01, 26.85it/s]Fetching 334 files:  94%|█████████▎| 313/334 [00:08<00:00, 28.00it/s]Fetching 334 files:  96%|█████████▌| 321/334 [00:09<00:00, 29.35it/s]Fetching 334 files:  98%|█████████▊| 328/334 [00:09<00:00, 34.98it/s]Fetching 334 files:  99%|█████████▉| 332/334 [00:09<00:00, 30.18it/s]Fetching 334 files: 100%|██████████| 334/334 [00:09<00:00, 35.30it/s]
+Fetching 334 files:   0%|          | 0/334 [00:00<?, ?it/s]Fetching 334 files:  17%|█▋        | 57/334 [00:00<00:00, 548.09it/s]Fetching 334 files:  40%|███▉      | 132/334 [00:00<00:00, 657.46it/s]Fetching 334 files:  67%|██████▋   | 225/334 [00:00<00:00, 778.75it/s]Fetching 334 files:  93%|█████████▎| 312/334 [00:00<00:00, 784.54it/s]Fetching 334 files: 100%|██████████| 334/334 [00:00<00:00, 786.94it/s]
+WARNING:kernels._versions:You are using version 4 of 'kernels-community/mamba-ssm', but version 5 is available.
+Fetching 42 files:   0%|          | 0/42 [00:00<?, ?it/s]Fetching 42 files:   2%|▏         | 1/42 [00:00<00:05,  8.12it/s]Fetching 42 files:   5%|▍         | 2/42 [00:00<00:05,  7.10it/s]Fetching 42 files:  21%|██▏       | 9/42 [00:00<00:01, 27.52it/s]Fetching 42 files:  29%|██▊       | 12/42 [00:00<00:01, 24.82it/s]Fetching 42 files:  38%|███▊      | 16/42 [00:00<00:00, 28.81it/s]Fetching 42 files:  48%|████▊     | 20/42 [00:00<00:00, 24.05it/s]Fetching 42 files:  57%|█████▋    | 24/42 [00:01<00:00, 22.92it/s]Fetching 42 files:  71%|███████▏  | 30/42 [00:01<00:00, 28.36it/s]Fetching 42 files:  81%|████████  | 34/42 [00:01<00:00, 27.14it/s]Fetching 42 files:  90%|█████████ | 38/42 [00:01<00:00, 24.74it/s]Fetching 42 files: 100%|██████████| 42/42 [00:03<00:00,  5.45it/s]Fetching 42 files: 100%|██████████| 42/42 [00:03<00:00, 11.43it/s]
+WARNING:kernels._versions:You are using version 4 of 'kernels-community/mamba-ssm', but version 5 is available.
+Fetching 42 files:   0%|          | 0/42 [00:00<?, ?it/s]Fetching 42 files: 100%|██████████| 42/42 [00:00<00:00, 652.57it/s]
+Fetching 334 files:   0%|          | 0/334 [00:00<?, ?it/s]Fetching 334 files:  13%|█▎        | 43/334 [00:00<00:00, 410.31it/s]Fetching 334 files:  40%|███▉      | 132/334 [00:00<00:00, 650.44it/s]Fetching 334 files:  65%|██████▍   | 217/334 [00:00<00:00, 706.40it/s]Fetching 334 files:  92%|█████████▏| 306/334 [00:00<00:00, 749.01it/s]Fetching 334 files: 100%|██████████| 334/334 [00:00<00:00, 762.26it/s]
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files:  29%|██▊       | 2/7 [00:00<00:00,  7.40it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00,  9.34it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00,  9.11it/s]
+  loaded in 41s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+  FAILED ours:0.25+compile: RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1619, in forward
+    outputs: MoeModelOutputWithPast = self.model(
+  File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/utils/output_capturing.py", line 361, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1418, in forward
+    position_ids = torch.cat([indexer_cache.indexer_position_ids, position_ids], dim=-1). To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 705, in get_non_cudagraph_inps
+    and t.untyped_storage().data_ptr() not in existing_path_data_ptrs
+        ^^^^^^^^^^^^^^^^^^^
+RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1619, in forward
+    outputs: MoeModelOutputWithPast = self.model(
+  File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/utils/output_capturing.py", line 361, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1418, in forward
+    position_ids = torch.cat([indexer_cache.indexer_position_ids, position_ids], dim=-1). To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.
+
+done in 5.8m

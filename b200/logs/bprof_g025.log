@@ -1,0 +1,58 @@
+== 2026-11-23T05:28:21-08:00 GPU1 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --decode-linears --mode max-autotune --combo --out /tmp/claude-150039/prof.jsonl --profile --configs gpu-nola:0.25+compile
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/1] gpu-nola:0.25+compile | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:08<02:49,  7.60it/s]Loading weights: 100%|██████████| 1359/1359 [00:08<00:00, 151.13it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+  loaded in 57s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+    prompt 1/4: 82.06 tok/s
+    prompt 2/4: 68.09 tok/s
+    prompt 3/4: 67.98 tok/s
+    prompt 4/4: 67.32 tok/s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/profiler/profiler.py:224: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+  PROFILE decode wall 17.04 ms/token, GPU kernel 23.35 ms/token (incl. the prompt's prefill), 1566 kernels/token
+  PROFILE   9.461 ms/tok     2.2/tok  Memcpy HtoD (Pinned -> Device)
+  PROFILE   2.838 ms/tok    47.6/tok  void qmv4_offload_kernel<64, 4>(__nv_bfloat16 const*, uint4*, __nv_bfloat16*, __nv_bfloat16*, uint4 const*, __
+  PROFILE   2.490 ms/tok     0.7/tok  _gather_qmv_kernel
+  PROFILE   1.895 ms/tok    47.6/tok  void qmv4_offload_kernel<64, 1>(__nv_bfloat16 const*, uint4*, __nv_bfloat16*, __nv_bfloat16*, uint4 const*, __
+  PROFILE   0.633 ms/tok    35.7/tok  triton_red_fused_mm_t_view_12
+  PROFILE   0.578 ms/tok    47.6/tok  void router_topk_kernel<512>(__nv_bfloat16 const*, uint4 const*, float*, __nv_bfloat16*, __nv_bfloat16*, long*
+  PROFILE   0.461 ms/tok    35.7/tok  triton_red_fused__to_copy__unsafe_view_add_mean_mm_mul_pow_rsqrt_sigmoid_slice_t_transpose_view_zeros_like_21
+  PROFILE   0.456 ms/tok    95.3/tok  triton_per_fused_div_mm_silu_slice_t_view_10
+  PROFILE   0.398 ms/tok    95.3/tok  void gemv_block_kernel<1>(__nv_bfloat16 const*, uint4 const*, __nv_bfloat16 const*, __nv_bfloat16*, int, int, 
+  PROFILE   0.355 ms/tok    47.6/tok  offload_plan_kernel(int const*, int, int, int, int*, int*, long*, long*, int, int*, int*)
+  PROFILE   0.287 ms/tok    12.0/tok  void at::native::radixSortKVInPlace<-2, -1, 32, 32, long, long, unsigned int>(at::cuda::detail::TensorInfo<lon
+  PROFILE   0.280 ms/tok    47.6/tok  triton_red_fused__unsafe_view_mean_mm_mul_sigmoid_t_view_26
+  PROFILE   0.246 ms/tok    47.6/tok  triton_per_fused_mm_mul_silu_slice_t_27
+  PROFILE   0.245 ms/tok    35.7/tok  triton_red_fused__to_copy__unsafe_view_add_clone_copy__div_exp_expand_mm_mul_neg_rsqrt_select_sigmoid_silu_sli
+  PROFILE   0.194 ms/tok     1.0/tok  triton_red_fused_mm_slice_t_view_55
+  PROFILE   0.175 ms/tok    12.0/tok  fmha_cutlassF_bf16_aligned_32x128_gmem_sm80(PyTorchMemEffAttention::AttentionKernel<cutlass::bfloat16_t, cutla
+  PROFILE   0.165 ms/tok    11.9/tok  triton_red_fused_mm_t_view_40
+  PROFILE   0.158 ms/tok    44.7/tok  triton_red_fused__to_copy__unsafe_view_add_div_mean_mm_mul_pow_sigmoid_slice_unsqueeze_view_39
+  PROFILE   0.148 ms/tok    95.3/tok  triton_poi_fused__unsafe_view_mean_mm_mul_sigmoid_view_11
+  PROFILE   0.123 ms/tok    11.9/tok  triton_red_fused__unsafe_view_clone_mm_mul_sigmoid_slice_split_t_transpose_view_50
+  PROFILE   0.122 ms/tok    36.7/tok  void at::native::(anonymous namespace)::conv_depthwise2d_forward_kernel_generic<c10::BFloat16, int>(torch::hea
+  PROFILE   0.093 ms/tok    11.9/tok  void at::native::sbtopk::gatherTopK<float, unsigned int, 1, false>(at::cuda::detail::TensorInfo<float const, u
+  PROFILE   0.083 ms/tok    45.6/tok  triton_red_fused__to_copy__unsafe_view_add_div_mean_mm_mul_pow_sigmoid_slice_unsqueeze_view_37
+  PROFILE   0.081 ms/tok    45.6/tok  triton_poi_fused__to_copy__unsafe_view_add_div_mean_mm_mul_pow_rsqrt_sigmoid_slice_unsqueeze_view_38
+  PROFILE   0.079 ms/tok    46.6/tok  triton_poi_fused__to_copy_add_mean_mul_pow_rsqrt_view_35
+  PROFILE   0.069 ms/tok    35.7/tok  triton_red_fused_18
+  PROFILE   0.069 ms/tok    47.6/tok  triton_poi_fused__to_copy_mul_qmv4_offload_silu_split_view_28
+  PROFILE   0.068 ms/tok    48.6/tok  Memcpy DtoD (Device -> Device)
+  PROFILE   0.066 ms/tok    47.6/tok  triton_per_fused__to_copy__unsafe_view_add_div_embedding_mean_mm_mul_pow_repeat_sigmoid_slice_unsqueeze_view_2
+  PROFILE   0.065 ms/tok    35.7/tok  triton_poi_fused__unsafe_view_cat_mm_slice_transpose_16
+  RESULT {"prefill_tok_s": 82.6984448942822, "decode_tok_s": 70.67858592613749, "decode_tok_s_per_prompt": [82.06, 68.09, 67.98, 67.32], "decode_ms_median": 14.14855697657913, "sustained_tok_s": null, "prefill_stats": {}, "config": "gpu-nola:0.25+compile", "load_s": 57.02422104298603, "device": "cuda", "peak_gib": 120.27381992340088, "same_tokens_as_first": 128}
+done in 7.4m
+== 2026-11-23T05:36:07-08:00 exit 0; other processes on GPU at end: 0

@@ -1,0 +1,22 @@
+== 2026-11-23T14:06:09-08:00 GPU1 idle; python mtp/mtp_engine.py 2 128 --decode-linears --mode max-autotune --offload gpu-nola:1.0
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<03:01,  7.10it/s]Loading weights: 100%|██████████| 1359/1359 [00:09<00:00, 141.16it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+{'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+   per step ms: {'drafts': 1.11, 'verify': 18.44, 'sync': 0.03, 'rollback': 1.49, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 109.9 tok/s, 2.33 tokens/step, acceptance 0.664, identical to eager spec for 84/128
+   per step ms: {'drafts': 1.72, 'verify': 18.71, 'sync': 0.03, 'rollback': 1.63, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 126.3 tok/s, 2.78 tokens/step, acceptance 0.902, identical to eager spec for 128/128
+   per step ms: {'drafts': 1.08, 'verify': 17.93, 'sync': 0.03, 'rollback': 1.47, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 109.9 tok/s, 2.29 tokens/step, acceptance 0.634, identical to eager spec for 86/128
+   per step ms: {'drafts': 1.12, 'verify': 18.09, 'sync': 0.03, 'rollback': 1.53, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 122.5 tok/s, 2.56 tokens/step, acceptance 0.780, identical to eager spec for 39/128
+== 2026-11-23T14:11:49-08:00 exit 0; other processes on GPU at end: 0

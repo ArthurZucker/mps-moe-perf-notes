@@ -1,0 +1,25 @@
+== 2026-11-23T20:38:58-08:00 GPU2 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --decode-linears --mode max-autotune --combo --out host2.jsonl --configs gpu-nola-host:0.25+compile
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/1] gpu-nola-host:0.25+compile | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:10<03:24,  6.30it/s]Loading weights: 100%|██████████| 1359/1359 [00:10<00:00, 124.96it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+  decode linears (['fuse', 'gemv', 'router']): {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+  loaded in 61s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+    prompt 1/4: 70.21 tok/s
+    prompt 2/4: 66.25 tok/s
+    prompt 3/4: 68.18 tok/s
+    prompt 4/4: 70.91 tok/s
+  RESULT {"prefill_tok_s": 81.78805724837291, "decode_tok_s": 69.14452973336427, "decode_tok_s_per_prompt": [70.21, 66.25, 68.18, 70.91], "decode_ms_median": 14.46246006526053, "sustained_tok_s": null, "prefill_stats": {}, "config": "gpu-nola-host:0.25+compile", "load_s": 60.678479498950765, "device": "cuda", "peak_gib": 120.27381992340088, "same_tokens_as_first": 128}
+done in 6.8m
+== 2026-11-23T20:46:08-08:00 exit 0; other processes on GPU at end: 0

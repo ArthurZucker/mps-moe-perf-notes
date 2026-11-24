@@ -1,0 +1,296 @@
+== 2026-11-23T10:34:23-08:00 GPU1 idle; python mtp/mtp_engine.py 2 128 --decode-linears --mode max-autotune
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   2%|▏         | 21/1359 [00:00<00:15, 85.14it/s]Loading weights:   3%|▎         | 41/1359 [00:00<00:17, 74.56it/s]Loading weights:   5%|▌         | 68/1359 [00:10<04:12,  5.12it/s]Loading weights:  23%|██▎       | 306/1359 [00:14<00:45, 23.28it/s]Loading weights:  60%|█████▉    | 813/1359 [00:15<00:06, 83.79it/s]Loading weights:  73%|███████▎  | 992/1359 [00:16<00:04, 86.96it/s]Loading weights:  82%|████████▏ | 1113/1359 [00:18<00:02, 88.02it/s]Loading weights:  88%|████████▊ | 1198/1359 [00:20<00:02, 75.12it/s]Loading weights: 100%|██████████| 1359/1359 [00:20<00:00, 67.33it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+{'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+Traceback (most recent call last):
+  File "/home/arthur/mps-moe-perf-notes/b200/mtp/mtp_engine.py", line 199, in <module>
+    for _ in range(2): generate(ids, 64, comp)  # warm / capture
+                       ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/mps-moe-perf-notes/b200/mtp/mtp_engine.py", line 175, in generate
+    mlogits, last = (t.clone() for t in fm[a + 1](R_BUF[:, : a + 1].clone(), g[:, : a + 1].contiguous(), mcache))
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 1024, in compile_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 2316, in __call__
+    result = self._torchdynamo_orig_backend(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 2052, in __call__
+    result = self._inner_convert(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 729, in __call__
+    result = _compile(
+             ^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1890, in _compile
+    raise InternalTorchDynamoError(
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1827, in _compile
+    guarded_code, tracer_output = compile_inner(code, one_graph, hooks)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_utils_internal.py", line 96, in wrapper_function
+    return function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1500, in compile_inner
+    return _compile_inner(code, one_graph, hooks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1534, in _compile_inner
+    dynamo_output = compile_frame(
+                    ^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1408, in compile_frame
+    bytecode, tracer_output = transform_code_object(code, transform)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/bytecode_transformation.py", line 1608, in transform_code_object
+    tracer_output = transformations(instructions, code_options)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1380, in transform
+    tracer_output = trace_frame(
+                    ^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 341, in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 863, in trace_frame
+    run_tracer()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 844, in run_tracer
+    tracer.run()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1794, in run
+    while self.step():
+          ^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1459, in step
+    self.dispatch_table[inst.opcode](self, inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1001, in wrapper
+    return inner_fn(self, inst)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4093, in CALL
+    self._call(inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4084, in _call
+    self.call_function(fn, args, kwargs)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1360, in call_function
+    self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/lazy.py", line 294, in realize_and_forward
+    return getattr(self.realize(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/nn_module.py", line 1146, in call_function
+    return variables.UserFunctionVariable(fn, source=source).call_function(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 691, in call_function
+    return super().call_function(tx, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 403, in call_function
+    return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1387, in inline_user_function_return
+    return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5668, in inline_call
+    return tracer.inline_call_()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5882, in inline_call_
+    self.run()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1794, in run
+    while self.step():
+          ^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1459, in step
+    self.dispatch_table[inst.opcode](self, inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1001, in wrapper
+    return inner_fn(self, inst)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 2792, in CALL_FUNCTION_EX
+    self.call_function(fn, argsvars.items, kwargsvars)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1360, in call_function
+    self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/lazy.py", line 294, in realize_and_forward
+    return getattr(self.realize(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 691, in call_function
+    return super().call_function(tx, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 403, in call_function
+    return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1387, in inline_user_function_return
+    return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5668, in inline_call
+    return tracer.inline_call_()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5882, in inline_call_
+    self.run()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1794, in run
+    while self.step():
+          ^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1459, in step
+    self.dispatch_table[inst.opcode](self, inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1001, in wrapper
+    return inner_fn(self, inst)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4093, in CALL
+    self._call(inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4084, in _call
+    self.call_function(fn, args, kwargs)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1360, in call_function
+    self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/lazy.py", line 294, in realize_and_forward
+    return getattr(self.realize(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/nn_module.py", line 1146, in call_function
+    return variables.UserFunctionVariable(fn, source=source).call_function(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 691, in call_function
+    return super().call_function(tx, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 403, in call_function
+    return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1387, in inline_user_function_return
+    return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5668, in inline_call
+    return tracer.inline_call_()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5882, in inline_call_
+    self.run()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1794, in run
+    while self.step():
+          ^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1459, in step
+    self.dispatch_table[inst.opcode](self, inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1001, in wrapper
+    return inner_fn(self, inst)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4093, in CALL
+    self._call(inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4084, in _call
+    self.call_function(fn, args, kwargs)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1360, in call_function
+    self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/lazy.py", line 294, in realize_and_forward
+    return getattr(self.realize(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/nn_module.py", line 1146, in call_function
+    return variables.UserFunctionVariable(fn, source=source).call_function(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 691, in call_function
+    return super().call_function(tx, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/functions.py", line 403, in call_function
+    return tx.inline_user_function_return(self, [*self.self_args(), *args], kwargs)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1387, in inline_user_function_return
+    return InliningInstructionTranslator.inline_call(self, fn, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5668, in inline_call
+    return tracer.inline_call_()
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 5882, in inline_call_
+    self.run()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1794, in run
+    while self.step():
+          ^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1459, in step
+    self.dispatch_table[inst.opcode](self, inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1001, in wrapper
+    return inner_fn(self, inst)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4093, in CALL
+    self._call(inst)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 4084, in _call
+    self.call_function(fn, args, kwargs)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/symbolic_convert.py", line 1360, in call_function
+    self.push(fn.call_function(self, args, kwargs))  # type: ignore[arg-type]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/misc.py", line 1340, in call_function
+    return self.obj.call_method(tx, self.name, list(args), kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/dicts.py", line 604, in call_method
+    if args[0] not in self:
+       ^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/dicts.py", line 260, in __contains__
+    and not isinstance(self.items[Hashable(vt)], variables.DeletedVariable)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/base.py", line 264, in __instancecheck__
+    return instance.lazy_isinstance(self)  # pyrefly: ignore[missing-attribute]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/lazy.py", line 108, in lazy_isinstance
+    return type.__instancecheck__(cls, self.realize())
+                                       ^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/lazy.py", line 102, in realize
+    self._cache.realize()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/lazy.py", line 43, in realize
+    self.vt = builder.VariableBuilder(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/builder.py", line 489, in __call__
+    return self._call_impl(value)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/builder.py", line 525, in _call_impl
+    vt = self._wrap(value)
+         ^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/builder.py", line 773, in _wrap
+    return type_dispatch(self, value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/builder.py", line 2434, in wrap_tensor
+    example_value = wrap_to_fake_tensor_and_record(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/builder.py", line 3990, in wrap_to_fake_tensor_and_record
+    return _wrap_to_fake_tensor_and_record_impl(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/builder.py", line 4048, in _wrap_to_fake_tensor_and_record_impl
+    fake_e = wrap_fake_exception(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/utils.py", line 3102, in wrap_fake_exception
+    return fn()
+           ^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/variables/builder.py", line 4049, in <lambda>
+    lambda: tx.fake_mode.from_tensor(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_subclasses/fake_tensor.py", line 3150, in from_tensor
+    return self.fake_tensor_converter.from_real_tensor(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_subclasses/fake_tensor.py", line 425, in from_real_tensor
+    out = self.meta_converter(
+          ^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_subclasses/meta_utils.py", line 2102, in __call__
+    t_desc = self.describer.describe_tensor(t, trace=trace)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_subclasses/meta_utils.py", line 316, in describe_tensor
+    storage = self.describe_storage(t.untyped_storage(), trace=trace)
+                                    ^^^^^^^^^^^^^^^^^^^
+torch._dynamo.exc.InternalTorchDynamoError: RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/home/arthur/mps-moe-perf-notes/b200/mtp/mtp_engine.py", line 93, in mtp_rows
+    out = mtp.layers[0](Rm, position_embeddings=pe, attention_mask=mask, past_key_values=mcache)
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_layers.py", line 121, in forward_with_checkpointing
+    return forward(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1267, in forward
+    hidden_states, hyper_input, injection_weights = self.attn_hyper_connection(hidden_states)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 998, in forward
+    hyper_input_normed = self.hc_norm(hyper_input)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 161, in forward
+    return output.type_as(x). To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.
+
+from user code:
+   File "/home/arthur/mps-moe-perf-notes/b200/mtp/mtp_engine.py", line 93, in mtp_rows
+    out = mtp.layers[0](Rm, position_embeddings=pe, attention_mask=mask, past_key_values=mcache)
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_layers.py", line 121, in forward_with_checkpointing
+    return forward(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1267, in forward
+    hidden_states, hyper_input, injection_weights = self.attn_hyper_connection(hidden_states)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 999, in forward
+    input_mix_weight = F.silu(self.input_mix_weight_down(hyper_input_normed) / self.hc_count)
+  File "/home/arthur/tf-pr50997/src/transformers/integrations/cuda_decode_linear.py", line 26, in forward
+    if self.state.get("input") is not x:
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+== 2026-11-23T10:39:04-08:00 exit 1; other processes on GPU at end: 0

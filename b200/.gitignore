@@ -1,0 +1,11 @@
+# build products / binaries (sources are committed; rebuild with kernel-src/moe-affine/build_local.py, nvcc for kbench/sa)
+kernel-src/moe-affine/build/
+kernel-src/moe-affine/.obj/
+kbench/sa/*
+!kbench/sa/*.cu
+!kbench/sa/*.cuh
+kbench/cpu/dot_bench
+__pycache__/
+*.pyc
+# multi-MB progress-bar log of an early run
+logs/gb_offload.log

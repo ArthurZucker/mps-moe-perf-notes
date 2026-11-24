@@ -1,0 +1,17 @@
+== 2026-11-23T20:10:21-08:00 GPU3 idle; python miss_dist.py
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<02:57,  7.28it/s]Loading weights: 100%|██████████| 1359/1359 [00:09<00:00, 144.89it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+frac 0.25: decode calls 24384 (~508 tokens), misses/token 76.8, per layer mean 1.60
+misses per layer-call histogram: {0: 7708, 1: 6744, 2: 4317, 3: 2521, 4: 1401, 5: 768, 6: 393, 7: 227, 8: 144, 9: 73, 10: 88}
+guess top-4: hinted fraction of misses 0.22
+guess top-6: hinted fraction of misses 0.33
+guess top-10: hinted fraction of misses 0.52
+guess top-16: hinted fraction of misses 0.68
+== 2026-11-23T20:12:22-08:00 exit 0; other processes on GPU at end: 0

@@ -1,0 +1,74 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  56%|█████▌    | 79/142 [00:00<00:00, 713.62it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 837.81it/s]
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/2] full | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   4%|▎         | 50/1359 [00:01<00:52, 25.04it/s]Loading weights:   5%|▌         | 68/1359 [00:11<04:33,  4.72it/s]Loading weights:  24%|██▍       | 329/1359 [00:11<00:27, 37.24it/s]Loading weights:  31%|███       | 415/1359 [00:13<00:22, 42.45it/s]Loading weights:  35%|███▍      | 472/1359 [00:13<00:18, 48.90it/s]Loading weights:  39%|███▉      | 533/1359 [00:15<00:17, 46.91it/s]Loading weights:  48%|████▊     | 653/1359 [00:15<00:10, 68.43it/s]Loading weights:  53%|█████▎    | 726/1359 [00:16<00:07, 87.21it/s]Loading weights:  56%|█████▌    | 755/1359 [00:18<00:11, 50.39it/s]Loading weights:  71%|███████   | 959/1359 [00:18<00:04, 97.66it/s]Loading weights:  76%|███████▌  | 1034/1359 [00:19<00:03, 104.20it/s]Loading weights:  80%|████████  | 1089/1359 [00:20<00:03, 79.08it/s] Loading weights:  81%|████████▏ | 1105/1359 [00:21<00:03, 76.78it/s]Loading weights:  89%|████████▉ | 1216/1359 [00:21<00:01, 116.47it/s]Loading weights:  95%|█████████▍| 1286/1359 [00:22<00:00, 109.69it/s]Loading weights:  99%|█████████▉| 1352/1359 [00:22<00:00, 141.06it/s]Loading weights: 100%|██████████| 1359/1359 [00:22<00:00, 61.08it/s] 
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97}
+  loaded in 33s
+    prompt 1/4: 15.27 tok/s
+    prompt 2/4: 15.29 tok/s
+    prompt 3/4: 15.27 tok/s
+    prompt 4/4: 15.25 tok/s
+  RESULT {"prefill_tok_s": 91.72010942297837, "decode_tok_s": 15.271718125942387, "decode_tok_s_per_prompt": [15.27, 15.29, 15.27, 15.25], "decode_ms_median": 65.48051710706204, "sustained_tok_s": null, "prefill_stats": {}, "config": "full", "load_s": 33.142025073990226, "device": "cuda", "peak_gib": 124.80733823776245, "same_tokens_as_first": 128}
+[2/2] gpu:0.25+compile | elapsed 1.3m | eta ~1m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<03:05,  6.94it/s]Loading weights:  84%|████████▍ | 1148/1359 [00:09<00:01, 161.32it/s]Loading weights: 100%|██████████| 1359/1359 [00:10<00:00, 134.32it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97}
+  loaded in 64s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/select_algorithm.py:3686: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  current_out_size = out_base.storage().size()
+Autotune Choices Stats:
+{"num_choices": 13, "num_triton_choices": 12, "best_kernel": "triton_mm_2", "best_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2", "best_time": 0.008895999751985073, "best_triton_pos": 0}
+AUTOTUNE mm(39x128, 128x4)
+strides: [128, 1], [1, 128]
+dtypes: torch.float32, torch.float32
+  triton_mm_2 0.0089 ms 100.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  mm 0.0090 ms 98.6% 
+  triton_mm_1 0.0100 ms 89.1% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+  triton_mm_3 0.0109 ms 81.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_7 0.0109 ms 81.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=64, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_8 0.0111 ms 80.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_11 0.0112 ms 79.7% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=64, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_9 0.0112 ms 79.2% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_10 0.0121 ms 73.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=64, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_0 0.0121 ms 73.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=1, num_warps=2
+SingleProcess AUTOTUNE benchmarking takes 0.1172 seconds and 0.0003 seconds precompiling for 13 choices
+    prompt 1/4: 67.69 tok/s
+Autotune Choices Stats:
+{"num_choices": 13, "num_triton_choices": 12, "best_kernel": "mm", "best_time": 0.008832000195980072, "best_triton_pos": 1, "best_triton_time": 0.008927999995648861, "best_triton_kernel": "triton_mm_146", "best_triton_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2"}
+AUTOTUNE mm(40x128, 128x4)
+strides: [128, 1], [1, 128]
+dtypes: torch.float32, torch.float32
+  mm 0.0088 ms 100.0% 
+  triton_mm_146 0.0089 ms 98.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=2
+  triton_mm_145 0.0101 ms 87.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=2
+  triton_mm_147 0.0110 ms 80.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_151 0.0110 ms 80.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=64, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_155 0.0110 ms 80.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=64, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+  triton_mm_152 0.0111 ms 79.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_153 0.0112 ms 78.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=4
+  triton_mm_144 0.0120 ms 73.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=32, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=1, num_warps=2
+  triton_mm_148 0.0121 ms 73.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=64, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=4
+SingleProcess AUTOTUNE benchmarking takes 0.1264 seconds and 0.0003 seconds precompiling for 13 choices
+    prompt 2/4: 65.23 tok/s
+    prompt 3/4: 68.08 tok/s
+    prompt 4/4: 66.96 tok/s
+  RESULT {"prefill_tok_s": 82.99496005097967, "decode_tok_s": 66.98837180629336, "decode_tok_s_per_prompt": [67.69, 65.23, 68.08, 66.96], "decode_ms_median": 14.927963959053159, "sustained_tok_s": null, "prefill_stats": {}, "config": "gpu:0.25+compile", "load_s": 63.999238795018755, "device": "cuda", "peak_gib": 137.3303771018982, "same_tokens_as_first": 84}
+done in 11.6m

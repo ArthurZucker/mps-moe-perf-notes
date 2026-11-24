@@ -1,0 +1,98 @@
+== 2026-11-23T06:11:49-08:00 GPU1 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --decode-linears --mode max-autotune --combo --out sweep.jsonl --configs full,full+compile,ours:0.25,ours:0.25+compile,gpu-nola:0.25,gpu-nola:0.25+compile,gpu:0.25+compile,gpu-nola-seed:0.25+compile,gpu-nola-host:0.25,gpu-nola-host:0.25+compile,gpu-nola:1.0+compile
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/11] full | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   2%|▏         | 22/1359 [00:00<00:08, 157.42it/s]Loading weights:   3%|▎         | 38/1359 [00:00<00:19, 68.47it/s] Loading weights:   5%|▌         | 68/1359 [00:13<05:18,  4.05it/s]Loading weights:  24%|██▍       | 329/1359 [00:13<00:31, 32.67it/s]Loading weights:  32%|███▏      | 439/1359 [00:14<00:21, 42.95it/s]Loading weights:  38%|███▊      | 510/1359 [00:15<00:19, 42.47it/s]Loading weights:  45%|████▍     | 609/1359 [00:16<00:14, 51.82it/s]Loading weights:  53%|█████▎    | 727/1359 [00:17<00:08, 75.77it/s]Loading weights:  56%|█████▋    | 765/1359 [00:17<00:08, 72.25it/s]Loading weights:  60%|█████▉    | 813/1359 [00:18<00:06, 80.53it/s]Loading weights:  62%|██████▏   | 837/1359 [00:18<00:06, 78.60it/s]Loading weights:  63%|██████▎   | 856/1359 [00:18<00:06, 74.03it/s]Loading weights:  64%|██████▍   | 871/1359 [00:19<00:06, 71.12it/s]Loading weights:  67%|██████▋   | 911/1359 [00:20<00:08, 55.96it/s]Loading weights:  74%|███████▍  | 1003/1359 [00:20<00:03, 89.02it/s]Loading weights:  78%|███████▊  | 1063/1359 [00:20<00:02, 115.46it/s]Loading weights:  80%|███████▉  | 1082/1359 [00:20<00:02, 120.57it/s]Loading weights:  81%|████████  | 1100/1359 [00:21<00:02, 108.81it/s]Loading weights:  82%|████████▏ | 1115/1359 [00:21<00:02, 90.92it/s] Loading weights:  84%|████████▍ | 1144/1359 [00:21<00:02, 91.72it/s]Loading weights:  86%|████████▌ | 1170/1359 [00:22<00:02, 91.70it/s]Loading weights:  88%|████████▊ | 1195/1359 [00:22<00:01, 88.74it/s]Loading weights:  90%|████████▉ | 1221/1359 [00:22<00:01, 97.49it/s]Loading weights:  92%|█████████▏| 1246/1359 [00:22<00:00, 117.74it/s]Loading weights:  93%|█████████▎| 1261/1359 [00:23<00:01, 94.73it/s] Loading weights:  95%|█████████▍| 1286/1359 [00:23<00:01, 71.29it/s]Loading weights:  97%|█████████▋| 1321/1359 [00:23<00:00, 81.62it/s]Loading weights: 100%|██████████| 1359/1359 [00:23<00:00, 56.68it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+  loaded in 34s
+    prompt 1/4: 16.33 tok/s
+    prompt 2/4: 16.27 tok/s
+    prompt 3/4: 16.33 tok/s
+    prompt 4/4: 16.36 tok/s
+  RESULT {"prefill_tok_s": 91.72335629979086, "decode_tok_s": 16.324203103442777, "decode_tok_s_per_prompt": [16.33, 16.27, 16.33, 16.36], "decode_ms_median": 61.25873303972185, "sustained_tok_s": null, "prefill_stats": {}, "config": "full", "load_s": 33.58714949700516, "device": "cuda", "peak_gib": 124.80797910690308, "same_tokens_as_first": 128}
+[2/11] full+compile | elapsed 1.3m | eta ~13m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 20/1359 [00:00<00:42, 31.20it/s]Loading weights:   2%|▏         | 29/1359 [00:02<02:15,  9.81it/s]Loading weights:   2%|▏         | 29/1359 [00:13<02:15,  9.81it/s]Loading weights:   5%|▌         | 68/1359 [00:14<05:12,  4.13it/s]Loading weights:  41%|████      | 553/1359 [00:14<00:14, 55.45it/s]Loading weights:  55%|█████▌    | 750/1359 [00:16<00:09, 65.68it/s]Loading weights:  64%|██████▍   | 874/1359 [00:22<00:11, 43.85it/s]Loading weights: 100%|██████████| 1359/1359 [00:22<00:00, 61.40it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+  loaded in 28s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+    prompt 1/4: 124.33 tok/s
+    prompt 2/4: 118.05 tok/s
+    prompt 3/4: 110.88 tok/s
+    prompt 4/4: 110.67 tok/s
+  RESULT {"prefill_tok_s": 92.12100412167688, "decode_tok_s": 111.31802703558355, "decode_tok_s_per_prompt": [124.33, 118.05, 110.88, 110.67], "decode_ms_median": 8.983270963653922, "sustained_tok_s": null, "prefill_stats": {}, "config": "full+compile", "load_s": 27.81116198305972, "device": "cuda", "peak_gib": 124.80984830856323, "same_tokens_as_first": 128}
+[3/11] ours:0.25 | elapsed 6.5m | eta ~29m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<03:03,  7.03it/s]Loading weights:  68%|██████▊   | 922/1359 [00:09<00:03, 131.22it/s]Loading weights: 100%|██████████| 1359/1359 [00:10<00:00, 131.97it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+  loaded in 13s
+    prompt 1/4: 3.49 tok/s
+    prompt 2/4: 2.47 tok/s
+    prompt 3/4: 2.43 tok/s
+    prompt 4/4: 2.47 tok/s
+  RESULT {"prefill_tok_s": 36.85675552079619, "decode_tok_s": 2.6090155356817166, "decode_tok_s_per_prompt": [3.49, 2.47, 2.43, 2.47], "decode_ms_median": 383.28633399214596, "sustained_tok_s": null, "prefill_stats": {"slots": 6662, "hits": 1815, "misses": 16133, "reads": 22369, "covered": 15760, "sync_seconds": 21.36265013378579, "wait_seconds": 0.29745141800958663}, "per_token": {"misses": 84.849609375, "hit_rate": 0.8365261957711977, "reads": 151.59375, "covered": 0.56975807379785, "sync_ms": 8.041566595011318, "wait_ms": 118.40111493029326}, "slots": 6662, "config": "ours:0.25", "load_s": 13.428928670007735, "device": "cuda", "peak_gib": 80.83848857879639, "same_tokens_as_first": 79}
+[4/11] ours:0.25+compile | elapsed 10.8m | eta ~29m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:11<03:47,  5.68it/s]Loading weights: 100%|██████████| 1359/1359 [00:12<00:00, 113.06it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+  loaded in 17s
+  FAILED ours:0.25+compile: AcceleratorError: CUDA error: an illegal memory access was encountered
+Search for `cudaErrorIllegalAddress' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_library/custom_ops.py", line 382, in wrapped_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 911, in experts_offload_misses
+    module.offload_store.misses_pass(
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 426, in misses_pass
+    routes = self._routes(name, hidden_states, top_k_index).cpu()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.AcceleratorError: CUDA error: an illegal memory access was encountered
+Search for `cudaErrorIllegalAddress' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+
+Traceback (most recent call last):
+  File "/home/arthur/mps-moe-perf-notes/b200/bench.py", line 388, in <module>
+    torch.cuda.empty_cache()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/cuda/memory.py", line 224, in empty_cache
+    torch._C._cuda_emptyCache()
+torch.AcceleratorError: CUDA error: an illegal memory access was encountered
+Search for `cudaErrorIllegalAddress' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+== 2026-11-23T06:25:25-08:00 exit 1; other processes on GPU at end: 0

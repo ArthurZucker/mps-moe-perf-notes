@@ -1,0 +1,37 @@
+== 2026-11-23T04:12:27-08:00 GPU1 idle; python prof_decode.py --gpu-offload 0.25 --pk 4 --gemv --inductor combo_kernels=True --mode max-autotune --tokens 16 --top 5 --trace /tmp/claude-150039/trace_pk4.json
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  61%|██████    | 86/142 [00:00<00:00, 855.35it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 893.20it/s]
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<02:57,  7.27it/s]Loading weights: 100%|██████████| 1359/1359 [00:09<00:00, 144.60it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/profiler/profiler.py:224: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+after load: 56.9 GiB
+after offload setup: 74.0 GiB
+inductor combo_kernels = True
+kernelize_decode_linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+memory: allocated 74.0 GiB, peak 120.3 GiB, reserved 78.9 GiB
+decode median 10.82 ms/token -> 92.4 tok/s (min 10.69 max 75.83)
+text: The salt had long since claimed Elias’s skin, turning it the color of driftwood
+GPU kernel time 99.38 ms/token (incl. 1 prefill amortized over 17), kernels/token 2047
+  memcpy                        71.848 ms/tok    50.2/tok
+  experts triton (prefill)      18.906 ms/tok     5.6/tok
+  triton fused                   3.493 ms/tok   999.5/tok
+  other                          2.857 ms/tok   631.1/tok
+  topk/sort                      1.264 ms/tok   166.8/tok
+  cuBLAS dense                   0.759 ms/tok   133.8/tok
+  conv                           0.126 ms/tok    37.0/tok
+  attention                      0.124 ms/tok    23.3/tok
+ 71.795 ms/tok    16.9/tok  Memcpy HtoD (Pinned -> Device)
+ 18.906 ms/tok     5.6/tok  _gather_qmv_kernel
+  0.726 ms/tok    45.2/tok  void qmv4_offload_kernel<64, 4>(__nv_bfloat16 const*, uint4*, __nv_bfloat16*, __nv_bfloat16*, uint4 const*, __nv_bfloat1
+  0.675 ms/tok    45.2/tok  void qmv4_offload_kernel<64, 1>(__nv_bfloat16 const*, uint4*, __nv_bfloat16*, __nv_bfloat16*, uint4 const*, __nv_bfloat1
+  0.552 ms/tok    45.2/tok  void router_topk_kernel<512>(__nv_bfloat16 const*, uint4 const*, float*, __nv_bfloat16*, __nv_bfloat16*, long*, int, int
+== 2026-11-23T04:16:10-08:00 exit 0; other processes on GPU at end: 0

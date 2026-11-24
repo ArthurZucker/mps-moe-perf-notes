@@ -1,0 +1,23 @@
+== 2026-11-23T08:25:23-08:00 GPU1 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --out /tmp/claude-150039/ours.jsonl --new-tokens 16 --configs ours:0.25+compile
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/1] ours:0.25+compile | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<03:07,  6.87it/s]Loading weights:  76%|███████▌  | 1035/1359 [00:10<00:02, 144.22it/s]Loading weights: 100%|██████████| 1359/1359 [00:10<00:00, 130.21it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  loaded in 18s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+    prompt 1/4: 2.19 tok/s
+    prompt 2/4: 4.45 tok/s
+    prompt 3/4: 4.14 tok/s
+    prompt 4/4: 4.81 tok/s
+  RESULT {"prefill_tok_s": 37.24034254356689, "decode_tok_s": 4.134996281363271, "decode_tok_s_per_prompt": [2.19, 4.45, 4.14, 4.81], "decode_ms_median": 241.83818604797125, "sustained_tok_s": null, "prefill_stats": {"slots": 6662, "hits": 1812, "misses": 16116, "reads": 22368, "covered": 15744, "sync_seconds": 21.124154285062104, "wait_seconds": 0.27834796311799437}, "per_token": {"misses": 246.890625, "hit_rate": 0.6882694128787878, "reads": 356.03125, "covered": 0.6512246060375926, "sync_ms": 68.5067167651141, "wait_ms": 180.83808383744326}, "slots": 6662, "config": "ours:0.25+compile", "load_s": 17.57844125200063, "device": "cuda", "peak_gib": 76.91522359848022, "same_tokens_as_first": 16}
+done in 4.4m
+== 2026-11-23T08:29:56-08:00 exit 0; other processes on GPU at end: 1

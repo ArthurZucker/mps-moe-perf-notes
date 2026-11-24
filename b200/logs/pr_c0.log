@@ -1,0 +1,58 @@
+== 2026-11-23T19:35:05-08:00 GPU1 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --mode max-autotune --combo --out pr.jsonl --configs full,full+compile
+transformers 5.23.0.dev0 from /raid/arthur/wt-c0/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/2] full | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   2%|▏         | 21/1359 [00:00<00:38, 34.85it/s]Loading weights:   5%|▌         | 68/1359 [00:12<04:11,  5.13it/s]Loading weights:  27%|██▋       | 362/1359 [00:13<00:28, 35.36it/s]Loading weights:  28%|██▊       | 379/1359 [00:13<00:27, 35.89it/s]Loading weights:  37%|███▋      | 500/1359 [00:14<00:17, 49.61it/s]Loading weights:  38%|███▊      | 512/1359 [00:19<00:33, 25.40it/s]Loading weights:  77%|███████▋  | 1040/1359 [00:19<00:02, 109.60it/s]Loading weights:  86%|████████▌ | 1170/1359 [00:20<00:01, 110.34it/s]Loading weights:  93%|█████████▎| 1261/1359 [00:21<00:00, 103.31it/s]Loading weights:  98%|█████████▊| 1326/1359 [00:22<00:00, 99.07it/s] Loading weights: 100%|██████████| 1359/1359 [00:22<00:00, 60.39it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  loaded in 33s
+    prompt 1/4: 12.99 tok/s
+    prompt 2/4: 12.95 tok/s
+    prompt 3/4: 13.0 tok/s
+    prompt 4/4: 13.02 tok/s
+  RESULT {"prefill_tok_s": 91.95087108664113, "decode_tok_s": 12.988662559207999, "decode_tok_s_per_prompt": [12.99, 12.95, 13.0, 13.02], "decode_ms_median": 76.99022092856467, "sustained_tok_s": null, "prefill_stats": {}, "config": "full", "load_s": 33.200397872016765, "device": "cuda", "peak_gib": 120.8061728477478, "same_tokens_as_first": 128}
+[2/2] full+compile | elapsed 1.5m | eta ~1m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 20/1359 [00:00<00:29, 45.43it/s]Loading weights:   2%|▏         | 25/1359 [00:05<06:32,  3.40it/s]Loading weights:   2%|▏         | 25/1359 [00:18<06:32,  3.40it/s]Loading weights:   5%|▌         | 68/1359 [00:20<07:16,  2.96it/s]Loading weights:  80%|████████  | 1089/1359 [00:22<00:03, 69.46it/s]Loading weights:  94%|█████████▍| 1284/1359 [00:23<00:00, 81.87it/s]Loading weights: 100%|██████████| 1359/1359 [00:23<00:00, 57.53it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  loaded in 28s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+  FAILED full+compile: RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/raid/arthur/wt-c0/src/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/raid/arthur/wt-c0/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1619, in forward
+    outputs: MoeModelOutputWithPast = self.model(
+  File "/raid/arthur/wt-c0/src/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/raid/arthur/wt-c0/src/transformers/utils/output_capturing.py", line 361, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/raid/arthur/wt-c0/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1418, in forward
+    position_ids = torch.cat([indexer_cache.indexer_position_ids, position_ids], dim=-1). To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 705, in get_non_cudagraph_inps
+    and t.untyped_storage().data_ptr() not in existing_path_data_ptrs
+        ^^^^^^^^^^^^^^^^^^^
+RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/raid/arthur/wt-c0/src/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/raid/arthur/wt-c0/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1619, in forward
+    outputs: MoeModelOutputWithPast = self.model(
+  File "/raid/arthur/wt-c0/src/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/raid/arthur/wt-c0/src/transformers/utils/output_capturing.py", line 361, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/raid/arthur/wt-c0/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1418, in forward
+    position_ids = torch.cat([indexer_cache.indexer_position_ids, position_ids], dim=-1). To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.
+
+done in 6.3m
+== 2026-11-23T19:41:38-08:00 exit 0; other processes on GPU at end: 0

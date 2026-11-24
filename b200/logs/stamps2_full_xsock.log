@@ -1,0 +1,12 @@
+== 2026-11-23T23:10:15-08:00 GPU6 idle; taskset -c 6,7,118,119 python stamps2.py
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 19/1359 [00:00<00:12, 105.92it/s]Loading weights:   2%|▏         | 30/1359 [00:00<00:36, 36.37it/s] Loading weights:   3%|▎         | 36/1359 [00:01<01:14, 17.81it/s]Loading weights:   3%|▎         | 36/1359 [00:19<01:14, 17.81it/s]Loading weights:   5%|▌         | 68/1359 [00:26<11:33,  1.86it/s]Loading weights:  43%|████▎     | 587/1359 [00:27<00:26, 29.69it/s]Loading weights:  47%|████▋     | 643/1359 [00:27<00:21, 33.34it/s]Loading weights:  50%|████▉     | 678/1359 [00:27<00:18, 36.13it/s]Loading weights:  52%|█████▏    | 706/1359 [00:28<00:17, 36.78it/s]Loading weights:  56%|█████▌    | 760/1359 [00:28<00:12, 46.09it/s]Loading weights:  58%|█████▊    | 787/1359 [00:29<00:12, 44.09it/s]Loading weights:  64%|██████▎   | 866/1359 [00:29<00:07, 64.05it/s]Loading weights:  65%|██████▌   | 889/1359 [00:29<00:07, 60.60it/s]Loading weights:  70%|██████▉   | 950/1359 [00:30<00:05, 80.26it/s]Loading weights:  71%|███████▏  | 969/1359 [00:30<00:04, 78.73it/s]Loading weights:  74%|███████▎  | 1002/1359 [00:30<00:04, 74.73it/s]Loading weights:  78%|███████▊  | 1055/1359 [00:31<00:04, 73.02it/s]Loading weights:  84%|████████▍ | 1147/1359 [00:33<00:03, 56.47it/s]Loading weights: 100%|██████████| 1359/1359 [00:33<00:00, 40.31it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+full 'Write a Python function that p': per token 8.84 ms = in-graph layer0->47 6.75 ms + layer47->next layer0 2.08 ms
+full 'Explain the causes of the Fren': per token 8.84 ms = in-graph layer0->47 6.75 ms + layer47->next layer0 2.08 ms
+== 2026-11-23T23:12:06-08:00 exit 0; other processes on GPU at end: 0

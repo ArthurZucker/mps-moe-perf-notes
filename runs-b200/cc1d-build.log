@@ -1,0 +1,6 @@
+Resolved 32 packages in 139ms
+   Building causal-conv1d==1.7.0
+      Built causal-conv1d==1.7.0
+Prepared 1 package in 9.28s
+Installed 1 package in 2ms
+ + causal-conv1d==1.7.0

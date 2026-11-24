@@ -1,0 +1,21 @@
+== 2026-11-23T10:24:49-08:00 GPU1 idle; python mtp/mtp_engine.py 2 128
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 20/1359 [00:00<00:21, 62.04it/s]Loading weights:   3%|▎         | 38/1359 [00:00<00:24, 53.67it/s]Loading weights:   5%|▌         | 68/1359 [00:10<04:10,  5.16it/s]Loading weights:  22%|██▏       | 302/1359 [00:11<00:30, 34.73it/s]Loading weights:  31%|███       | 418/1359 [00:11<00:17, 52.62it/s]Loading weights:  32%|███▏      | 440/1359 [00:13<00:24, 38.03it/s]Loading weights:  48%|████▊     | 648/1359 [00:13<00:08, 82.40it/s]Loading weights:  51%|█████     | 695/1359 [00:14<00:08, 82.41it/s]Loading weights:  54%|█████▎    | 730/1359 [00:15<00:08, 73.17it/s]Loading weights:  59%|█████▉    | 808/1359 [00:15<00:05, 96.53it/s]Loading weights:  62%|██████▏   | 836/1359 [00:15<00:05, 97.10it/s]Loading weights:  64%|██████▎   | 866/1359 [00:17<00:08, 58.57it/s]Loading weights:  68%|██████▊   | 921/1359 [00:18<00:08, 52.78it/s]Loading weights:  84%|████████▍ | 1146/1359 [00:19<00:01, 114.15it/s]Loading weights:  86%|████████▌ | 1165/1359 [00:19<00:02, 91.00it/s] Loading weights:  94%|█████████▍| 1283/1359 [00:20<00:00, 131.27it/s]Loading weights:  96%|█████████▌| 1306/1359 [00:20<00:00, 110.60it/s]Loading weights: 100%|██████████| 1359/1359 [00:20<00:00, 65.59it/s] 
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+W1123 10:28:55.688000 1459120 torch/_dynamo/convert_frame.py:1743] [0/8] torch._dynamo hit config.recompile_limit (8)
+W1123 10:28:55.688000 1459120 torch/_dynamo/convert_frame.py:1743] [0/8]    function: 'mtp_rows' (/home/arthur/mps-moe-perf-notes/b200/mtp/mtp_engine.py:81)
+W1123 10:28:55.688000 1459120 torch/_dynamo/convert_frame.py:1743] [0/8]    last reason: 0/7: 10241 <= R.stride()[0]  # output = self._norm(x.float())  # src/transformers/models/qwen4_exp/modeling_qwen4_exp.py:157 in forward (_prims_common/__init__.py:504 in __lt__)
+W1123 10:28:55.688000 1459120 torch/_dynamo/convert_frame.py:1743] [0/8] To log all recompilation reasons, use TORCH_LOGS="recompiles".
+W1123 10:28:55.688000 1459120 torch/_dynamo/convert_frame.py:1743] [0/8] To diagnose recompilation issues, see https://docs.pytorch.org/docs/main/user_guide/torch_compiler/compile/programming_model.recompilation.html
+K=2 compiled: 0.8 tok/s, 2.10 tokens/step, acceptance 0.541, identical to eager spec for 33/128
+K=2 compiled: 125.2 tok/s, 2.84 tokens/step, acceptance 0.933, identical to eager spec for 128/128
+K=2 compiled: 113.2 tok/s, 2.56 tokens/step, acceptance 0.790, identical to eager spec for 89/128
+K=2 compiled: 115.5 tok/s, 2.56 tokens/step, acceptance 0.770, identical to eager spec for 39/128
+== 2026-11-23T10:29:26-08:00 exit 0; other processes on GPU at end: 0

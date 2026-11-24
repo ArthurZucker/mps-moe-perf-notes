@@ -1,0 +1,15 @@
+== 2026-11-23T23:10:15-08:00 GPU5 idle; python stamps2.py
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|          | 12/1359 [00:00<00:28, 46.97it/s]Loading weights:   5%|▌         | 68/1359 [00:14<04:57,  4.34it/s]Loading weights: 100%|██████████| 1359/1359 [00:14<00:00, 90.88it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+host 'Write a Python function that p': per token 13.89 ms = in-graph layer0->47 9.51 ms + layer47->next layer0 4.24 ms
+host 'Explain the causes of the Fren': per token 13.69 ms = in-graph layer0->47 9.45 ms + layer47->next layer0 4.28 ms
+== 2026-11-23T23:16:54-08:00 exit 0; other processes on GPU at end: 0

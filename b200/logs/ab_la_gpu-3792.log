@@ -1,0 +1,26 @@
+== 2026-11-23T02:28:05-08:00 GPU1 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --decode-linears --mode max-autotune --combo --out runs.jsonl --configs gpu:0.25+compile
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  69%|██████▉   | 98/142 [00:00<00:00, 971.32it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 990.36it/s]
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/1] gpu:0.25+compile | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<03:01,  7.10it/s]Loading weights:  76%|███████▌  | 1035/1359 [00:09<00:02, 147.59it/s]Loading weights: 100%|██████████| 1359/1359 [00:09<00:00, 136.46it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+  loaded in 57s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+    prompt 1/4: 81.06 tok/s
+    prompt 2/4: 68.63 tok/s
+    prompt 3/4: 71.14 tok/s
+    prompt 4/4: 68.52 tok/s
+  RESULT {"prefill_tok_s": 82.68770592240003, "decode_tok_s": 71.86138768056546, "decode_tok_s_per_prompt": [81.06, 68.63, 71.14, 68.52], "decode_ms_median": 13.915678951889277, "sustained_tok_s": null, "prefill_stats": {}, "config": "gpu:0.25+compile", "load_s": 57.06523259996902, "device": "cuda", "peak_gib": 120.27381992340088, "same_tokens_as_first": 128}
+done in 7.3m
+== 2026-11-23T02:35:38-08:00 exit 0; other processes on GPU at end: 0

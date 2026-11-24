@@ -1,0 +1,39 @@
+== 2026-11-23T07:37:00-08:00 GPU1 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --decode-linears --out /tmp/claude-150039/rs.jsonl --new-tokens 64 --configs full,gpu-nola-host-refresh:0.25
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/2] full | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 17/1359 [00:00<00:16, 80.02it/s]Loading weights:   2%|▏         | 33/1359 [00:00<00:27, 48.99it/s]Loading weights:   5%|▌         | 68/1359 [00:10<03:54,  5.49it/s]Loading weights:  24%|██▍       | 327/1359 [00:10<00:25, 41.14it/s]Loading weights:  27%|██▋       | 366/1359 [00:10<00:20, 47.75it/s]Loading weights:  30%|██▉       | 404/1359 [00:11<00:21, 44.90it/s]Loading weights:  35%|███▍      | 473/1359 [00:13<00:19, 44.54it/s]Loading weights:  36%|███▌      | 492/1359 [00:14<00:22, 38.20it/s]Loading weights:  56%|█████▌    | 755/1359 [00:15<00:07, 79.63it/s]Loading weights:  68%|██████▊   | 922/1359 [00:16<00:03, 110.21it/s]Loading weights:  71%|███████   | 966/1359 [00:16<00:03, 121.35it/s]Loading weights:  73%|███████▎  | 992/1359 [00:16<00:02, 122.84it/s]Loading weights:  75%|███████▍  | 1014/1359 [00:17<00:03, 102.17it/s]Loading weights:  78%|███████▊  | 1055/1359 [00:17<00:02, 109.37it/s]Loading weights:  80%|████████  | 1090/1359 [00:18<00:03, 81.94it/s] Loading weights:  86%|████████▋ | 1174/1359 [00:18<00:01, 115.62it/s]Loading weights:  88%|████████▊ | 1202/1359 [00:19<00:01, 107.42it/s]Loading weights:  90%|████████▉ | 1217/1359 [00:19<00:01, 104.14it/s]Loading weights:  92%|█████████▏| 1254/1359 [00:19<00:00, 109.56it/s]Loading weights:  95%|█████████▍| 1287/1359 [00:19<00:00, 116.96it/s]Loading weights:  96%|█████████▌| 1305/1359 [00:20<00:00, 101.37it/s]Loading weights:  98%|█████████▊| 1333/1359 [00:20<00:00, 99.36it/s] Loading weights: 100%|██████████| 1359/1359 [00:20<00:00, 66.50it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+  loaded in 30s
+    prompt 1/4: 16.4 tok/s
+    prompt 2/4: 16.38 tok/s
+    prompt 3/4: 16.37 tok/s
+    prompt 4/4: 16.37 tok/s
+  RESULT {"prefill_tok_s": 91.73635762144552, "decode_tok_s": 16.3800190612625, "decode_tok_s_per_prompt": [16.4, 16.38, 16.37, 16.37], "decode_ms_median": 61.04999000672251, "sustained_tok_s": null, "prefill_stats": {}, "config": "full", "load_s": 30.28763981803786, "device": "cuda", "peak_gib": 124.80478048324585, "same_tokens_as_first": 64}
+[2/2] gpu-nola-host-refresh:0.25 | elapsed 1.0m | eta ~1m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:10<03:28,  6.20it/s]Loading weights:  78%|███████▊  | 1061/1359 [00:11<00:02, 133.73it/s]Loading weights: 100%|██████████| 1359/1359 [00:11<00:00, 119.77it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+  loaded in 57s
+    prompt 1/4: 10.09 tok/s
+    prompt 2/4: 10.24 tok/s
+    prompt 3/4: 10.12 tok/s
+    prompt 4/4: 10.23 tok/s
+  RESULT {"prefill_tok_s": 82.38038710334644, "decode_tok_s": 10.175481364554383, "decode_tok_s_per_prompt": [10.09, 10.24, 10.12, 10.23], "decode_ms_median": 98.27544901054353, "sustained_tok_s": null, "prefill_stats": {}, "config": "gpu-nola-host-refresh:0.25", "load_s": 56.878870973945595, "device": "cuda", "peak_gib": 120.18959140777588, "same_tokens_as_first": 64}
+done in 2.7m
+== 2026-11-23T07:40:02-08:00 exit 0; other processes on GPU at end: 0

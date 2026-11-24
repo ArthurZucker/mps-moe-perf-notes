@@ -1,0 +1,53 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 8 files:   0%|          | 0/8 [00:00<?, ?it/s]Fetching 8 files: 100%|██████████| 8/8 [00:00<00:00, 1029.75it/s]
+ArthurZ/Qwen3-30B-A3B-native: experts 54.0 GiB, rest 2.9 GiB (0s)
+[1/6] full | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/531 [00:00<?, ?it/s]Loading weights:   0%|          | 1/531 [00:00<01:25,  6.17it/s]Loading weights:   0%|          | 2/531 [00:00<01:25,  6.22it/s]Loading weights:   1%|          | 5/531 [00:01<02:36,  3.36it/s]Loading weights:   8%|▊         | 42/531 [00:04<00:46, 10.50it/s]Loading weights:  32%|███▏      | 170/531 [00:04<00:06, 53.51it/s]Loading weights:  36%|███▌      | 189/531 [00:05<00:07, 47.79it/s]Loading weights:  38%|███▊      | 203/531 [00:05<00:06, 50.55it/s]Loading weights:  40%|████      | 215/531 [00:06<00:10, 30.45it/s]Loading weights:  49%|████▉     | 262/531 [00:08<00:08, 30.50it/s]Loading weights:  61%|██████▏   | 326/531 [00:09<00:05, 34.56it/s]Loading weights:  76%|███████▌  | 401/531 [00:10<00:02, 55.94it/s]Loading weights:  78%|███████▊  | 414/531 [00:12<00:03, 32.60it/s]Loading weights:  92%|█████████▏| 486/531 [00:13<00:01, 41.91it/s]Loading weights: 100%|██████████| 531/531 [00:13<00:00, 40.46it/s]
+  loaded in 18s
+    prompt 1/4: 18.65 tok/s
+    prompt 2/4: 32.59 tok/s
+    prompt 3/4: 32.57 tok/s
+    prompt 4/4: 32.54 tok/s
+  RESULT {"prefill_tok_s": 9309.442472729756, "decode_tok_s": 32.49652501873359, "decode_tok_s_per_prompt": [18.65, 32.59, 32.57, 32.54], "decode_ms_median": 30.772521044127643, "sustained_tok_s": null, "prefill_stats": {}, "config": "full", "load_s": 17.51711444905959, "device": "cuda", "peak_gib": 57.2667818069458, "same_tokens_as_first": 128}
+[2/6] full+compile | elapsed 0.6m | eta ~3m
+Loading weights:   0%|          | 0/531 [00:00<?, ?it/s]Loading weights:   0%|          | 1/531 [00:00<01:01,  8.66it/s]Loading weights:   0%|          | 2/531 [00:00<01:12,  7.34it/s]Loading weights:   1%|          | 5/531 [00:01<02:30,  3.49it/s]Loading weights:   9%|▉         | 48/531 [00:05<00:50,  9.50it/s]Loading weights:  42%|████▏     | 225/531 [00:05<00:05, 57.70it/s]Loading weights:  47%|████▋     | 252/531 [00:08<00:08, 33.87it/s]Loading weights:  66%|██████▋   | 352/531 [00:09<00:03, 49.20it/s]Loading weights:  74%|███████▍  | 393/531 [00:09<00:02, 47.75it/s]Loading weights:  83%|████████▎ | 441/531 [00:10<00:01, 48.19it/s]Loading weights:  85%|████████▍ | 451/531 [00:11<00:02, 37.47it/s]Loading weights: 100%|██████████| 531/531 [00:12<00:00, 44.23it/s]
+  loaded in 15s
+    prompt 1/4: 154.2 tok/s
+    prompt 2/4: 151.2 tok/s
+    prompt 3/4: 151.19 tok/s
+    prompt 4/4: 151.11 tok/s
+  RESULT {"prefill_tok_s": 18367.065961834276, "decode_tok_s": 151.33307025725637, "decode_tok_s_per_prompt": [154.2, 151.2, 151.19, 151.11], "decode_ms_median": 6.607941002584994, "sustained_tok_s": null, "prefill_stats": {}, "config": "full+compile", "load_s": 14.706679173978046, "device": "cuda", "peak_gib": 57.2667818069458, "same_tokens_as_first": 7}
+[3/6] ours:0.5 | elapsed 1.2m | eta ~2m
+Loading weights:   0%|          | 0/531 [00:00<?, ?it/s]Loading weights:   0%|          | 1/531 [00:00<01:00,  8.70it/s]Loading weights:   0%|          | 2/531 [00:00<01:11,  7.36it/s]Loading weights:  18%|█▊        | 94/531 [00:00<00:01, 355.31it/s]Loading weights:  36%|███▌      | 189/531 [00:00<00:00, 562.98it/s]Loading weights:  54%|█████▍    | 286/531 [00:00<00:00, 698.56it/s]Loading weights:  73%|███████▎  | 386/531 [00:00<00:00, 791.11it/s]Loading weights:  89%|████████▉ | 474/531 [00:00<00:00, 809.44it/s]Loading weights: 100%|██████████| 531/531 [00:00<00:00, 638.30it/s]
+  loaded in 1s
+    prompt 1/4: 7.28 tok/s
+    prompt 2/4: 4.31 tok/s
+    prompt 3/4: 6.15 tok/s
+    prompt 4/4: 6.32 tok/s
+  RESULT {"prefill_tok_s": 996.2804899184681, "decode_tok_s": 5.931292945382317, "decode_tok_s_per_prompt": [7.28, 4.31, 6.15, 6.32], "decode_ms_median": 168.59730402939022, "sustained_tok_s": null, "prefill_stats": {"slots": 3071, "hits": 1562, "misses": 3433, "reads": 4393, "covered": 3360, "sync_seconds": 0.006683821091428399, "wait_seconds": 0.058882072451524436}, "per_token": {"misses": 26.541015625, "hit_rate": 0.9349939246658566, "reads": 47.240234375, "covered": 0.8202222385753183, "sync_ms": 13.282321113592843, "wait_ms": 27.503588901936382}, "slots": 3071, "config": "ours:0.5", "load_s": 0.9395328479586169, "device": "cuda", "peak_gib": 32.482176780700684, "same_tokens_as_first": 7}
+[4/6] ours:0.25 | elapsed 2.9m | eta ~3m
+Loading weights:   0%|          | 0/531 [00:00<?, ?it/s]Loading weights:   0%|          | 1/531 [00:00<01:22,  6.46it/s]Loading weights:   0%|          | 2/531 [00:00<01:23,  6.37it/s]Loading weights:  15%|█▌        | 80/531 [00:00<00:01, 274.09it/s]Loading weights:  33%|███▎      | 176/531 [00:00<00:00, 497.89it/s]Loading weights:  54%|█████▎    | 285/531 [00:00<00:00, 667.33it/s]Loading weights:  73%|███████▎  | 388/531 [00:00<00:00, 778.28it/s]Loading weights:  90%|█████████ | 479/531 [00:00<00:00, 814.46it/s]Loading weights: 100%|██████████| 531/531 [00:00<00:00, 602.62it/s]
+  loaded in 1s
+    prompt 1/4: 3.99 tok/s
+    prompt 2/4: 2.5 tok/s
+    prompt 3/4: 3.07 tok/s
+    prompt 4/4: 2.83 tok/s
+  RESULT {"prefill_tok_s": 998.1028881633982, "decode_tok_s": 2.9900102957072003, "decode_tok_s_per_prompt": [3.99, 2.5, 3.07, 2.83], "decode_ms_median": 334.44700890686363, "sustained_tok_s": null, "prefill_stats": {"slots": 1535, "hits": 1249, "misses": 3744, "reads": 4727, "covered": 3622, "sync_seconds": 0.006645479239523411, "wait_seconds": 0.05391659261658788}, "per_token": {"misses": 95.708984375, "hit_rate": 0.7655796286817292, "reads": 133.0078125, "covered": 0.80856274105667, "sync_ms": 14.660828337810017, "wait_ms": 88.70496931967864}, "slots": 1535, "config": "ours:0.25", "load_s": 1.085259190062061, "device": "cuda", "peak_gib": 19.861083030700684, "same_tokens_as_first": 7}
+[5/6] ours:0.5+compile | elapsed 6.0m | eta ~3m
+Loading weights:   0%|          | 0/531 [00:00<?, ?it/s]Loading weights:   0%|          | 1/531 [00:00<02:46,  3.19it/s]Loading weights:  18%|█▊        | 97/531 [00:00<00:01, 302.48it/s]Loading weights:  37%|███▋      | 198/531 [00:00<00:00, 519.16it/s]Loading weights:  60%|█████▉    | 317/531 [00:00<00:00, 723.17it/s]Loading weights:  79%|███████▉  | 422/531 [00:00<00:00, 822.25it/s]Loading weights:  99%|█████████▉| 526/531 [00:00<00:00, 878.17it/s]Loading weights: 100%|██████████| 531/531 [00:00<00:00, 644.42it/s]
+  loaded in 1s
+    prompt 1/4: 22.37 tok/s
+    prompt 2/4: 9.38 tok/s
+    prompt 3/4: 12.65 tok/s
+    prompt 4/4: 13.24 tok/s
+  RESULT {"prefill_tok_s": 1045.6834520563132, "decode_tok_s": 12.795611265565379, "decode_tok_s_per_prompt": [22.37, 9.38, 12.65, 13.24], "decode_ms_median": 78.15179589670151, "sustained_tok_s": null, "prefill_stats": {"slots": 3071, "hits": 1562, "misses": 3433, "reads": 4393, "covered": 3360, "sync_seconds": 0.0064942240715026855, "wait_seconds": 0.035651702200993896}, "per_token": {"misses": 26.880859375, "hit_rate": 0.9341543113305489, "reads": 46.013671875, "covered": 0.8177722880186006, "sync_ms": 20.575876980274188, "wait_ms": 34.25049373436195}, "slots": 3071, "config": "ours:0.5+compile", "load_s": 1.0317157030804083, "device": "cuda", "peak_gib": 32.483153343200684, "same_tokens_as_first": 7}
+[6/6] ours:0.25+compile | elapsed 8.5m | eta ~2m
+Loading weights:   0%|          | 0/531 [00:00<?, ?it/s]Loading weights:   0%|          | 1/531 [00:00<00:58,  9.01it/s]Loading weights:   0%|          | 2/531 [00:00<01:10,  7.46it/s]Loading weights:  20%|██        | 108/531 [00:00<00:01, 411.29it/s]Loading weights:  39%|███▉      | 207/531 [00:00<00:00, 607.99it/s]Loading weights:  58%|█████▊    | 309/531 [00:00<00:00, 738.27it/s]Loading weights:  78%|███████▊  | 414/531 [00:00<00:00, 838.07it/s]Loading weights:  95%|█████████▌| 505/531 [00:00<00:00, 833.21it/s]Loading weights: 100%|██████████| 531/531 [00:00<00:00, 671.47it/s]
+  loaded in 1s
+    prompt 1/4: 6.87 tok/s
+    prompt 2/4: 4.47 tok/s
+    prompt 3/4: 5.42 tok/s
+    prompt 4/4: 4.99 tok/s
+  RESULT {"prefill_tok_s": 946.4572716222183, "decode_tok_s": 5.206452314689618, "decode_tok_s_per_prompt": [6.87, 4.47, 5.42, 4.99], "decode_ms_median": 192.06936692353338, "sustained_tok_s": null, "prefill_stats": {"slots": 1535, "hits": 1249, "misses": 3744, "reads": 4727, "covered": 3622, "sync_seconds": 0.016566239879466593, "wait_seconds": 0.05654179572593421}, "per_token": {"misses": 94.85546875, "hit_rate": 0.7676645904494006, "reads": 130.916015625, "covered": 0.8085903718650908, "sync_ms": 24.41425145298126, "wait_ms": 86.37395292771544}, "slots": 1535, "config": "ours:0.25+compile", "load_s": 0.9265400859294459, "device": "cuda", "peak_gib": 19.871389389038086, "same_tokens_as_first": 9}
+done in 12.1m

@@ -1,0 +1,14 @@
+== 2026-11-23T03:24:34-08:00 GPU1 idle; python la_stats.py
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  60%|█████▉    | 85/142 [00:00<00:00, 818.13it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 886.39it/s]
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<03:07,  6.90it/s]Loading weights: 100%|██████████| 1359/1359 [00:09<00:00, 137.28it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+lookahead=True: misses/token 45.1  (routes/token 472)  prefetched/token 81.4  guess precision 0.67
+  precision by guess rank: 0.92 0.88 0.84 0.78 0.71 0.64 0.58 0.51 0.44 0.37
+== 2026-11-23T03:26:21-08:00 exit 0; other processes on GPU at end: 0

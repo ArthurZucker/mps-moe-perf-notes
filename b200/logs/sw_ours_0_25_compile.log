@@ -1,0 +1,66 @@
+== 2026-11-23T07:58:37-08:00 GPU1 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --decode-linears --mode max-autotune --combo --out sweep.jsonl --configs full,ours:0.25+compile
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/2] full | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 18/1359 [00:02<03:06,  7.18it/s]Loading weights:   2%|▏         | 21/1359 [00:07<10:13,  2.18it/s]Loading weights:   5%|▌         | 68/1359 [00:17<05:24,  3.98it/s]Loading weights:  76%|███████▌  | 1032/1359 [00:18<00:03, 89.19it/s]Loading weights:  84%|████████▍ | 1143/1359 [00:19<00:02, 87.23it/s]Loading weights:  94%|█████████▍| 1284/1359 [00:20<00:00, 96.75it/s]Loading weights: 100%|██████████| 1359/1359 [00:20<00:00, 65.32it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+  loaded in 29s
+    prompt 1/4: 16.11 tok/s
+    prompt 2/4: 16.12 tok/s
+    prompt 3/4: 16.05 tok/s
+    prompt 4/4: 16.14 tok/s
+  RESULT {"prefill_tok_s": 91.71395186920351, "decode_tok_s": 16.105515622186932, "decode_tok_s_per_prompt": [16.11, 16.12, 16.05, 16.14], "decode_ms_median": 62.090529943816364, "sustained_tok_s": null, "prefill_stats": {}, "config": "full", "load_s": 28.672974936082028, "device": "cuda", "peak_gib": 124.80733823776245, "same_tokens_as_first": 128}
+[2/2] ours:0.25+compile | elapsed 1.3m | eta ~1m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:08<02:49,  7.61it/s]Loading weights: 100%|██████████| 1359/1359 [00:08<00:00, 151.65it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+  loaded in 12s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+  FAILED ours:0.25+compile: AcceleratorError: CUDA error: an illegal memory access was encountered
+Search for `cudaErrorIllegalAddress' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_library/custom_ops.py", line 382, in wrapped_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 911, in experts_offload_misses
+    module.offload_store.misses_pass(
+  File "/home/arthur/tf-pr50997/src/transformers/distributed/offload.py", line 426, in misses_pass
+    routes = self._routes(name, hidden_states, top_k_index).cpu()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.AcceleratorError: CUDA error: an illegal memory access was encountered
+Search for `cudaErrorIllegalAddress' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+
+Traceback (most recent call last):
+  File "/home/arthur/mps-moe-perf-notes/b200/bench.py", line 389, in <module>
+    torch.cuda.empty_cache()
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/cuda/memory.py", line 224, in empty_cache
+    torch._C._cuda_emptyCache()
+torch.AcceleratorError: CUDA error: an illegal memory access was encountered
+Search for `cudaErrorIllegalAddress' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+== 2026-11-23T08:02:32-08:00 exit 1; other processes on GPU at end: 0

@@ -1,0 +1,28 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  54%|█████▍    | 77/142 [00:00<00:00, 735.29it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 880.60it/s]
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/1] full | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   2%|▏         | 23/1359 [00:00<00:10, 131.68it/s]Loading weights:   3%|▎         | 37/1359 [00:00<00:16, 80.14it/s] Loading weights:   3%|▎         | 37/1359 [00:13<00:16, 80.14it/s]Loading weights:   5%|▌         | 68/1359 [00:14<05:51,  3.67it/s]Loading weights:  27%|██▋       | 364/1359 [00:17<00:40, 24.83it/s]Loading weights:  56%|█████▌    | 756/1359 [00:18<00:09, 64.54it/s]Loading weights:  61%|██████    | 826/1359 [00:18<00:07, 73.78it/s]Loading weights:  65%|██████▌   | 887/1359 [00:19<00:07, 65.33it/s]Loading weights:  70%|███████   | 956/1359 [00:19<00:05, 77.92it/s]Loading weights:  76%|███████▌  | 1034/1359 [00:20<00:03, 87.69it/s]Loading weights:  80%|████████  | 1089/1359 [00:21<00:03, 84.26it/s]Loading weights:  87%|████████▋ | 1176/1359 [00:22<00:02, 82.06it/s]Loading weights:  95%|█████████▍| 1286/1359 [00:22<00:00, 114.02it/s]Loading weights:  97%|█████████▋| 1312/1359 [00:22<00:00, 106.97it/s]Loading weights:  99%|█████████▊| 1339/1359 [00:23<00:00, 111.80it/s]Loading weights: 100%|██████████| 1359/1359 [00:23<00:00, 58.62it/s] 
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Fetching 334 files:   0%|          | 0/334 [00:00<?, ?it/s]Fetching 334 files:  32%|███▏      | 106/334 [00:00<00:00, 938.31it/s]Fetching 334 files:  68%|██████▊   | 226/334 [00:00<00:00, 1076.37it/s]Fetching 334 files: 100%|██████████| 334/334 [00:00<00:00, 1123.65it/s]
+Fetching 334 files:   0%|          | 0/334 [00:00<?, ?it/s]Fetching 334 files:  59%|█████▊    | 196/334 [00:00<00:00, 1835.17it/s]Fetching 334 files: 100%|██████████| 334/334 [00:00<00:00, 1793.70it/s]
+WARNING:kernels._versions:You are using version 4 of 'kernels-community/mamba-ssm', but version 5 is available.
+Fetching 42 files:   0%|          | 0/42 [00:00<?, ?it/s]Fetching 42 files:  21%|██▏       | 9/42 [00:00<00:00, 78.90it/s]Fetching 42 files:  40%|████      | 17/42 [00:00<00:00, 30.10it/s]Fetching 42 files:  55%|█████▍    | 23/42 [00:00<00:00, 31.82it/s]Fetching 42 files:  67%|██████▋   | 28/42 [00:00<00:00, 30.60it/s]Fetching 42 files:  76%|███████▌  | 32/42 [00:01<00:00, 27.69it/s]Fetching 42 files:  90%|█████████ | 38/42 [00:01<00:00, 26.43it/s]Fetching 42 files: 100%|██████████| 42/42 [00:03<00:00,  6.26it/s]Fetching 42 files: 100%|██████████| 42/42 [00:03<00:00, 12.51it/s]
+WARNING:kernels._versions:You are using version 4 of 'kernels-community/mamba-ssm', but version 5 is available.
+Fetching 42 files:   0%|          | 0/42 [00:00<?, ?it/s]Fetching 42 files: 100%|██████████| 42/42 [00:00<00:00, 835.35it/s]
+Fetching 334 files:   0%|          | 0/334 [00:00<?, ?it/s]Fetching 334 files:  28%|██▊       | 92/334 [00:00<00:00, 900.69it/s]Fetching 334 files:  62%|██████▏   | 208/334 [00:00<00:00, 1013.15it/s]Fetching 334 files:  96%|█████████▌| 319/334 [00:00<00:00, 1047.38it/s]Fetching 334 files: 100%|██████████| 334/334 [00:00<00:00, 1034.87it/s]
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 33.16it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 32.89it/s]
+  loaded in 40s
+    prompt 1/4: 12.43 tok/s
+    prompt 2/4: 12.22 tok/s
+    prompt 3/4: 12.43 tok/s
+    prompt 4/4: 12.52 tok/s
+  RESULT {"prefill_tok_s": 91.96694293178811, "decode_tok_s": 12.436536647713636, "decode_tok_s_per_prompt": [12.43, 12.22, 12.43, 12.52], "decode_ms_median": 80.40823810733855, "sustained_tok_s": null, "prefill_stats": {}, "config": "full", "load_s": 40.44258788297884, "device": "cuda", "peak_gib": 120.8081259727478, "same_tokens_as_first": 128}
+done in 1.6m

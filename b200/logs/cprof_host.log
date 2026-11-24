@@ -1,0 +1,92 @@
+== 2026-11-23T23:35:44-08:00 GPU5 idle; python prof_decode.py --gpu-offload 0.25 --host 64-111 --gemv --mode max-autotune --inductor combo_kernels=True --tokens 32 --cprofile --no-profile
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:10<03:12,  6.71it/s]Loading weights: 100%|██████████| 1359/1359 [00:10<00:00, 133.59it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+after load: 56.9 GiB
+after offload setup: 74.0 GiB
+inductor combo_kernels = True
+kernelize_decode_linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+memory: allocated 74.2 GiB, peak 120.3 GiB, reserved 79.0 GiB
+decode median 12.12 ms/token -> 82.5 tok/s (min 11.69 max 13.14)
+text: The salt had long since claimed Elias’s skin, turning it the color of driftwood, and the wind had carved lines into his face that mirrored the jagged cliffs
+host tier: 28.1 calls/token (of 48 layers), 55.1 host routes/token, cpu per call gate 29.1 act 1.2 down 8.0 us, bad posts 0 bad hints 0 hints 1498
+         285418 function calls (256593 primitive calls) in 2.220 seconds
+
+   Ordered by: internal time
+   List reduced from 935 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       48    1.524    0.032    1.524    0.032 {built-in method torch.bincount}
+       33    0.265    0.008    0.265    0.008 /home/arthur/tf-pr50997/src/transformers/generation/utils.py:392(__call__)
+     31/0    0.056    0.002    0.000          /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/accelerate/hooks.py:179(new_forward)
+       32    0.013    0.000    0.013    0.000 <string>:2(guard)
+      132    0.012    0.000    0.013    0.000 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_library/custom_ops.py:346(backend_impl)
+      437    0.012    0.000    0.012    0.000 {built-in method torch._C._nn.linear}
+        7    0.009    0.001    0.009    0.001 {built-in method torch._C._cuda_synchronize}
+        1    0.009    0.009    0.009    0.009 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/cuda/graphs.py:117(capture_end)
+     1628    0.007    0.000    0.007    0.000 {method 'to' of 'torch._C.TensorBase' objects}
+  126/117    0.007    0.000    0.031    0.000 {built-in method builtins.next}
+24842/3797    0.007    0.000    0.008    0.000 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py:2837(named_modules)
+42789/42787    0.007    0.000    0.008    0.000 {built-in method builtins.isinstance}
+  563/122    0.007    0.000    1.614    0.013 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:1240(_fn)
+      348    0.005    0.000    0.018    0.000 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/triton/runtime/jit.py:695(run)
+2903/1547    0.005    0.000    0.013    0.000 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/accelerate/utils/operations.py:136(send_to_device)
+       97    0.005    0.000    0.033    0.000 /home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py:991(forward)
+      252    0.005    0.000    0.019    0.000 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/triton/runtime/autotuner.py:212(run)
+  561/171    0.004    0.000    0.695    0.004 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_ops.py:864(__call__)
+       48    0.004    0.000    0.023    0.000 /home/arthur/tf-pr50997/src/transformers/integrations/metal_quantization.py:270(forward)
+     1036    0.004    0.000    0.004    0.000 {_launch_kernel}
+   1811/0    0.004    0.000    0.000          /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py:1783(_call_impl)
+   1791/0    0.004    0.000    0.000          /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py:1775(_wrapped_call_impl)
+      330    0.004    0.000    0.004    0.000 {built-in method torch.arange}
+      405    0.004    0.000    0.004    0.000 {method 'float' of 'torch._C.TensorBase' objects}
+      102    0.004    0.000    0.004    0.000 {built-in method torch.isin}
+
+
+         285418 function calls (256593 primitive calls) in 2.220 seconds
+
+   Ordered by: cumulative time
+   List reduced from 935 to 30 due to restriction <30>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       48    0.000    0.000    1.727    0.036 /home/arthur/tf-pr50997/src/transformers/modeling_layers.py:88(forward_with_checkpointing)
+       48    0.002    0.000    1.725    0.036 /home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py:1252(forward)
+  563/122    0.007    0.000    1.614    0.013 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:1240(_fn)
+       48    0.001    0.000    1.583    0.033 /home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py:966(forward)
+       48    0.000    0.000    1.567    0.033 /home/arthur/tf-pr50997/src/transformers/integrations/cuda_expert_offload.py:335(forward)
+       48    0.002    0.000    1.567    0.033 /home/arthur/tf-pr50997/src/transformers/integrations/cuda_expert_offload.py:434(_staged_forward)
+       48    0.002    0.000    1.534    0.032 /home/arthur/tf-pr50997/src/transformers/integrations/cuda_expert_offload.py:417(_seed_pool)
+       48    1.524    0.032    1.524    0.032 {built-in method torch.bincount}
+  561/171    0.004    0.000    0.695    0.004 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_ops.py:864(__call__)
+       33    0.265    0.008    0.265    0.008 /home/arthur/tf-pr50997/src/transformers/generation/utils.py:392(__call__)
+       36    0.000    0.000    0.077    0.002 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/kernels/layer/layer.py:570(new_forward)
+       36    0.001    0.000    0.076    0.002 /home/arthur/tf-pr50997/src/transformers/integrations/accelerate.py:999(wrapped)
+       36    0.002    0.000    0.074    0.002 /home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py:510(forward)
+   144/72    0.000    0.000    0.051    0.001 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/kernels/layer/layer.py:841(forward)
+       72    0.000    0.000    0.050    0.001 /home/arthur/tf-pr50997/src/transformers/integrations/hub_kernels.py:1072(wrapped)
+       72    0.000    0.000    0.049    0.001 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/autograd/function.py:580(apply)
+       72    0.001    0.000    0.048    0.001 {built-in method apply}
+   288/36    0.001    0.000    0.045    0.001 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/fla/backends.py:169(wrapper)
+       36    0.000    0.000    0.045    0.001 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/fla/ops/gated_delta_rule/chunk.py:395(chunk_gated_delta_rule)
+    72/36    0.001    0.000    0.043    0.001 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/fla/utils/decorators.py:116(wrapper)
+       36    0.000    0.000    0.040    0.001 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/amp/autocast_mode.py:476(decorate_fwd)
+       36    0.000    0.000    0.040    0.001 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/fla/ops/gated_delta_rule/chunk.py:255(forward)
+       97    0.005    0.000    0.033    0.000 /home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py:991(forward)
+      348    0.001    0.000    0.032    0.000 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/triton/runtime/jit.py:370(<lambda>)
+  126/117    0.007    0.000    0.031    0.000 {built-in method builtins.next}
+       36    0.000    0.000    0.028    0.001 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/fla/ops/gated_delta_rule/chunk.py:33(chunk_gated_delta_rule_fwd)
+     10/7    0.000    0.000    0.025    0.004 /usr/lib/python3.12/contextlib.py:132(__enter__)
+      252    0.001    0.000    0.024    0.000 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/fla/ops/utils/cache.py:374(run)
+       12    0.001    0.000    0.024    0.002 /home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py:823(forward)
+       48    0.004    0.000    0.023    0.000 /home/arthur/tf-pr50997/src/transformers/integrations/metal_quantization.py:270(forward)
+
+
+== 2026-11-23T23:39:33-08:00 exit 0; other processes on GPU at end: 0

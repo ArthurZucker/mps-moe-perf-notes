@@ -1,0 +1,24 @@
+== 2026-11-23T08:39:38-08:00 GPU1 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --out /tmp/claude-150039/ours.jsonl --new-tokens 16 --decode-linears --configs ours:0.25+compile
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/1] ours:0.25+compile | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:10<03:18,  6.51it/s]Loading weights:  72%|███████▏  | 980/1359 [00:10<00:02, 129.39it/s]Loading weights: 100%|██████████| 1359/1359 [00:11<00:00, 123.35it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears (['fuse', 'router']): {'fused_groups': 192, 'gemv_linears': 0, 'fused_routers': 0}
+  loaded in 20s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+    prompt 1/4: 2.87 tok/s
+    prompt 2/4: 36.46 tok/s
+    prompt 3/4: 29.34 tok/s
+    prompt 4/4: 29.22 tok/s
+  RESULT {"prefill_tok_s": 35.975800991325585, "decode_tok_s": 28.032668718079698, "decode_tok_s_per_prompt": [2.87, 36.46, 29.34, 29.22], "decode_ms_median": 35.67266499157995, "sustained_tok_s": null, "prefill_stats": {"slots": 6662, "hits": 1818, "misses": 16146, "reads": 22369, "covered": 15773, "sync_seconds": 21.14513448101934, "wait_seconds": 0.35410923149902374}, "per_token": {"misses": 187.046875, "hit_rate": 0.7638669717531955, "reads": 259.546875, "covered": 0.6834850889649987, "sync_ms": 47.36849484288541, "wait_ms": 119.36975444041309}, "slots": 6662, "config": "ours:0.25+compile", "load_s": 20.034523183945566, "device": "cuda", "peak_gib": 80.83103847503662, "same_tokens_as_first": 16}
+done in 5.7m
+== 2026-11-23T08:45:27-08:00 exit 0; other processes on GPU at end: 0

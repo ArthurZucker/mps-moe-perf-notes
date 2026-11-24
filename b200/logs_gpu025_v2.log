@@ -1,0 +1,86 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  53%|█████▎    | 75/142 [00:00<00:00, 669.54it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 981.14it/s]
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/2] full | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 20/1359 [00:00<00:20, 66.35it/s]Loading weights:   2%|▏         | 27/1359 [00:01<01:18, 17.06it/s]Loading weights:   5%|▌         | 68/1359 [00:12<04:39,  4.62it/s]Loading weights:  23%|██▎       | 306/1359 [00:14<00:40, 26.30it/s]Loading weights:  39%|███▉      | 530/1359 [00:15<00:16, 51.31it/s]Loading weights:  45%|████▌     | 613/1359 [00:16<00:13, 55.28it/s]Loading weights:  53%|█████▎    | 726/1359 [00:17<00:09, 66.58it/s]Loading weights:  54%|█████▍    | 739/1359 [00:18<00:12, 51.66it/s]Loading weights:  59%|█████▉    | 808/1359 [00:19<00:09, 58.21it/s]Loading weights:  76%|███████▌  | 1032/1359 [00:20<00:02, 111.34it/s]Loading weights:  77%|███████▋  | 1052/1359 [00:22<00:05, 60.79it/s] Loading weights: 100%|██████████| 1359/1359 [00:22<00:00, 60.41it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 0}
+  loaded in 30s
+    prompt 1/4: 15.84 tok/s
+    prompt 2/4: 15.8 tok/s
+    prompt 3/4: 15.86 tok/s
+    prompt 4/4: 15.85 tok/s
+  RESULT {"prefill_tok_s": 91.7061494111356, "decode_tok_s": 15.841678264314236, "decode_tok_s_per_prompt": [15.84, 15.8, 15.86, 15.85], "decode_ms_median": 63.12462501227856, "sustained_tok_s": null, "prefill_stats": {}, "config": "full", "load_s": 30.391863559023477, "device": "cuda", "peak_gib": 124.80733823776245, "same_tokens_as_first": 128}
+[2/2] gpu:0.25+compile | elapsed 1.3m | eta ~1m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:11<03:31,  6.11it/s]Loading weights:  61%|██████▏   | 835/1359 [00:11<00:05, 102.46it/s]Loading weights:  96%|█████████▌| 1304/1359 [00:11<00:00, 173.21it/s]Loading weights: 100%|██████████| 1359/1359 [00:11<00:00, 115.90it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 0}
+  loaded in 64s
+  FAILED gpu:0.25+compile: BackendCompilerFailed: backend='inductor' raised:
+RuntimeError: Found a custom (non-ATen) operator whose output has alias annotations: _moe_affine_cuda_d0005a8::offload_plan(Tensor ids, int layer, int E, Tensor(a!) table, Tensor(b!) owner, Tensor(c!) age, Tensor(d!) clock) -> Tensor[]. We only support functionalizing operators whose outputs do not have alias annotations (e.g. 'Tensor(a)' is a Tensor with an alias annotation whereas 'Tensor' is a Tensor without. The '(a)' is the alias annotation). The alias annotation specifies that the output Tensor shares storage with an input that has the same annotation. Please check if (1) the output needs to be an output (if not, don't return it), (2) if the output doesn't share storage with any inputs, then delete the alias annotation. (3) if the output indeed shares storage with an input, then add a .clone() before returning it to prevent storage sharing and then delete the alias annotation. Otherwise, please file an issue on GitHub.
+
+While executing %offload_plan : [num_users=2] = call_function[target=torch.ops._moe_affine_cuda_d0005a8.offload_plan](args = (%ids, 0, 512, %l_module_modules_model_modules_layers_modules_0_modules_mlp_modules_experts_forward_closure_8_cell_contents_buffers_table_, %l_module_modules_model_modules_layers_modules_0_modules_mlp_modules_experts_forward_closure_8_cell_contents_buffers_owner_, %l_module_modules_model_modules_layers_modules_0_modules_mlp_modules_experts_forward_closure_8_cell_contents_buffers_age_, %l_module_modules_model_modules_layers_modules_0_modules_mlp_modules_experts_forward_closure_8_cell_contents_buffers_clock_), kwargs = {})
+Original traceback:
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/accelerate/hooks.py", line 185, in new_forward
+    output = module._old_forward(*args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1617, in forward
+    outputs: MoeModelOutputWithPast = self.model(
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/accelerate/hooks.py", line 185, in new_forward
+    output = module._old_forward(*args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/utils/output_capturing.py", line 361, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1447, in forward
+    hidden_states = decoder_layer(
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/accelerate/hooks.py", line 185, in new_forward
+    output = module._old_forward(*args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/modeling_layers.py", line 121, in forward_with_checkpointing
+    return forward(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1285, in forward
+    hidden_states = self.mlp(hidden_states)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/accelerate/hooks.py", line 185, in new_forward
+    output = module._old_forward(*args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 971, in forward
+    expert_output = self.experts(hidden_states_reshaped, selected_experts, routing_weights)
+  File "/home/arthur/tf-pr50997/src/transformers/integrations/cuda_expert_offload.py", line 62, in forward
+    slots, miss = kernel.offload_plan(ids, layer, self.num_experts, self.table, self.owner, self.age, self.clock)
+  File "/home/arthur/mps-moe-perf-notes/b200/kernel-src/moe-affine/build/torch211-cu130-x86_64-linux/__init__.py", line 42, in offload_plan
+    return ops.offload_plan(ids, layer, num_experts, table, owner, age, clock)
+
+Use tlparse to see full graph. (https://github.com/pytorch/tlparse?tab=readme-ov-file#tlparse-parse-structured-pt2-logs)
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+    hidden_states = self.mlp(hidden_states)
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/accelerate/hooks.py", line 185, in new_forward
+    output = module._old_forward(*args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 971, in forward
+    expert_output = self.experts(hidden_states_reshaped, selected_experts, routing_weights)
+  File "/home/arthur/tf-pr50997/src/transformers/integrations/cuda_expert_offload.py", line 62, in forward
+    slots, miss = kernel.offload_plan(ids, layer, self.num_experts, self.table, self.owner, self.age, self.clock)
+  File "/home/arthur/mps-moe-perf-notes/b200/kernel-src/moe-affine/build/torch211-cu130-x86_64-linux/__init__.py", line 42, in offload_plan
+    return ops.offload_plan(ids, layer, num_experts, table, owner, age, clock)
+
+Use tlparse to see full graph. (https://github.com/pytorch/tlparse?tab=readme-ov-file#tlparse-parse-structured-pt2-logs)
+
+Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+
+
+done in 2.9m

@@ -1,0 +1,157 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  61%|██████▏   | 87/142 [00:00<00:00, 790.75it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 918.93it/s]
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/6] full | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|          | 13/1359 [00:00<00:34, 38.97it/s]Loading weights:   3%|▎         | 36/1359 [00:00<00:24, 53.00it/s]Loading weights:   5%|▌         | 68/1359 [00:10<03:54,  5.50it/s]Loading weights:  20%|██        | 272/1359 [00:11<00:38, 28.19it/s]Loading weights:  32%|███▏      | 441/1359 [00:13<00:21, 42.15it/s]Loading weights:  33%|███▎      | 449/1359 [00:16<00:29, 31.14it/s]Loading weights:  66%|██████▌   | 891/1359 [00:16<00:04, 97.12it/s]Loading weights:  72%|███████▏  | 977/1359 [00:17<00:03, 110.30it/s]Loading weights:  74%|███████▍  | 1003/1359 [00:17<00:03, 108.25it/s]Loading weights:  76%|███████▌  | 1031/1359 [00:19<00:05, 60.99it/s] Loading weights:  94%|█████████▍| 1284/1359 [00:20<00:00, 115.83it/s]Loading weights:  98%|█████████▊| 1334/1359 [00:20<00:00, 122.28it/s]Loading weights: 100%|██████████| 1359/1359 [00:20<00:00, 65.68it/s] 
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  loaded in 29s
+    prompt 1/4: 13.16 tok/s
+    prompt 2/4: 13.22 tok/s
+    prompt 3/4: 13.22 tok/s
+    prompt 4/4: 13.21 tok/s
+  RESULT {"prefill_tok_s": 91.94999431426125, "decode_tok_s": 13.207590545879963, "decode_tok_s_per_prompt": [13.16, 13.22, 13.22, 13.21], "decode_ms_median": 75.71403705514967, "sustained_tok_s": null, "prefill_stats": {}, "config": "full", "load_s": 28.664013287983835, "device": "cuda", "peak_gib": 120.8081259727478, "same_tokens_as_first": 128}
+[2/6] full+compile | elapsed 1.7m | eta ~9m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   2%|▏         | 21/1359 [00:00<00:06, 201.85it/s]Loading weights:   3%|▎         | 42/1359 [00:00<00:25, 52.60it/s] Loading weights:   5%|▌         | 68/1359 [00:10<04:10,  5.16it/s]Loading weights:  27%|██▋       | 362/1359 [00:10<00:21, 46.87it/s]Loading weights:  35%|███▍      | 470/1359 [00:11<00:15, 58.80it/s]Loading weights:  40%|████      | 544/1359 [00:13<00:15, 51.12it/s]Loading weights:  49%|████▉     | 665/1359 [00:13<00:09, 76.73it/s]Loading weights:  53%|█████▎    | 725/1359 [00:13<00:07, 82.00it/s]Loading weights:  57%|█████▋    | 769/1359 [00:14<00:08, 73.57it/s]Loading weights:  59%|█████▉    | 808/1359 [00:15<00:07, 69.97it/s]Loading weights:  63%|██████▎   | 862/1359 [00:15<00:05, 85.61it/s]Loading weights:  65%|██████▌   | 886/1359 [00:15<00:05, 84.05it/s]Loading weights:  68%|██████▊   | 922/1359 [00:16<00:04, 92.90it/s]Loading weights:  69%|██████▉   | 940/1359 [00:17<00:06, 62.80it/s]Loading weights:  76%|███████▌  | 1035/1359 [00:17<00:03, 98.89it/s]Loading weights:  79%|███████▊  | 1069/1359 [00:17<00:02, 114.56it/s]Loading weights:  80%|████████  | 1089/1359 [00:17<00:02, 110.14it/s]Loading weights:  81%|████████▏ | 1106/1359 [00:18<00:02, 100.95it/s]Loading weights:  83%|████████▎ | 1134/1359 [00:18<00:03, 71.98it/s] Loading weights:  84%|████████▍ | 1145/1359 [00:18<00:03, 69.01it/s]Loading weights:  90%|████████▉ | 1223/1359 [00:19<00:01, 120.22it/s]Loading weights:  91%|█████████ | 1239/1359 [00:19<00:01, 91.06it/s] Loading weights:  92%|█████████▏| 1251/1359 [00:20<00:01, 57.16it/s]Loading weights: 100%|██████████| 1359/1359 [00:20<00:00, 66.50it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  loaded in 27s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+  FAILED full+compile: RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1619, in forward
+    outputs: MoeModelOutputWithPast = self.model(
+  File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/utils/output_capturing.py", line 361, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1418, in forward
+    position_ids = torch.cat([indexer_cache.indexer_position_ids, position_ids], dim=-1). To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 705, in get_non_cudagraph_inps
+    and t.untyped_storage().data_ptr() not in existing_path_data_ptrs
+        ^^^^^^^^^^^^^^^^^^^
+RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1619, in forward
+    outputs: MoeModelOutputWithPast = self.model(
+  File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/utils/output_capturing.py", line 361, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1418, in forward
+    position_ids = torch.cat([indexer_cache.indexer_position_ids, position_ids], dim=-1). To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.
+
+[3/6] ours:0.5 | elapsed 5.1m | eta ~10m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<03:03,  7.04it/s]Loading weights:  68%|██████▊   | 920/1359 [00:09<00:03, 130.76it/s]Loading weights: 100%|█████████▉| 1356/1359 [00:10<00:00, 201.20it/s]Loading weights: 100%|██████████| 1359/1359 [00:10<00:00, 132.28it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  loaded in 13s
+    prompt 1/4: 3.88 tok/s
+    prompt 2/4: 3.02 tok/s
+    prompt 3/4: 3.12 tok/s
+    prompt 4/4: 3.41 tok/s
+  RESULT {"prefill_tok_s": 36.74163975240556, "decode_tok_s": 3.3584395052704914, "decode_tok_s_per_prompt": [3.88, 3.02, 3.12, 3.41], "decode_ms_median": 297.7573359385133, "sustained_tok_s": null, "prefill_stats": {"slots": 12934, "hits": 1820, "misses": 16118, "reads": 22365, "covered": 15746, "sync_seconds": 21.340267385356128, "wait_seconds": 0.3036026241024956}, "per_token": {"misses": 35.90625, "hit_rate": 0.9308138703437479, "reads": 74.623046875, "covered": 0.5589099216710183, "sync_ms": 14.148357554859103, "wait_ms": 48.276373465796496}, "slots": 12934, "config": "ours:0.5", "load_s": 13.301950822933577, "device": "cuda", "peak_gib": 93.07418584823608, "same_tokens_as_first": 32}
+[4/6] ours:0.25 | elapsed 8.7m | eta ~9m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:10<03:23,  6.34it/s]Loading weights: 100%|██████████| 1359/1359 [00:10<00:00, 126.33it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  loaded in 15s
+    prompt 1/4: 2.53 tok/s
+    prompt 2/4: 1.75 tok/s
+    prompt 3/4: 1.76 tok/s
+    prompt 4/4: 1.71 tok/s
+  RESULT {"prefill_tok_s": 35.99521901057528, "decode_tok_s": 1.8575690776823757, "decode_tok_s_per_prompt": [2.53, 1.75, 1.76, 1.71], "decode_ms_median": 538.3379880804569, "sustained_tok_s": null, "prefill_stats": {"slots": 6662, "hits": 1813, "misses": 16121, "reads": 22368, "covered": 15749, "sync_seconds": 21.391652774298564, "wait_seconds": 0.34363450028467923}, "per_token": {"misses": 85.123046875, "hit_rate": 0.8360049368222218, "reads": 151.25390625, "covered": 0.5711630681687814, "sync_ms": 15.922427457326194, "wait_ms": 137.2569016396028}, "slots": 6662, "config": "ours:0.25", "load_s": 15.039887415943667, "device": "cuda", "peak_gib": 76.91840887069702, "same_tokens_as_first": 42}
+[5/6] ours:0.5+compile | elapsed 14.3m | eta ~7m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:14<04:27,  4.83it/s]Loading weights: 100%|██████████| 1359/1359 [00:14<00:00, 96.19it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  loaded in 18s
+  FAILED ours:0.5+compile: RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1619, in forward
+    outputs: MoeModelOutputWithPast = self.model(
+  File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/utils/output_capturing.py", line 361, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1418, in forward
+    position_ids = torch.cat([indexer_cache.indexer_position_ids, position_ids], dim=-1). To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 705, in get_non_cudagraph_inps
+    and t.untyped_storage().data_ptr() not in existing_path_data_ptrs
+        ^^^^^^^^^^^^^^^^^^^
+RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1619, in forward
+    outputs: MoeModelOutputWithPast = self.model(
+  File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/utils/output_capturing.py", line 361, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1418, in forward
+    position_ids = torch.cat([indexer_cache.indexer_position_ids, position_ids], dim=-1). To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.
+
+[6/6] ours:0.25+compile | elapsed 18.7m | eta ~4m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:12<03:55,  5.48it/s]Loading weights: 100%|██████████| 1359/1359 [00:12<00:00, 109.25it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  loaded in 16s
+  FAILED ours:0.25+compile: RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1619, in forward
+    outputs: MoeModelOutputWithPast = self.model(
+  File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/utils/output_capturing.py", line 361, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1418, in forward
+    position_ids = torch.cat([indexer_cache.indexer_position_ids, position_ids], dim=-1). To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/cudagraph_trees.py", line 705, in get_non_cudagraph_inps
+    and t.untyped_storage().data_ptr() not in existing_path_data_ptrs
+        ^^^^^^^^^^^^^^^^^^^
+RuntimeError: Error: accessing tensor output of CUDAGraphs that has been overwritten by a subsequent run. Stack trace: File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 943, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1619, in forward
+    outputs: MoeModelOutputWithPast = self.model(
+  File "/home/arthur/tf-pr50997/src/transformers/utils/generic.py", line 1081, in wrapper
+    output = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/utils/output_capturing.py", line 361, in wrapper
+    outputs = func(self, *args, **kwargs)
+  File "/home/arthur/tf-pr50997/src/transformers/models/qwen4_exp/modeling_qwen4_exp.py", line 1418, in forward
+    position_ids = torch.cat([indexer_cache.indexer_position_ids, position_ids], dim=-1). To prevent overwriting, clone the tensor outside of torch.compile() or call torch.compiler.cudagraph_mark_step_begin() before each model invocation.
+
+done in 22.7m

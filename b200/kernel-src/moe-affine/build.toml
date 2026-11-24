@@ -1,0 +1,12 @@
+[general]
+name = "moe-affine"
+backends = ["cuda"]
+
+[torch]
+# ops are registered from csrc/moe_affine.cu (TORCH_LIBRARY); the Python wrappers + fake impls live in torch-ext/moe_affine
+src = []
+
+[kernel.moe_affine]
+backend = "cuda"
+cuda-capabilities = ["10.0"]
+src = ["csrc/moe_affine.cu", "csrc/host_tier.cpp"]

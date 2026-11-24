@@ -1,0 +1,49 @@
+== 2026-11-23T12:23:01-08:00 GPU1 idle; python mtp/mtp_engine.py 2 64 --decode-linears --profile
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   2%|▏         | 22/1359 [00:00<00:18, 73.22it/s]Loading weights:   2%|▏         | 30/1359 [00:00<00:34, 38.25it/s]Loading weights:   5%|▌         | 68/1359 [00:10<04:06,  5.24it/s]Loading weights:  20%|██        | 278/1359 [00:10<00:33, 32.62it/s]Loading weights:  22%|██▏       | 304/1359 [00:17<01:00, 17.34it/s]Loading weights:  68%|██████▊   | 926/1359 [00:18<00:05, 82.24it/s]Loading weights:  76%|███████▌  | 1034/1359 [00:18<00:03, 90.76it/s]Loading weights:  80%|████████  | 1089/1359 [00:21<00:04, 65.32it/s]Loading weights: 100%|██████████| 1359/1359 [00:21<00:00, 62.39it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/profiler/profiler.py:224: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+{'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+PROFILE 28.73 ms GPU per step, 2948 kernels/step
+PROFILE  11.712 ms/step    3.5/step  _gather_qmv_kernel
+PROFILE   2.178 ms/step  247.0/step  nvjet_sm100_tst_128x8_64x12_4x1_v_bz_TNT
+PROFILE   1.997 ms/step   50.0/step  void (anonymous namespace)::qmv4_kernel<64, 4>(__nv_bfloat16 const*, uint4 const*, __nv_bfloat16 const*, __nv_
+PROFILE   1.430 ms/step   50.0/step  void (anonymous namespace)::qmv4_kernel<64, 1>(__nv_bfloat16 const*, uint4 const*, __nv_bfloat16 const*, __nv_
+PROFILE   1.397 ms/step  146.5/step  void cutlass::Kernel2<cutlass_75_wmma_tensorop_bf16_s161616gemm_bf16_32x32_32x1_tn_align1>(cutlass_75_wmma_ten
+PROFILE   0.853 ms/step  194.9/step  void gemv_block_kernel<3>(__nv_bfloat16 const*, uint4 const*, __nv_bfloat16 const*, __nv_bfloat16*, int, int, 
+PROFILE   0.775 ms/step   14.5/step  fmha_cutlassF_bf16_aligned_32x128_gmem_sm80(PyTorchMemEffAttention::AttentionKernel<cutlass::bfloat16_t, cutla
+PROFILE   0.639 ms/step   63.9/step  void at::native::sbtopk::gatherTopK<float, unsigned int, 2, false>(at::cuda::detail::TensorInfo<float const, u
+PROFILE   0.601 ms/step   56.0/step  nvjet_sm100_tst_64x8_64x16_2x1_v_bz_splitK_TNT
+PROFILE   0.583 ms/step   36.0/step  triton_red_fused__to_copy__unsafe_view_add_clone_copy__div_exp_expand_mul_neg_rsqrt_select_sigmoid_silu_slice_
+PROFILE   0.576 ms/step    3.0/step  nvjet_sm100_tst_192x8_64x8_2x1_v_bz_TNT
+PROFILE   0.417 ms/step  158.8/step  void cublasLt::splitKreduce_kernel<32, 16, int, float, __nv_bfloat16, float, __nv_bfloat16, false, float, __nv
+PROFILE   0.414 ms/step   51.0/step  nvjet_sm100_tst_64x8_64x16_4x1_v_bz_splitK_TNT
+PROFILE   0.396 ms/step  148.2/step  void cublasLt::splitKreduce_kernel<32, 16, int, __nv_bfloat16, __nv_bfloat16, float, __nv_bfloat16, false, __n
+PROFILE   0.350 ms/step   14.5/step  void at::native::radixSortKVInPlace<-2, -1, 32, 32, long, long, unsigned int>(at::cuda::detail::TensorInfo<lon
+PROFILE   0.234 ms/step   50.6/step  void at::native::bitonicSortKVInPlace<2, -1, 16, 16, float, long, at::native::GTOp<float, true>, unsigned int>
+PROFILE   0.232 ms/step   50.0/step  nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_TNN
+PROFILE   0.200 ms/step   36.0/step  triton_poi_fused_19
+PROFILE   0.199 ms/step   50.0/step  nvjet_sm100_tst_24x64_64x16_4x1_v_bz_TNN
+PROFILE   0.189 ms/step   13.3/step  void at::native::radixSortKVInPlace<2, -1, 32, 32, float, long, unsigned int>(at::cuda::detail::TensorInfo<flo
+PROFILE   0.157 ms/step   98.9/step  Memcpy DtoD (Device -> Device)
+PROFILE   0.145 ms/step   96.0/step  triton_poi_fused__unsafe_view_mean_mul_sigmoid_view_25
+PROFILE   0.138 ms/step   37.0/step  void at::native::(anonymous namespace)::conv_depthwise2d_forward_kernel_generic<c10::BFloat16, int>(torch::hea
+PROFILE   0.127 ms/step   46.0/step  triton_red_fused__to_copy__unsafe_view_add_div_mean_mul_pow_sigmoid_slice_unsqueeze_view_43
+PROFILE   0.126 ms/step   95.0/step  triton_poi_fused_div_silu_slice_24
+   per step ms: {'drafts': 1.54, 'verify': 18.78, 'sync': 0.04, 'rollback': 1.92, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 101.9 tok/s, 2.29 tokens/step, acceptance 0.643, identical to eager spec for 64/64
+   per step ms: {'drafts': 1.61, 'verify': 19.23, 'sync': 0.04, 'rollback': 2.09, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 122.3 tok/s, 2.78 tokens/step, acceptance 0.913, identical to eager spec for 64/64
+   per step ms: {'drafts': 1.5, 'verify': 19.03, 'sync': 0.04, 'rollback': 1.94, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 106.3 tok/s, 2.37 tokens/step, acceptance 0.704, identical to eager spec for 14/64
+   per step ms: {'drafts': 1.43, 'verify': 18.79, 'sync': 0.04, 'rollback': 1.85, 'catchup': 0.0} (rollback includes the catch-up)
+K=2 compiled: 97.4 tok/s, 2.13 tokens/step, acceptance 0.583, identical to eager spec for 46/64
+== 2026-11-23T12:26:23-08:00 exit 0; other processes on GPU at end: 0

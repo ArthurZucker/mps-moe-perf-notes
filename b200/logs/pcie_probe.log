@@ -1,0 +1,22 @@
+== 2026-11-23T03:19:41-08:00 GPU1 idle; python pcie_probe.py
+DMA memcpy  1 experts:    53.6 us   51.6 GB/s
+DMA memcpy  2 experts:   103.3 us   53.6 GB/s
+DMA memcpy  4 experts:   202.4 us   54.6 GB/s
+DMA memcpy 10 experts:   500.6 us   55.2 GB/s
+SM install  1 experts,  16 blocks/expert:    69.4 us   39.8 GB/s
+SM install  1 experts,  64 blocks/expert:    59.6 us   46.4 GB/s
+SM install  1 experts, 148 blocks/expert:    59.6 us   46.4 GB/s
+SM install  1 experts, 296 blocks/expert:    59.1 us   46.8 GB/s
+SM install  2 experts,  16 blocks/expert:   114.8 us   48.2 GB/s
+SM install  2 experts,  64 blocks/expert:   112.8 us   49.0 GB/s
+SM install  2 experts, 148 blocks/expert:   112.6 us   49.1 GB/s
+SM install  2 experts, 296 blocks/expert:   112.5 us   49.2 GB/s
+SM install  4 experts,  16 blocks/expert:   221.4 us   49.9 GB/s
+SM install  4 experts,  64 blocks/expert:   220.7 us   50.1 GB/s
+SM install  4 experts, 148 blocks/expert:   220.6 us   50.1 GB/s
+SM install  4 experts, 296 blocks/expert:   220.2 us   50.2 GB/s
+SM install 10 experts,  16 blocks/expert:   542.7 us   50.9 GB/s
+SM install 10 experts,  64 blocks/expert:   542.4 us   51.0 GB/s
+SM install 10 experts, 148 blocks/expert:   542.7 us   50.9 GB/s
+SM install 10 experts, 296 blocks/expert:   542.8 us   50.9 GB/s
+== 2026-11-23T03:19:45-08:00 exit 0; other processes on GPU at end: 0

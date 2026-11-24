@@ -1,0 +1,39 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  50%|█████     | 71/142 [00:00<00:00, 643.75it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 860.23it/s]
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/2] full | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   3%|▎         | 42/1359 [00:00<00:21, 61.93it/s]Loading weights:   5%|▌         | 68/1359 [00:12<04:42,  4.57it/s]Loading weights:  27%|██▋       | 362/1359 [00:12<00:27, 36.77it/s]Loading weights:  31%|███       | 420/1359 [00:13<00:21, 44.61it/s]Loading weights:  33%|███▎      | 453/1359 [00:13<00:18, 47.79it/s]Loading weights:  35%|███▌      | 476/1359 [00:15<00:23, 36.98it/s]Loading weights:  47%|████▋     | 635/1359 [00:15<00:10, 66.07it/s]Loading weights:  53%|█████▎    | 725/1359 [00:16<00:08, 72.91it/s]Loading weights:  59%|█████▉    | 808/1359 [00:17<00:06, 80.75it/s]Loading weights:  68%|██████▊   | 921/1359 [00:19<00:05, 76.33it/s]Loading weights:  69%|██████▊   | 933/1359 [00:20<00:06, 63.62it/s]Loading weights:  86%|████████▋ | 1174/1359 [00:21<00:02, 90.20it/s]Loading weights: 100%|██████████| 1359/1359 [00:21<00:00, 61.92it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 0}
+  loaded in 31s
+    prompt 1/4: 15.44 tok/s
+    prompt 2/4: 15.49 tok/s
+    prompt 3/4: 15.45 tok/s
+    prompt 4/4: 15.45 tok/s
+  RESULT {"prefill_tok_s": 91.73256528759407, "decode_tok_s": 15.45958055049016, "decode_tok_s_per_prompt": [15.44, 15.49, 15.45, 15.45], "decode_ms_median": 64.6848080214113, "sustained_tok_s": null, "prefill_stats": {}, "config": "full", "load_s": 31.09677185898181, "device": "cuda", "peak_gib": 124.80733823776245, "same_tokens_as_first": 128}
+[2/2] gpu:0.25+compile | elapsed 1.3m | eta ~1m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   3%|▎         | 45/1359 [00:00<00:04, 283.27it/s]Loading weights:   5%|▌         | 74/1359 [00:09<03:24,  6.30it/s] Loading weights:  89%|████████▊ | 1203/1359 [00:09<00:00, 168.62it/s]Loading weights: 100%|██████████| 1359/1359 [00:09<00:00, 137.37it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 0}
+  loaded in 62s
+[transformers] You have set `compile_config`, but we are unable to meet the criteria for compilation. Compilation will be skipped.
+    prompt 1/4: 14.22 tok/s
+    prompt 2/4: 14.2 tok/s
+    prompt 3/4: 14.11 tok/s
+    prompt 4/4: 14.11 tok/s
+  RESULT {"prefill_tok_s": 82.9981735307198, "decode_tok_s": 14.160444931359383, "decode_tok_s_per_prompt": [14.22, 14.2, 14.11, 14.11], "decode_ms_median": 70.61924994923174, "sustained_tok_s": null, "prefill_stats": {}, "config": "gpu:0.25+compile", "load_s": 61.94227213598788, "device": "cuda", "peak_gib": 137.3303771018982, "same_tokens_as_first": 79}
+done in 3.3m

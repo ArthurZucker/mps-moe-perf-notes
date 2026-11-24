@@ -1,0 +1,37 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  72%|███████▏  | 102/142 [00:00<00:00, 1007.31it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 1066.98it/s]
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/2] full | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 18/1359 [00:00<00:56, 23.93it/s]Loading weights:   1%|▏         | 18/1359 [00:11<00:56, 23.93it/s]Loading weights:   5%|▌         | 68/1359 [00:13<04:27,  4.83it/s]Loading weights:  25%|██▍       | 336/1359 [00:14<00:33, 30.43it/s]Loading weights:  35%|███▍      | 472/1359 [00:14<00:18, 47.20it/s]Loading weights:  37%|███▋      | 499/1359 [00:14<00:17, 49.78it/s]Loading weights:  39%|███▉      | 530/1359 [00:15<00:15, 53.55it/s]Loading weights:  40%|████      | 547/1359 [00:16<00:17, 47.29it/s]Loading weights:  47%|████▋     | 640/1359 [00:16<00:11, 63.96it/s]Loading weights:  53%|█████▎    | 725/1359 [00:17<00:08, 79.00it/s]Loading weights:  57%|█████▋    | 776/1359 [00:17<00:06, 89.46it/s]Loading weights:  58%|█████▊    | 790/1359 [00:19<00:10, 52.72it/s]Loading weights:  70%|██████▉   | 951/1359 [00:19<00:03, 114.53it/s]Loading weights:  72%|███████▏  | 980/1359 [00:20<00:03, 97.45it/s] Loading weights:  76%|███████▌  | 1035/1359 [00:20<00:02, 115.48it/s]Loading weights:  78%|███████▊  | 1058/1359 [00:21<00:04, 64.29it/s] Loading weights:  81%|████████  | 1102/1359 [00:22<00:04, 64.23it/s]Loading weights:  94%|█████████▍| 1283/1359 [00:23<00:00, 115.33it/s]Loading weights: 100%|██████████| 1359/1359 [00:23<00:00, 58.83it/s] 
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  loaded in 33s
+    prompt 1/4: 13.94 tok/s
+    prompt 2/4: 13.95 tok/s
+    prompt 3/4: 13.99 tok/s
+    prompt 4/4: 13.96 tok/s
+  RESULT {"prefill_tok_s": 91.90946622678368, "decode_tok_s": 13.96432103763336, "decode_tok_s_per_prompt": [13.94, 13.95, 13.99, 13.96], "decode_ms_median": 71.6110720532015, "sustained_tok_s": null, "prefill_stats": {}, "config": "full", "load_s": 33.4146501790965, "device": "cuda", "peak_gib": 120.8061728477478, "same_tokens_as_first": 128}
+[2/2] ours:0.5+compile | elapsed 1.4m | eta ~1m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:13<04:25,  4.87it/s]Loading weights: 100%|██████████| 1359/1359 [00:14<00:00, 97.02it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  loaded in 17s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+    prompt 1/4: 8.43 tok/s
+    prompt 2/4: 5.35 tok/s
+    prompt 3/4: 6.57 tok/s
+    prompt 4/4: 5.34 tok/s
+  RESULT {"prefill_tok_s": 36.66666676543829, "decode_tok_s": 6.143975792087569, "decode_tok_s_per_prompt": [8.43, 5.35, 6.57, 5.34], "decode_ms_median": 162.7610579598695, "sustained_tok_s": null, "prefill_stats": {"slots": 12934, "hits": 1809, "misses": 16192, "reads": 22371, "covered": 15820, "sync_seconds": 21.33603465219494, "wait_seconds": 0.270275087445043}, "per_token": {"misses": 35.73828125, "hit_rate": 0.9311403723342202, "reads": 64.736328125, "covered": 0.5562356541698547, "sync_ms": 48.96301289750227, "wait_ms": 50.217017401337216}, "slots": 12934, "config": "ours:0.5+compile", "load_s": 16.899099992006086, "device": "cuda", "peak_gib": 93.06931066513062, "same_tokens_as_first": 128}
+done in 7.5m

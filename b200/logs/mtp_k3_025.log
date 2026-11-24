@@ -1,0 +1,24 @@
+== 2026-11-23T13:01:25-08:00 GPU1 idle; python mtp/mtp_engine.py 3 128 --decode-linears --mode max-autotune --offload gpu-nola:0.25
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<02:59,  7.19it/s]Loading weights:  84%|████████▍ | 1144/1359 [00:09<00:01, 166.52it/s]Loading weights: 100%|██████████| 1359/1359 [00:09<00:00, 139.48it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+{'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+Traceback (most recent call last):
+  File "/home/arthur/mps-moe-perf-notes/b200/mtp/mtp_engine.py", line 214, in <module>
+    ref, *_ = generate(ids, N, eager)
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/arthur/mps-moe-perf-notes/b200/mtp/mtp_engine.py", line 189, in generate
+    fr[K - a](cache, mcache)
+  File "/home/arthur/mps-moe-perf-notes/b200/mtp/mtp_engine.py", line 136, in rollback
+    st.copy_(full[..., L_ - k - drop: L_ - drop])
+RuntimeError: The size of tensor a (2) must match the size of tensor b (0) at non-singleton dimension 1
+== 2026-11-23T13:02:46-08:00 exit 1; other processes on GPU at end: 0

@@ -1,0 +1,89 @@
+== 2026-11-23T04:23:00-08:00 GPU1 idle; python prof_decode.py --gemv --inductor combo_kernels=True --mode max-autotune --tokens 32 --top 40
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  55%|█████▍    | 78/142 [00:00<00:00, 760.42it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 860.34it/s]
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 20/1359 [00:00<00:07, 187.11it/s]Loading weights:   3%|▎         | 39/1359 [00:00<00:10, 126.80it/s]Loading weights:   4%|▍         | 53/1359 [00:00<00:17, 74.79it/s] Loading weights:   5%|▌         | 68/1359 [00:09<04:52,  4.42it/s]Loading weights:  19%|█▉        | 258/1359 [00:09<00:33, 33.05it/s]Loading weights:  23%|██▎       | 316/1359 [00:10<00:28, 37.21it/s]Loading weights:  29%|██▊       | 390/1359 [00:11<00:20, 47.84it/s]Loading weights:  33%|███▎      | 442/1359 [00:11<00:14, 61.83it/s]Loading weights:  35%|███▌      | 479/1359 [00:11<00:12, 67.72it/s]Loading weights:  37%|███▋      | 508/1359 [00:12<00:13, 65.39it/s]Loading weights:  39%|███▉      | 532/1359 [00:13<00:14, 55.36it/s]Loading weights:  40%|████      | 548/1359 [00:13<00:13, 59.94it/s]Loading weights:  45%|████▌     | 618/1359 [00:13<00:08, 89.77it/s]Loading weights:  47%|████▋     | 635/1359 [00:13<00:07, 91.03it/s]Loading weights:  48%|████▊     | 659/1359 [00:14<00:11, 58.84it/s]Loading weights:  50%|████▉     | 677/1359 [00:14<00:11, 58.48it/s]Loading weights:  57%|█████▋    | 776/1359 [00:15<00:04, 133.65it/s]Loading weights:  60%|█████▉    | 810/1359 [00:16<00:08, 67.27it/s] Loading weights:  68%|██████▊   | 922/1359 [00:16<00:04, 108.46it/s]Loading weights:  72%|███████▏  | 976/1359 [00:17<00:03, 96.93it/s] Loading weights:  76%|███████▌  | 1031/1359 [00:19<00:04, 66.14it/s]Loading weights:  87%|████████▋ | 1180/1359 [00:19<00:01, 107.74it/s]Loading weights:  90%|████████▉ | 1222/1359 [00:19<00:01, 116.09it/s]Loading weights:  91%|█████████▏| 1241/1359 [00:20<00:01, 97.62it/s] Loading weights:  95%|█████████▍| 1287/1359 [00:20<00:00, 112.97it/s]Loading weights:  96%|█████████▌| 1303/1359 [00:20<00:00, 116.67it/s]Loading weights:  97%|█████████▋| 1319/1359 [00:21<00:00, 81.13it/s] Loading weights: 100%|██████████| 1359/1359 [00:21<00:00, 63.89it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/select_algorithm.py:3686: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  current_out_size = out_base.storage().size()
+Autotune Choices Stats:
+{"num_choices": 12, "num_triton_choices": 11, "best_kernel": "mm", "best_time": 0.00800000037997961, "best_triton_pos": 1, "best_triton_time": 0.008224000222980976, "best_triton_kernel": "triton_mm_2", "best_triton_kernel_desc": "ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=1"}
+AUTOTUNE mm(15x128, 128x4)
+strides: [128, 1], [1, 128]
+dtypes: torch.float32, torch.float32
+  mm 0.0080 ms 100.0% 
+  triton_mm_2 0.0082 ms 97.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=1
+  triton_mm_10 0.0083 ms 96.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=1
+  triton_mm_7 0.0092 ms 86.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=1
+  triton_mm_6 0.0093 ms 86.2% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=1
+  triton_mm_9 0.0094 ms 85.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=1
+  triton_mm_3 0.0100 ms 80.1% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=1
+  triton_mm_5 0.0100 ms 79.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=1
+  triton_mm_8 0.0100 ms 79.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=1
+  triton_mm_1 0.0100 ms 79.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=128, BLOCK_M=16, BLOCK_N=16, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=1
+SingleProcess AUTOTUNE benchmarking takes 0.1080 seconds and 0.0001 seconds precompiling for 12 choices
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/profiler/profiler.py:224: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+inductor combo_kernels = True
+kernelize_decode_linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 48}
+memory: allocated 120.2 GiB, peak 124.7 GiB, reserved 125.0 GiB
+decode median 8.67 ms/token -> 115.4 tok/s (min 8.61 max 57.90)
+text: The salt had long since claimed Elias’s skin, turning it the color of driftwood, and the wind had carved lines into his face that mirrored the jagged cliffs
+GPU kernel time 17.28 ms/token (incl. 1 prefill amortized over 33), kernels/token 1591
+  experts triton (prefill)       9.806 ms/tok    49.5/tok
+  triton fused                   3.755 ms/tok   937.7/tok
+  topk/sort                      0.755 ms/tok    75.3/tok
+  experts gate_up (cuda)         0.742 ms/tok    46.5/tok
+  experts down_route (cuda)      0.717 ms/tok    46.5/tok
+  cuBLAS dense                   0.613 ms/tok   122.2/tok
+  other                          0.607 ms/tok   229.6/tok
+  conv                           0.128 ms/tok    37.0/tok
+  attention                      0.122 ms/tok    23.6/tok
+  memcpy                         0.038 ms/tok    23.4/tok
+  9.735 ms/tok     2.9/tok  _gather_qmv_kernel
+  0.742 ms/tok    46.5/tok  void (anonymous namespace)::qmv4_kernel<64, 4>(__nv_bfloat16 const*, uint4 const*, __nv_bfloat16 const*, __nv_bfloat16 c
+  0.717 ms/tok    46.5/tok  void (anonymous namespace)::qmv4_kernel<64, 1>(__nv_bfloat16 const*, uint4 const*, __nv_bfloat16 const*, __nv_bfloat16 c
+  0.565 ms/tok    46.5/tok  void router_topk_kernel<512>(__nv_bfloat16 const*, uint4 const*, float*, __nv_bfloat16*, __nv_bfloat16*, long*, int, int
+  0.563 ms/tok    34.9/tok  triton_red_fused_mm_t_view_11
+  0.443 ms/tok    34.9/tok  triton_red_fused__to_copy__unsafe_view_add_mean_mm_mul_pow_rsqrt_sigmoid_slice_t_transpose_view_zeros_like_19
+  0.383 ms/tok    94.1/tok  void gemv_block_kernel<1>(__nv_bfloat16 const*, uint4 const*, __nv_bfloat16 const*, __nv_bfloat16*, int, int, long)
+  0.380 ms/tok    93.1/tok  triton_per_fused_div_mm_silu_slice_t_view_23
+  0.272 ms/tok    34.9/tok  triton_red_fused__to_copy__unsafe_view_add_clone_copy__div_exp_expand_mm_mul_neg_rsqrt_select_sigmoid_silu_slice_softplu
+  0.269 ms/tok    46.5/tok  triton_red_fused__unsafe_view_mean_mm_mul_sigmoid_t_view_25
+  0.200 ms/tok    46.5/tok  triton_per_fused_mm_mul_silu_slice_t_26
+  0.187 ms/tok     1.0/tok  triton_red_fused_mm_t_53
+  0.172 ms/tok    93.1/tok  triton_poi_fused__unsafe_view_mean_mm_mul_sigmoid_view_10
+  0.170 ms/tok    11.6/tok  triton_red_fused_mm_t_view_39
+  0.124 ms/tok    35.9/tok  void at::native::(anonymous namespace)::conv_depthwise2d_forward_kernel_generic<c10::BFloat16, int>(torch::headeronly::d
+  0.112 ms/tok    11.6/tok  triton_red_fused__unsafe_view_clone_mm_mul_sigmoid_slice_split_t_transpose_view_49
+  0.108 ms/tok    43.6/tok  triton_red_fused__to_copy__unsafe_view_add_div_mean_mm_mul_pow_sigmoid_slice_unsqueeze_view_38
+  0.100 ms/tok    12.0/tok  fmha_cutlassF_bf16_aligned_32x128_gmem_sm80(PyTorchMemEffAttention::AttentionKernel<cutlass::bfloat16_t, cutlass::arch::
+  0.085 ms/tok    44.6/tok  triton_red_fused__to_copy__unsafe_view_add_div_mean_mm_mul_pow_sigmoid_slice_unsqueeze_view_36
+  0.085 ms/tok    11.6/tok  void at::native::sbtopk::gatherTopK<float, unsigned int, 1, false>(at::cuda::detail::TensorInfo<float const, unsigned in
+  0.079 ms/tok    44.6/tok  triton_poi_fused__to_copy__unsafe_view_add_div_mean_mm_mul_pow_rsqrt_sigmoid_slice_unsqueeze_view_37
+  0.077 ms/tok    45.6/tok  triton_poi_fused__to_copy_add_mean_mul_pow_rsqrt_view_34
+  0.077 ms/tok     2.9/tok  void cutlass::Kernel2<cutlass_80_wmma_tensorop_bf16_s161616gemm_bf16_32x32_128x2_tn_align2>(cutlass_80_wmma_tensorop_bf1
+  0.071 ms/tok    46.5/tok  triton_poi_fused__to_copy__unsafe_view_clamp_down_route4_gather_qmv4_lt_mean_mm_mul_sigmoid_silu_split_view_24
+  0.071 ms/tok    34.9/tok  triton_poi_fused__unsafe_view_cat_mm_slice_transpose_14
+  0.071 ms/tok    34.9/tok  triton_poi_fused_copy_copy__slice_15
+  0.065 ms/tok    46.5/tok  triton_poi_fused__to_copy_clamp_down_route4_lt_mul_silu_split_view_27
+  0.063 ms/tok    34.9/tok  triton_red_fused_16
+  0.062 ms/tok    46.5/tok  triton_per_fused__to_copy__unsafe_view_add_div_embedding_mean_mm_mul_pow_repeat_sigmoid_slice_unsqueeze_view_21
+  0.056 ms/tok    34.9/tok  triton_per_fused__to_copy_mean_pow_transpose_view_zeros_like_18
+  0.053 ms/tok    11.6/tok  void at::native::bitonicSortKVInPlace<-2, -1, 16, 16, float, long, at::native::GTOp<float, true>, unsigned int>(at::cuda
+  0.050 ms/tok    14.7/tok  void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}:
+  0.046 ms/tok    11.6/tok  void gemmSN_TN_kernel<float, 128, 16, 2, 4, 8, 9, false, cublasGemvTensorStridedBatched<float const>, cublasGemvTensorSt
+  0.042 ms/tok    12.4/tok  void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<c10::BFloat16, 
+  0.034 ms/tok     5.6/tok  void at::native::reduce_kernel<512, 1, at::native::ReduceOp<float, at::native::MeanOps<float, float, float, float>, unsi
+  0.031 ms/tok    18.3/tok  Memcpy DtoD (Device -> Device)
+  0.030 ms/tok    11.6/tok  triton_red_fused_43
+  0.026 ms/tok    11.2/tok  void at::native::elementwise_kernel<128, 2, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, f
+  0.025 ms/tok    11.6/tok  triton_poi_fused_42
+  0.025 ms/tok    11.6/tok  triton_poi_fused_45
+== 2026-11-23T04:26:19-08:00 exit 0; other processes on GPU at end: 0

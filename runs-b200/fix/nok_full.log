@@ -1,0 +1,37 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  61%|██████▏   | 87/142 [00:00<00:00, 705.88it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 912.29it/s]
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/2] full | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   4%|▎         | 50/1359 [00:00<00:05, 238.64it/s]Loading weights:   4%|▎         | 50/1359 [00:14<00:05, 238.64it/s]Loading weights:   5%|▌         | 68/1359 [00:14<06:00,  3.58it/s] Loading weights:  23%|██▎       | 306/1359 [00:15<00:40, 25.78it/s]Loading weights:  26%|██▋       | 360/1359 [00:15<00:32, 30.75it/s]Loading weights:  29%|██▉       | 394/1359 [00:16<00:27, 34.79it/s]Loading weights:  31%|███       | 419/1359 [00:17<00:32, 28.83it/s]Loading weights:  42%|████▏     | 575/1359 [00:18<00:12, 62.06it/s]Loading weights:  45%|████▌     | 612/1359 [00:18<00:11, 67.60it/s]Loading weights:  47%|████▋     | 635/1359 [00:18<00:10, 69.21it/s]Loading weights:  49%|████▉     | 664/1359 [00:18<00:09, 74.83it/s]Loading weights:  51%|█████▏    | 697/1359 [00:20<00:12, 53.93it/s]Loading weights:  59%|█████▊    | 796/1359 [00:20<00:06, 92.85it/s]Loading weights:  62%|██████▏   | 841/1359 [00:20<00:04, 114.20it/s]Loading weights:  64%|██████▍   | 867/1359 [00:20<00:05, 98.28it/s] Loading weights:  65%|██████▌   | 889/1359 [00:21<00:04, 106.13it/s]Loading weights:  67%|██████▋   | 908/1359 [00:21<00:04, 108.50it/s]Loading weights:  68%|██████▊   | 925/1359 [00:21<00:05, 76.74it/s] Loading weights:  72%|███████▏  | 981/1359 [00:21<00:03, 124.70it/s]Loading weights:  74%|███████▍  | 1005/1359 [00:22<00:04, 85.23it/s]Loading weights:  76%|███████▌  | 1030/1359 [00:23<00:05, 61.20it/s]Loading weights:  82%|████████▏ | 1113/1359 [00:24<00:03, 77.91it/s]Loading weights:  88%|████████▊ | 1201/1359 [00:24<00:01, 123.92it/s]Loading weights:  90%|█████████ | 1224/1359 [00:25<00:01, 68.41it/s] Loading weights:  98%|█████████▊| 1334/1359 [00:25<00:00, 116.03it/s]Loading weights: 100%|██████████| 1359/1359 [00:25<00:00, 52.77it/s] 
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  loaded in 34s
+    prompt 1/4: 13.6 tok/s
+    prompt 2/4: 13.62 tok/s
+    prompt 3/4: 13.6 tok/s
+    prompt 4/4: 13.63 tok/s
+  RESULT {"prefill_tok_s": 91.44911313708792, "decode_tok_s": 13.611343014615004, "decode_tok_s_per_prompt": [13.6, 13.62, 13.6, 13.63], "decode_ms_median": 73.46813601907343, "sustained_tok_s": null, "prefill_stats": {}, "config": "full", "load_s": 33.687854883028194, "device": "cuda", "peak_gib": 120.8061728477478, "same_tokens_as_first": 128}
+[2/2] full+compile | elapsed 1.4m | eta ~1m
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   0%|          | 4/1359 [00:00<03:36,  6.27it/s]Loading weights:   5%|▌         | 68/1359 [00:16<05:09,  4.17it/s]Loading weights:  32%|███▏      | 438/1359 [00:16<00:25, 36.84it/s]Loading weights:  48%|████▊     | 646/1359 [00:18<00:14, 48.75it/s]Loading weights:  56%|█████▌    | 763/1359 [00:19<00:10, 55.70it/s]Loading weights:  62%|██████▏   | 838/1359 [00:20<00:08, 63.34it/s]Loading weights:  66%|██████▌   | 892/1359 [00:21<00:07, 60.16it/s]Loading weights:  70%|██████▉   | 948/1359 [00:22<00:06, 61.12it/s]Loading weights:  75%|███████▌  | 1024/1359 [00:22<00:04, 75.10it/s]Loading weights:  78%|███████▊  | 1063/1359 [00:23<00:03, 75.76it/s]Loading weights:  80%|███████▉  | 1083/1359 [00:23<00:03, 79.55it/s]Loading weights:  81%|████████  | 1101/1359 [00:23<00:03, 82.49it/s]Loading weights:  82%|████████▏ | 1117/1359 [00:23<00:03, 69.54it/s]Loading weights:  87%|████████▋ | 1178/1359 [00:24<00:02, 72.88it/s]Loading weights:  93%|█████████▎| 1259/1359 [00:24<00:00, 117.70it/s]Loading weights:  94%|█████████▍| 1282/1359 [00:25<00:00, 117.88it/s]Loading weights:  96%|█████████▌| 1302/1359 [00:25<00:00, 100.85it/s]Loading weights:  97%|█████████▋| 1318/1359 [00:26<00:00, 72.95it/s] Loading weights: 100%|██████████| 1359/1359 [00:26<00:00, 52.26it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  loaded in 30s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+    prompt 1/4: 38.76 tok/s
+    prompt 2/4: 38.19 tok/s
+    prompt 3/4: 38.24 tok/s
+    prompt 4/4: 38.22 tok/s
+  RESULT {"prefill_tok_s": 92.16386147954198, "decode_tok_s": 38.2361174884208, "decode_tok_s_per_prompt": [38.76, 38.19, 38.24, 38.22], "decode_ms_median": 26.153282960876822, "sustained_tok_s": null, "prefill_stats": {}, "config": "full+compile", "load_s": 30.429748939001, "device": "cuda", "peak_gib": 120.80692052841187, "same_tokens_as_first": 100}
+done in 5.9m

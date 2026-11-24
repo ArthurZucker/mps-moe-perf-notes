@@ -1,0 +1,23 @@
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+Fetching 142 files:   0%|          | 0/142 [00:00<?, ?it/s]Fetching 142 files:  58%|█████▊    | 83/142 [00:00<00:00, 741.90it/s]Fetching 142 files: 100%|██████████| 142/142 [00:00<00:00, 1016.70it/s]
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/1] full+compile | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 20/1359 [00:00<00:28, 46.18it/s]Loading weights:   2%|▏         | 25/1359 [00:07<08:47,  2.53it/s]Loading weights:   5%|▌         | 68/1359 [00:18<06:16,  3.43it/s]Loading weights:  76%|███████▋  | 1037/1359 [00:18<00:03, 86.94it/s]Loading weights: 100%|██████████| 1359/1359 [00:22<00:00, 61.40it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears: {'fused_groups': 192, 'gemv_linears': 97}
+  loaded in 32s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+    prompt 1/4: 116.91 tok/s
+    prompt 2/4: 110.14 tok/s
+    prompt 3/4: 110.17 tok/s
+    prompt 4/4: 110.09 tok/s
+  RESULT {"prefill_tok_s": 91.71163224098132, "decode_tok_s": 110.21214796541308, "decode_tok_s_per_prompt": [116.91, 110.14, 110.17, 110.09], "decode_ms_median": 9.073409950360656, "sustained_tok_s": null, "prefill_stats": {}, "config": "full+compile", "load_s": 32.11017169710249, "device": "cuda", "peak_gib": 124.80733823776245, "same_tokens_as_first": 128}
+done in 6.1m
