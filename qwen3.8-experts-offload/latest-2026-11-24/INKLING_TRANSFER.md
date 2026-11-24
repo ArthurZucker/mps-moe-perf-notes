@@ -48,3 +48,28 @@ The final checkpoint moves that work offline. Qwen3.8 already has the same treat
 The Inkling 79 tok/s result is mostly a **capacity** result: 18 GB fits. Qwen3.8's 65 GB
 expert bank does not. The same final-checkpoint and fusion work is already applied; the
 remaining gap is bytes per token from SSD, not dispatch count.
+
+## Measured transfer attempts on Qwen3.8
+
+Both on the final Qwen3.8 checkpoint, 16 GiB cache, events off, 32 GB Metal cap.
+
+| transfer | decode | sustained | correctness | verdict |
+|---|---:|---:|---|---|
+| baseline (no transfer) | 8.56 | 9.10 | 128/128 | reference |
+| Inkling GDN/short-conv hub kernels (`use_kernels=True` after load) | 6.94 | 7.90 | 128/128 | **reject: slower** |
+| fused Qwen4 router (Metal softmax top-k, one dispatch) | 6.51 | 9.13 | **7/128** | **reject: wrong output** |
+
+The GDN hub kernels are numerically correct but slower on this M3 Ultra; the kernelize path also
+needs a post-load workaround because the streamed embed leaves `model.device` on meta. The
+fused router kernel is not correct yet (softmax/top-k selection), so it is not pushed as a
+perf branch.
+
+## Conclusion
+
+No Inkling kernel transfers positively to Qwen3.8 at 32 GB. The Qwen3.8 gains remain:
+
+- final checkpoint, 0 on-the-fly quantization (published);
+- fused sibling linears, 4-bit Metal experts (already in the branch);
+- 48 GB for 4-bit (59.59 tok/s) or 2.5-bit Sakura at 30 GB (56-62 tok/s).
+
+The 32 GB 4-bit wall is expert bytes from SSD, not router or GDN dispatch.
