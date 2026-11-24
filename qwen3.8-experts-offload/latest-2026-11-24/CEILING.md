@@ -38,6 +38,31 @@ At 80% hit, 32 GB tops out near 27-38 tok/s even with perfect overlap and a 7-10
 SSD. At 95% hit, the 14.3 ms compute floor dominates and 32 GB can reach the same
 ~70 tok/s as the 64 GB run.
 
+## Measured: I/O is not the ceiling (2026-11-24, 16 GiB cache, events off)
+
+The read-ahead path was reading 2.96 GB/token when the all-miss cost is 1.33 GB/token:
+speculative reads for the next layer were being thrown away when the guess was wrong.
+Setting `TRANSFORMERS_EXPERTS_OFFLOAD_LOOKAHEAD=0` cuts disk reads **3.08x**:
+
+| arm | sustained | decode mean | disk read | bytes/token | read rate |
+|---|---:|---:|---:|---:|---:|
+| lookahead 1 (default) | 8.27 | 6.73 | 187.7 GiB | 2.96 GB | 1.43 GB/s |
+| lookahead 0 | 8.16 | 5.76 | 60.9 GiB | 1.01 GB | 0.49 GB/s |
+
+**Throughput did not move.** Removing two thirds of the reads left sustained decode flat
+and the mean slightly worse. So the 32 GB run is not I/O-bound, and the internal SSD is
+not the ceiling: `dd` on the checkpoint reads at **7.6 GB/s**, and decode never exceeds
+1.4 GB/s of it. The stall model in the first half of this file over-weights I/O.
+
+What the wall actually is: **host + GPU work per token.** At 16 GiB the measured non-stall
+cost is ~24.8 ms/token against ~8.5 ms of I/O stall, and the 48 GiB run's non-stall cost
+is ~16.8 ms/token. The 8 ms/token difference between 32 and 48 GiB is host cache
+bookkeeping, not SSD reads. The router and GDN kernels are dispatch-count reductions, and
+they were perf-neutral, so dispatch count is not the wall either.
+
+The unmeasured part is where the ~24.8 ms of non-stall time goes: GPU kernels, host sync,
+and the offload table bookkeeping. That needs a host-side profile before more kernel work.
+
 ## What to fix
 
 1. Overlap the miss read with the next layer's compute, not the current layer's wait.
