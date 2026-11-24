@@ -1,0 +1,15 @@
+diff --git a/src/transformers/models/inkling2_loop/modeling_inkling2_loop.py b/src/transformers/models/inkling2_loop/modeling_inkling2_loop.py
+index 32c576c..915a245 100644
+--- a/src/transformers/models/inkling2_loop/modeling_inkling2_loop.py
++++ b/src/transformers/models/inkling2_loop/modeling_inkling2_loop.py
+@@ -1309,6 +1309,10 @@ class Inkling2LoopPreTrainedModel(PreTrainedModel):
+     }
+ 
+     def _init_weights(self, module):
++        # A pre-quantized Metal checkpoint stores packed uint32 weights; do not run
++        # float initializers on them (Metal has no normal_ kernel for UInt32).
++        if any(p.dtype == torch.uint32 for p in module.parameters(recurse=False)):
++            return
+         super()._init_weights(module)
+         std = self.config.get_text_config().initializer_range
+         if isinstance(module, Inkling2LoopRelativePositionBias):
