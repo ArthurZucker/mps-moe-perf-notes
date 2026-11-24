@@ -1,0 +1,51 @@
+== 2026-11-24T02:24:51-08:00 GPU5 idle; python prof_decode.py --gemv --mode max-autotune --inductor combo_kernels=True --tokens 16 --trace /raid/arthur/tr_full.json
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 20/1359 [00:00<00:18, 71.96it/s]Loading weights:   2%|▏         | 28/1359 [00:00<00:45, 28.98it/s]Loading weights:   5%|▌         | 68/1359 [00:10<04:02,  5.33it/s]Loading weights:  39%|███▉      | 528/1359 [00:12<00:14, 57.39it/s]Loading weights:  53%|█████▎    | 724/1359 [00:13<00:09, 68.99it/s]Loading weights:  72%|███████▏  | 976/1359 [00:16<00:05, 75.47it/s]Loading weights: 100%|██████████| 1359/1359 [00:16<00:00, 80.81it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/profiler/profiler.py:224: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+inductor combo_kernels = True
+kernelize_decode_linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+memory: allocated 120.3 GiB, peak 124.7 GiB, reserved 125.2 GiB
+decode median 8.73 ms/token -> 114.6 tok/s (min 8.65 max 9.66)
+text: The salt had long since claimed Elias’s skin, turning it the color of driftwood
+GPU kernel time 27.26 ms/token (incl. 1 prefill amortized over 17), kernels/token 1909
+  experts triton (prefill)      18.907 ms/tok     5.6/tok
+  triton fused                   4.345 ms/tok   963.8/tok
+  other                          2.053 ms/tok   497.3/tok
+  cuBLAS dense                   0.989 ms/tok   225.1/tok
+  topk/sort                      0.683 ms/tok   123.5/tok
+  conv                           0.123 ms/tok    37.0/tok
+  attention                      0.115 ms/tok    23.3/tok
+  memcpy                         0.048 ms/tok    33.2/tok
+ 18.907 ms/tok     5.6/tok  _gather_qmv_kernel
+  1.186 ms/tok    33.9/tok  triton_red_fused__to_copy__unsafe_view_add_clone_copy__div_exp_expand_mm_mul_neg_rsqrt_select_sigmoid_silu_slice_softplu
+  0.605 ms/tok   181.6/tok  void gemv_block_kernel<1>(__nv_bfloat16 const*, uint4 const*, __nv_bfloat16 const*, __nv_bfloat16*, int, int, long)
+  0.548 ms/tok    33.9/tok  triton_red_fused_mm_t_view_16
+  0.545 ms/tok    45.2/tok  void (anonymous namespace)::tc6::kernel<640, 10>(__nv_bfloat16 const*, uint4*, __nv_bfloat16*, __nv_bfloat16*, (anonymou
+  0.472 ms/tok    45.2/tok  void (anonymous namespace)::tc6::kernel<2560, 1>(__nv_bfloat16 const*, uint4*, __nv_bfloat16*, __nv_bfloat16*, (anonymou
+  0.458 ms/tok    33.9/tok  triton_red_fused__to_copy__unsafe_view_add_mean_mm_mul_pow_rsqrt_sigmoid_slice_t_transpose_view_zeros_like_23
+  0.358 ms/tok    56.5/tok  void at::native::sbtopk::gatherTopK<float, unsigned int, 1, false>(at::cuda::detail::TensorInfo<float const, unsigned in
+  0.303 ms/tok    91.3/tok  triton_per_fused_div_mm_silu_slice_t_view_12
+  0.224 ms/tok    56.5/tok  void at::native::bitonicSortKVInPlace<-2, -1, 16, 16, float, long, at::native::GTOp<float, true>, unsigned int>(at::cuda
+  0.181 ms/tok     0.9/tok  triton_red_fused_mm_t_57
+  0.166 ms/tok    45.2/tok  triton_red_fused_28
+  0.158 ms/tok    11.3/tok  triton_red_fused_mm_t_view_43
+  0.147 ms/tok     5.6/tok  void cutlass::Kernel2<cutlass_80_wmma_tensorop_bf16_s161616gemm_bf16_32x32_128x2_tn_align2>(cutlass_80_wmma_tensorop_bf1
+  0.146 ms/tok    45.2/tok  triton_per_fused_29
+  0.140 ms/tok    89.4/tok  triton_poi_fused__unsafe_view_mean_mm_mul_sigmoid_view_27
+  0.127 ms/tok    42.4/tok  triton_red_fused__to_copy__unsafe_view_add_div_mean_mm_mul_pow_sigmoid_slice_unsqueeze_view_42
+  0.115 ms/tok    34.9/tok  void at::native::(anonymous namespace)::conv_depthwise2d_forward_kernel_generic<c10::BFloat16, int>(torch::headeronly::d
+  0.102 ms/tok    11.3/tok  triton_red_fused__unsafe_view_clone_mm_mul_sigmoid_slice_split_t_transpose_view_53
+  0.096 ms/tok    12.0/tok  fmha_cutlassF_bf16_aligned_32x128_gmem_sm80(PyTorchMemEffAttention::AttentionKernel<cutlass::bfloat16_t, cutlass::arch::
+  0.092 ms/tok    27.6/tok  void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}:
+  0.081 ms/tok    24.1/tok  void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<c10::BFloat16, 
+  0.078 ms/tok    43.3/tok  triton_poi_fused__to_copy__unsafe_view_add_div_mean_mm_mul_pow_rsqrt_sigmoid_slice_unsqueeze_view_41
+  0.072 ms/tok    44.2/tok  triton_poi_fused__to_copy_add_mean_mul_pow_rsqrt_view_38
+  0.070 ms/tok    43.3/tok  triton_red_fused__to_copy__unsafe_view_add_div_mean_mm_mul_pow_sigmoid_slice_unsqueeze_view_40
+== 2026-11-24T02:25:49-08:00 exit 0; other processes on GPU at end: 0

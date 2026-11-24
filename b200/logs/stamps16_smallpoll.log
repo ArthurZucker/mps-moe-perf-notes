@@ -1,0 +1,17 @@
+== 2026-11-24T02:14:05-08:00 GPU5 idle; python stamps2.py
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<02:51,  7.51it/s]Loading weights: 100%|██████████| 1359/1359 [00:09<00:00, 149.28it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+  tier A: 19.8 calls/token, 1.57 routes/call, cpu per call gate 28.9 act 1.0 down 8.0 us
+host 'Write a Python function that p': per token 14.45 ms = layer0 MoE 0.06 + layers 1..47 12.08 + layer47 end -> next layer0 router 2.26 ms
+  tier A: 9.4 calls/token, 1.19 routes/call, cpu per call gate 22.7 act 0.9 down 6.5 us
+host 'Explain the causes of the Fren': per token 14.41 ms = layer0 MoE 0.06 + layers 1..47 11.72 + layer47 end -> next layer0 router 2.63 ms
+== 2026-11-24T02:19:54-08:00 exit 0; other processes on GPU at end: 0

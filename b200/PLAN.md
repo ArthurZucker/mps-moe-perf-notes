@@ -214,3 +214,35 @@ parallel GDN verify (no per-token loop), multi-token fused router, larger expert
   - pool refresh by the copy engine: GPU plans LRU victims (layers <= current, unused this token), key pending (-2), ring in
     the mapped mailbox; CPU installer thread cudaMemcpyAsync host bank -> slot, done counter; GPU commits table[key] = slot
     only if owner[slot] == key. kbench/test_refresh.py: 935 installs, all committed entries byte-exact, none stale.
+- E25 (2026-11-24) miss-cost decomposition and fixes. In-graph GPU timestamps (stamps2.py), A/B on the same GPU:
+  - accelerate dispatch hooks left on 1302 modules by the cpu-offload device_map: ~2 ms/token host time -> removed in
+    apply_gpu_experts_offload (gap between tokens 4.2 -> 2.2 ms, = full's 2.07).
+  - cache policies (sim_policies.py / sim_opt.py / sim_lfu.py, routing_256): LRU 64.6 misses/token; SLRU / ARC / LRU-2
+    / decayed LFU +- admission 63.6-115; Belady 34.7; per-prompt static oracle 39.8. No realizable policy beats LRU.
+  - hints: router(l+1) on layer l's MoE input covers 70% of misses at top-16; on layer l+1's MLP-side hyper-connection
+    mix of its entering streams 89% (V2); plain mean of the normed streams 82% (V3, = V2 at the staged top-4/6) and reads
+    20 KB instead of 13 MB per layer. Layers 1..47: 9.85 (V1) -> 9.35 (V2) ms; V3 9.41 vs V2 9.54 on clean cores: V3 kept.
+  - rejected: staging 6 / 8 hinted experts (= / +0.6 ms); GPU prefetch of the top-2 hinted experts by the copy engine
+    (+1.4 ms: DMA reads compete with the CPU for the socket's DRAM); two tiers (one per socket, own barrier, NUMA replica)
+    9.43 vs 9.35 (per-call CPU 41 -> 27 us but no gain: the CPU is not the bound); huge-page replica on the own node (=);
+    gate/up software prefetch (-10% per call in the harness, = in model); v3 lookup+post on the main stream (+0.45 ms);
+    poll join without events (= in prof, +1.7 ms in stamps2); refresh forked after the join (80-128 ms/token: broken).
+  - machinery, not misses: at pool 1.0 (almost no misses) layers 1..47 are still 9.0-9.4 ms vs 6.65 full. Per-layer trace
+    (tr_full / tr_join_poll): period 158 (full) vs 172-183 us p50, 221-240 p90; background kernels (guess 57 -> 19 us via
+    warp-shuffle top-k + parallel residency checks + one fence; HC down-projection 32 -> 6.5 us block-per-row) and the
+    gate/up tc6 run 10.4 -> 12.7 us p50 / 18.7 p90 while the post / refresh run beside it.
+  - shared machine: other users' threads on the worker cores (remi_ouazan cpu 111, 98; cyril_vallez cpu 58) preempt a
+    spinning worker and the all-thread barrier waits a scheduler slice: gate phase 2.1 ms per call in one run. -> CPU tier
+    without barriers: claimable slices with sequence-stamped done flags, a slice claimed but unfinished after
+    HOST_STEAL_US is re-run (idempotent), one publisher. Exact under HOST_STEAL_US=0 (maximal duplication).
+  - stealing v2: one stealer per late slice (the first version re-ran every late slice on every waiting thread: a
+    thundering herd that never finished), completion counted per phase on one cache line, the call index shared (packed
+    index | seq CAS word: a worker that skipped a stolen call cannot under-count its target). Exact with a CPU hog pinned on
+    a worker core (steal 0 / 20 / 1000 us). Model (all node-1 cores incl. other users'): layers 1..47 9.28 / 8.98 ms
+    (from 9.4-9.5), ~1 slice re-run per call.
+  - installer reading a pinned node-0 replica (copy engine off the workers' DRAM): 10.9 ms (worse; re-runs x3). Rejected.
+  - zero-miss machinery (HOST_FILL_POOL=1, every expert resident, 0 CPU calls): prof harness 9.66 vs full 8.73 ms/token
+    (+0.93 ms: lookup / post / poll / add, 5 extra kernels per layer, p50 layer 160.3 vs 158 us). The stamps2 probe
+    overstates host mode (+2.6 ms there): end-to-end time is the reference.
+  - hint precision: staged top-4 non-resident guesses cover ~30% of the ~2 misses per layer -> ~85% of the staged bytes
+    are never used; misses are by construction the experts the LRU pool did not expect.

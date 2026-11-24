@@ -1683,6 +1683,8 @@ torch::Tensor qmv4_tc6(torch::Tensor x, torch::Tensor pw, torch::Tensor ps, torc
 // Layout shared with host_tier2.cpp (Mailbox2 / Result2).
 namespace {
 constexpr int HT2_MAXR = 64, HT2_MAXT = 4, HT2_MAXH = 8192, HT2_RING = 1024;
+// pollers spin while the CPU works: keep them small enough to share an SM with the main stream's blocks
+constexpr int HT2_POLL_THREADS = 1024;
 struct alignas(64) HostMailbox2 {
   volatile unsigned long long seq; volatile unsigned long long hint_seq;
   int layer, n, ntok, hint_layer, hint_n, pad[5];
@@ -1701,61 +1703,76 @@ struct alignas(64) HostResult2 { volatile unsigned long long done; unsigned long
 // even when a concurrent refresh commits an install between the lookup and this post.
 __global__ void __launch_bounds__(512) host_post2_kernel(const int* __restrict__ ids, const float* __restrict__ w, int R,
     int layer, const float* __restrict__ gpu_w, const __nv_bfloat16* __restrict__ x, int H, int ntok,
-    HostMailbox2* mb, unsigned long long* state) {
+    HostMailbox2* mb, HostMailbox2* mb2, unsigned long long* state) {
+  // Two tiers (one per socket): the c-th missed route goes to tier c % 2. state: [counter, seq tier a, seq tier b].
   __shared__ int miss_flag[HT2_MAXR];
-  __shared__ int n;
-  const int tid = threadIdx.x, topk = R / ntok;
+  __shared__ int n_t[2];
+  const int tid = threadIdx.x, topk = R / ntok, nt = mb2 ? 2 : 1;
   if (tid < R) miss_flag[tid] = gpu_w[tid] == 0.f && w[tid] != 0.f;
   __syncthreads();
   if (tid == 0) {
-    int c = 0;
+    int c[2] = {0, 0}, q = 0;
     for (int r = 0; r < R; ++r)
-      if (miss_flag[r]) { mb->ids[c] = ids[r]; mb->w[c] = w[r]; mb->tok[c] = r / topk; ++c; }
-    n = c;
+      if (miss_flag[r]) {
+        HostMailbox2* m = (q % nt) ? mb2 : mb;
+        int& cc = c[q % nt];
+        m->ids[cc] = ids[r]; m->w[cc] = w[r]; m->tok[cc] = r / topk; ++cc; ++q;
+      }
+    n_t[0] = c[0]; n_t[1] = c[1];
   }
   __syncthreads();
-  if (n == 0) { if (tid == 0) state[1] = 0; return; }
-  // activation in the host tier's pair layout: per 128-element chunk c, word c*64 + k*16 + i = (x[c*128+8i+k], x[+4])
+  if (n_t[0] == 0 && n_t[1] == 0) { if (tid == 0) { state[1] = 0; state[2] = 0; } return; }
   const unsigned short* xs = reinterpret_cast<const unsigned short*>(x);
-  uint4* xd = reinterpret_cast<uint4*>(mb->xq);
-  for (int v = tid; v < ntok * H / 8; v += blockDim.x) {  // 4 words per store
-    const int o = v * 4, row = o / (H / 2), ow = o - row * (H / 2), c = ow / 64, k = (ow % 64) / 16, i0 = ow % 16;
-    const unsigned short* xr = xs + (long)row * H + c * 128;
-    unsigned int wv[4];
+  for (int t = 0; t < nt; ++t) {
+    if (n_t[t] == 0) continue;
+    HostMailbox2* m = t ? mb2 : mb;
+    uint4* xd = reinterpret_cast<uint4*>(m->xq);
+    for (int v = tid; v < ntok * H / 8; v += blockDim.x) {
+      const int o = v * 4, row = o / (H / 2), ow = o - row * (H / 2), c = ow / 64, k = (ow % 64) / 16, i0 = ow % 16;
+      const unsigned short* xr = xs + (long)row * H + c * 128;
+      unsigned int wv[4];
 #pragma unroll
-    for (int u = 0; u < 4; ++u) wv[u] = xr[8 * (i0 + u) + k] | ((unsigned int)xr[8 * (i0 + u) + k + 4] << 16);
-    xd[v] = make_uint4(wv[0], wv[1], wv[2], wv[3]);
-  }
-  const int lane = tid & 31, warp = tid >> 5, nwarps = blockDim.x >> 5;
-  for (int gi = warp; gi < ntok * H / 64; gi += nwarps) {
-    const float2 f = __bfloat1622float2(reinterpret_cast<const __nv_bfloat162*>(x + (long)gi * 64)[lane]);
-    float v = f.x + f.y;
+      for (int u = 0; u < 4; ++u) wv[u] = xr[8 * (i0 + u) + k] | ((unsigned int)xr[8 * (i0 + u) + k + 4] << 16);
+      xd[v] = make_uint4(wv[0], wv[1], wv[2], wv[3]);
+    }
+    const int lane = tid & 31, warp = tid >> 5, nwarps = blockDim.x >> 5;
+    for (int gi = warp; gi < ntok * H / 64; gi += nwarps) {
+      const float2 f = __bfloat1622float2(reinterpret_cast<const __nv_bfloat162*>(x + (long)gi * 64)[lane]);
+      float v = f.x + f.y;
 #pragma unroll
-    for (int o = 16; o > 0; o >>= 1) v += __shfl_xor_sync(0xffffffffu, v, o);
-    if (lane == 0) mb->xgs[gi] = v;
+      for (int o = 16; o > 0; o >>= 1) v += __shfl_xor_sync(0xffffffffu, v, o);
+      if (lane == 0) m->xgs[gi] = v;
+    }
   }
   __syncthreads();
   if (tid == 0) {
-    mb->layer = layer; mb->n = n; mb->ntok = ntok;
+    const unsigned long long sq = state[0] + 1;
+    state[0] = sq;
+    for (int t = 0; t < 2; ++t) state[1 + t] = (t < nt && n_t[t]) ? sq : 0;
+    for (int t = 0; t < nt; ++t) {
+      if (!n_t[t]) continue;
+      HostMailbox2* m = t ? mb2 : mb;
+      m->layer = layer; m->n = n_t[t]; m->ntok = ntok;
+    }
     __threadfence_system();
-    const unsigned long long s = state[0] + 1;
-    state[0] = s; state[1] = s;
-    mb->seq = s;
+    for (int t = 0; t < nt; ++t) if (n_t[t]) (t ? mb2 : mb)->seq = sq;
     __threadfence_system();
   }
 }
 
 // out + host result: thread 0 spins on the done flag, then every thread reads 16 bytes of the result (one round).
 __global__ void __launch_bounds__(1024) host_wait2_kernel(const __nv_bfloat16* __restrict__ in, __nv_bfloat16* __restrict__ out,
-    int numel, HostResult2* res, const unsigned long long* state) {
-  const unsigned long long s = state[1];
-  if (s != 0 && threadIdx.x == 0) {
-    while (res->done != s) {}
+    int numel, HostResult2* res, HostResult2* res2, const unsigned long long* state) {
+  const unsigned long long sa = state[1], sb = res2 ? state[2] : 0;
+  if (threadIdx.x == 0) {
+    if (sa) while (res->done != sa) {}
+    if (sb) while (res2->done != sb) {}
     __threadfence_system();
   }
   __syncthreads();
   for (int i = threadIdx.x; i < numel / 4; i += blockDim.x) {
-    float4 v = s != 0 ? __ldcv(reinterpret_cast<const float4*>(res->out) + i) : make_float4(0.f, 0.f, 0.f, 0.f);
+    float4 v = sa ? __ldcv(reinterpret_cast<const float4*>(res->out) + i) : make_float4(0.f, 0.f, 0.f, 0.f);
+    if (sb) { const float4 u = __ldcv(reinterpret_cast<const float4*>(res2->out) + i); v.x += u.x; v.y += u.y; v.z += u.z; v.w += u.w; }
     float2 a0 = make_float2(0.f, 0.f), a1 = a0;
     if (in) {
       const __nv_bfloat162* a = reinterpret_cast<const __nv_bfloat162*>(in) + 2 * i;
@@ -1767,42 +1784,12 @@ __global__ void __launch_bounds__(1024) host_wait2_kernel(const __nv_bfloat16* _
   }
 }
 
-// Prefetch hint: the experts of `ids` (guesses for `layer`) that are not resident -> the host tier stages them.
-__global__ void host_hint2_kernel(const int* __restrict__ ids, int R, int layer, int E, const int* __restrict__ table,
-                                  HostMailbox2* mb, unsigned long long* hstate) {
-  __shared__ int e_s[HT2_MAXR], keep[HT2_MAXR];
-  const int r = threadIdx.x;
-  if (r < R) { e_s[r] = ids[r]; keep[r] = table[layer * E + e_s[r]] < 0; }
-  __syncthreads();
-  if (r < R && keep[r])
-    for (int q = 0; q < r; ++q) if (e_s[q] == e_s[r]) { keep[r] = 0; break; }  // first occurrence only
-  __syncthreads();
-  if (r != 0) return;
-  int c = 0;
-  for (int q = 0; q < R; ++q) if (keep[q]) mb->hint_ids[c++] = e_s[q];
-  if (c == 0) return;
-  mb->hint_layer = layer; mb->hint_n = c;
-  __threadfence_system();
-  const unsigned long long s = hstate[0] + 1;
-  hstate[0] = s;
-  mb->hint_seq = s;
-  __threadfence_system();
-}
-}  // namespace
-
-void host_hint2(torch::Tensor ids, int64_t layer, int64_t E, torch::Tensor table, int64_t mailbox, torch::Tensor hstate) {
-  TORCH_CHECK(ids.numel() <= HT2_MAXR && ids.scalar_type() == at::kInt && ids.is_contiguous());
-  host_hint2_kernel<<<1, 64, 0, at::cuda::getCurrentCUDAStream()>>>(ids.data_ptr<int>(), ids.numel(), layer, E,
-      table.data_ptr<int>(), (HostMailbox2*)mailbox, (unsigned long long*)hstate.data_ptr<int64_t>());
-}
-namespace {
-
 // Guess + hint in one launch (side stream): logits = x . W[e] for the E router rows (warp per row, all blocks), the
 // last block to finish takes the top-k, drops resident experts (table of `layer`) and posts them as the hint.
 // scratch: [E] float logits; counter: one int (reset by the last block).
 __global__ void __launch_bounds__(256) host_guess2_kernel(const __nv_bfloat16* __restrict__ x, const __nv_bfloat16* __restrict__ W,
     int E, int H, int k, int max_out, int layer, const int* __restrict__ table, float* scratch, unsigned int* counter,
-    HostMailbox2* mb, unsigned long long* hstate) {
+    HostMailbox2* mb, HostMailbox2* mb2, unsigned long long* hstate) {
   const int lane = threadIdx.x & 31, warp = threadIdx.x >> 5, gw = blockIdx.x * 8 + warp, nw = gridDim.x * 8;
   for (int e = gw; e < E; e += nw) {
     const uint4* wr = reinterpret_cast<const uint4*>(W + (long)e * H);
@@ -1826,57 +1813,106 @@ __global__ void __launch_bounds__(256) host_guess2_kernel(const __nv_bfloat16* _
   __syncthreads();
   if (!last) return;
   __threadfence();
-  __shared__ float bv[8];
-  __shared__ int bi[8], picked[HT2_MAXR];
-  __shared__ int n_out;
-  if (threadIdx.x == 0) n_out = 0;
-  for (int r = 0; r < k; ++r) {  // k rounds of argmax over E (taken entries set to -inf)
-    float v = -INFINITY; int idx = -1;
-    for (int e = threadIdx.x; e < E; e += blockDim.x) {
-      float t = __ldcg(scratch + e);
-      if (t != t) t = -INFINITY;  // NaN logits (garbage activations) never win and never yield an index < 0 below
-      if (idx < 0 || t > v) { v = t; idx = e; }
-    }
+  if (max_out < 0) { if (threadIdx.x == 0) *counter = 0; return; }  // debug: logits only
+  // top-k with warp shuffles only: each warp takes the top k of its E / 8 logits, warp 0 merges the 8 k candidates.
+  // Ties: lower index first. NaN -> -inf. (E <= 1024, k <= 32.)
+  __shared__ float cv[8 * 32];
+  __shared__ int ci[8 * 32];
+  __shared__ int si[32];
+  const int per_warp = (E + 7) / 8, slots_per_lane = (per_warp + 31) / 32;
+  {
+    float v[4]; int ix[4];
 #pragma unroll
-    for (int o = 16; o > 0; o >>= 1) {
-      const float ov = __shfl_xor_sync(0xffffffffu, v, o); const int oi = __shfl_xor_sync(0xffffffffu, idx, o);
-      if (oi >= 0 && (idx < 0 || ov > v || (ov == v && oi < idx))) { v = ov; idx = oi; }
+    for (int q = 0; q < 4; ++q) {
+      const int e = warp * per_warp + q * 32 + lane;
+      const bool ok = q < slots_per_lane && q * 32 + lane < per_warp && e < E;
+      float t = ok ? __ldcg(scratch + e) : -INFINITY;
+      if (t != t) t = -INFINITY;
+      v[q] = t; ix[q] = ok ? e : 0x7fffffff;
     }
-    if (lane == 0) { bv[warp] = v; bi[warp] = idx; }
-    __syncthreads();
-    if (threadIdx.x == 0) {
-      float b = bv[0]; int ix = bi[0];
-      for (int w = 1; w < 8; ++w) if (bi[w] >= 0 && (ix < 0 || bv[w] > b || (bv[w] == b && bi[w] < ix))) { b = bv[w]; ix = bi[w]; }
-      if (ix >= 0) {
-        scratch[ix] = -INFINITY;
-        if (table[layer * E + ix] < 0 && n_out < max_out) picked[n_out++] = ix;
+    for (int r = 0; r < k && r < 32; ++r) {
+      float bv = v[0]; int bi = ix[0], bq = 0;
+#pragma unroll
+      for (int q = 1; q < 4; ++q) if (v[q] > bv || (v[q] == bv && ix[q] < bi)) { bv = v[q]; bi = ix[q]; bq = q; }
+      float wv = bv; int wi = bi;
+#pragma unroll
+      for (int o = 16; o > 0; o >>= 1) {
+        const float ov = __shfl_xor_sync(0xffffffffu, wv, o); const int oi = __shfl_xor_sync(0xffffffffu, wi, o);
+        if (ov > wv || (ov == wv && oi < wi)) { wv = ov; wi = oi; }
       }
+      if (bi == wi) {  // the owning lane retires its entry
+#pragma unroll
+        for (int q = 0; q < 4; ++q) if (q == bq) { v[q] = -INFINITY; ix[q] = 0x7fffffff; }
+      }
+      if (lane == 0) { cv[warp * 32 + r] = wv; ci[warp * 32 + r] = wi; }
     }
-    __syncthreads();
   }
+  __syncthreads();
+  if (warp == 0) {
+    float v[8]; int ix[8];
+#pragma unroll
+    for (int q = 0; q < 8; ++q) {  // lane holds candidate (q, lane) = warp q's rank `lane`
+      const bool ok = lane < k;
+      v[q] = ok ? cv[q * 32 + lane] : -INFINITY; ix[q] = ok ? ci[q * 32 + lane] : 0x7fffffff;
+    }
+    for (int r = 0; r < k && r < 32; ++r) {
+      float bv = v[0]; int bi = ix[0], bq = 0;
+#pragma unroll
+      for (int q = 1; q < 8; ++q) if (v[q] > bv || (v[q] == bv && ix[q] < bi)) { bv = v[q]; bi = ix[q]; bq = q; }
+      float wv = bv; int wi = bi;
+#pragma unroll
+      for (int o = 16; o > 0; o >>= 1) {
+        const float ov = __shfl_xor_sync(0xffffffffu, wv, o); const int oi = __shfl_xor_sync(0xffffffffu, wi, o);
+        if (ov > wv || (ov == wv && oi < wi)) { wv = ov; wi = oi; }
+      }
+      if (bi == wi) {
+#pragma unroll
+        for (int q = 0; q < 8; ++q) if (q == bq) { v[q] = -INFINITY; ix[q] = 0x7fffffff; }
+      }
+      if (lane == 0) si[r] = wi < E ? wi : -1;
+    }
+  }
+  __syncthreads();
+  const int P = 32;
+  __shared__ int keep[HT2_MAXR];
+  __shared__ int picked[HT2_MAXR];
+  __shared__ int n_out;
+  if (threadIdx.x < k && threadIdx.x < P && threadIdx.x < HT2_MAXR) {  // residency checks in parallel
+    const int ix = si[threadIdx.x];
+    keep[threadIdx.x] = ix >= 0 && table[layer * E + ix] < 0;
+  }
+  __syncthreads();
+  if (threadIdx.x == 0) {
+    n_out = 0;
+    for (int r = 0; r < k && r < P && r < HT2_MAXR; ++r)
+      if (keep[r] && n_out < max_out) picked[n_out++] = si[r];
+  }
+  __syncthreads();
   if (threadIdx.x == 0) {
     *counter = 0;
-    if (n_out) {
-      for (int q = 0; q < n_out; ++q) mb->hint_ids[q] = picked[q];
-      mb->hint_layer = layer; mb->hint_n = n_out;
-      __threadfence_system();
+    if (n_out) {  // two tiers: the q-th guess to tier q % 2 (each stages its own)
+      const int nt = mb2 ? 2 : 1;
+      int c[2] = {0, 0};
+      for (int q = 0; q < n_out; ++q) { HostMailbox2* m = (q % nt) ? mb2 : mb; m->hint_ids[c[q % nt]++] = picked[q]; }
+      for (int t = 0; t < nt; ++t) { HostMailbox2* m = t ? mb2 : mb; m->hint_layer = layer; m->hint_n = c[t]; }
+      __threadfence_system();  // the ids land before the sequence number
       const unsigned long long s = hstate[0] + 1;
       hstate[0] = s;
-      mb->hint_seq = s;
-      __threadfence_system();
+      for (int t = 0; t < nt; ++t) if (c[t]) (t ? mb2 : mb)->hint_seq = s;
     }
   }
 }
 }  // namespace
 
 void host_guess2(torch::Tensor x, torch::Tensor W, int64_t k, int64_t layer, torch::Tensor table, int64_t mailbox,
-                 torch::Tensor hstate, torch::Tensor scratch, torch::Tensor counter, int64_t max_out, int64_t blocks) {
+                 torch::Tensor hstate, torch::Tensor scratch, torch::Tensor counter, int64_t max_out, int64_t blocks, int64_t mailbox_b) {
   const int64_t E = W.size(0), H = W.size(1);
   TORCH_CHECK(x.numel() == H && x.scalar_type() == at::kBFloat16 && W.scalar_type() == at::kBFloat16 && W.is_contiguous() &&
               x.is_contiguous() && H % 8 == 0 && k <= HT2_MAXR && scratch.numel() >= E && counter.scalar_type() == at::kInt);
-  host_guess2_kernel<<<(int)blocks, 256, 0, at::cuda::getCurrentCUDAStream()>>>((const __nv_bfloat16*)x.data_ptr(),
-      (const __nv_bfloat16*)W.data_ptr(), E, H, k, (int)std::min<int64_t>(max_out, HT2_MAXR), layer, table.data_ptr<int>(), scratch.data_ptr<float>(),
-      (unsigned int*)counter.data_ptr<int>(), (HostMailbox2*)mailbox, (unsigned long long*)hstate.data_ptr<int64_t>());
+  TORCH_CHECK(E <= 1024 && k <= 32 && (E + 7) / 8 <= 128, "guess: at most 1024 experts, k <= 32");
+  host_guess2_kernel<<<(int)std::max<int64_t>(blocks, (E + 7) / 8), 256, 0, at::cuda::getCurrentCUDAStream()>>>((const __nv_bfloat16*)x.data_ptr(),
+      (const __nv_bfloat16*)W.data_ptr(), E, H, k, (int)(max_out < 0 ? -1 : std::min<int64_t>(max_out, HT2_MAXR)), layer, table.data_ptr<int>(), scratch.data_ptr<float>(),
+      (unsigned int*)counter.data_ptr<int>(), (HostMailbox2*)mailbox, (HostMailbox2*)mailbox_b, (unsigned long long*)hstate.data_ptr<int64_t>());
 }
 namespace {
 
@@ -1885,9 +1921,12 @@ namespace {
 // LRU victim among slots of layers <= `layer` not used this token (no kernel can be reading them), its old key
 // invalidated now, the new key marked pending (-2: a miss for every lookup) until committed. rstate: [produced,
 // committed]. Planning stops at `max_installs` or when the ring is full.
+// mode 0: refresh (this layer's misses after its lookup; victims: layers <= layer, unused this token).
+// mode 1: prefetch (the layer's hinted guesses, from the mailbox, before its lookup; victims: layers < layer only).
+// Never a victim: a slot whose install is still pending (its key's table entry is -2).
 __global__ void __launch_bounds__(1024) host_refresh2_kernel(const int* __restrict__ ids, int R, int layer, int E,
     int* __restrict__ table, int* __restrict__ owner, long* __restrict__ age, const long* __restrict__ clock, int S,
-    int max_installs, HostMailbox2* mb, long long* rstate) {
+    int max_installs, HostMailbox2* mb, long long* rstate, int mode) {
   __shared__ long best_age[32];
   __shared__ int best_slot[32];
   __shared__ int keys[HT2_MAXR];
@@ -1904,10 +1943,11 @@ __global__ void __launch_bounds__(1024) host_refresh2_kernel(const int* __restri
     }
     rstate[1] = done;
     head = rstate[0];
-    // this layer's missed, not pending, distinct experts
+    // this layer's missed (or hinted), not pending, distinct experts
     int c = 0;
-    for (int r = 0; r < R && c < max_installs; ++r) {
-      const int key = layer * E + ids[r];
+    const int RR = mode == 1 ? min(mb->hint_n, HT2_MAXR) : R;
+    for (int r = 0; r < RR && c < max_installs; ++r) {
+      const int key = layer * E + (mode == 1 ? mb->hint_ids[r] : ids[r]);
       if (table[key] != -1) continue;
       bool dup = false;
       for (int q = 0; q < c; ++q) dup |= keys[q] == key;
@@ -1920,7 +1960,7 @@ __global__ void __launch_bounds__(1024) host_refresh2_kernel(const int* __restri
     long a = 0x7fffffffffffffffL; int sl = -1;
     for (int i = tid; i < S; i += blockDim.x) {
       const int o = owner[i];
-      const bool ok = o < 0 || (o / E <= layer && age[i] < now);
+      const bool ok = o < 0 || ((mode == 1 ? o / E < layer : o / E <= layer) && age[i] < now && table[o] != -2);
       const long v = o < 0 ? -1 : age[i];
       if (ok && v < a) { a = v; sl = i; }
     }
@@ -1954,13 +1994,13 @@ __global__ void __launch_bounds__(1024) host_refresh2_kernel(const int* __restri
 }  // namespace
 
 void host_refresh2(torch::Tensor ids, int64_t layer, int64_t E, torch::Tensor table, torch::Tensor owner, torch::Tensor age,
-                   torch::Tensor clock, int64_t max_installs, int64_t mailbox, torch::Tensor rstate) {
+                   torch::Tensor clock, int64_t max_installs, int64_t mailbox, torch::Tensor rstate, int64_t mode) {
   TORCH_CHECK(ids.numel() <= HT2_MAXR && max_installs <= HT2_MAXR && rstate.scalar_type() == at::kLong && rstate.numel() == 2);
   host_refresh2_kernel<<<1, 1024, 0, at::cuda::getCurrentCUDAStream()>>>(ids.data_ptr<int>(), ids.numel(), layer, E,
       table.data_ptr<int>(), owner.data_ptr<int>(), age.data_ptr<int64_t>(), clock.data_ptr<int64_t>(), owner.numel(),
-      max_installs, (HostMailbox2*)mailbox, (long long*)rstate.data_ptr<int64_t>());
+      max_installs, (HostMailbox2*)mailbox, (long long*)rstate.data_ptr<int64_t>(), (int)mode);
 }
-void host_tier2_installer(int64_t handle, std::vector<int64_t> pool, std::vector<int64_t> expert_bytes, int64_t E, int64_t device, int64_t cpu);
+void host_tier2_installer(int64_t handle, std::vector<int64_t> pool, std::vector<int64_t> expert_bytes, int64_t E, int64_t device, int64_t cpu, int64_t table);
 int64_t host_tier2_drain(int64_t handle);
 namespace {
 
@@ -2101,6 +2141,23 @@ __global__ void rowdot_kernel(const __nv_bfloat16* __restrict__ W, const float* 
     else out[row] = 1.f / (1.f + __expf(-acc));
   }
 }
+template <int ACT>
+__global__ void __launch_bounds__(256) rowdot_block_kernel(const __nv_bfloat16* __restrict__ W, const float* __restrict__ v, float* out, int K, float scale) {
+  __shared__ float red[8];
+  const int row = blockIdx.x;
+  const __nv_bfloat162* w2 = reinterpret_cast<const __nv_bfloat162*>(W + (long)row * K);
+  float acc = 0.f;
+  for (int c = threadIdx.x; c < K / 2; c += 256) { const float2 a = __bfloat1622float2(w2[c]); acc = fmaf(a.x, v[2 * c], fmaf(a.y, v[2 * c + 1], acc)); }
+  for (int o = 16; o > 0; o >>= 1) acc += __shfl_xor_sync(0xffffffffu, acc, o);
+  if ((threadIdx.x & 31) == 0) red[threadIdx.x >> 5] = acc;
+  __syncthreads();
+  if (threadIdx.x == 0) {
+    float t = 0.f;
+    for (int i = 0; i < 8; ++i) t += red[i];
+    if (ACT == 0) { const float z = t / scale; out[row] = z / (1.f + __expf(-z)); }
+    else out[row] = 1.f / (1.f + __expf(-t));
+  }
+}
 __global__ void hc_mix_kernel(const float* __restrict__ u, const float* __restrict__ hn, __nv_bfloat16* xhat, int H, int G) {
   const int i = blockIdx.x * blockDim.x + threadIdx.x;
   if (i >= H) return;
@@ -2110,8 +2167,17 @@ __global__ void hc_mix_kernel(const float* __restrict__ u, const float* __restri
 }
 }  // namespace
 
+__global__ void hc_mean_kernel(const float* __restrict__ hn, __nv_bfloat16* xhat, int H, int G) {
+  const int i = blockIdx.x * blockDim.x + threadIdx.x;
+  if (i >= H) return;
+  float acc = 0.f;
+  for (int g = 0; g < G; ++g) acc += hn[g * H + i];
+  xhat[i] = __float2bfloat16(acc / G);
+}
+
+// gates = false: the plain mean of the normalized streams (no low-rank mixing gates: ~20 KB read instead of ~13 MB)
 void hc_mix_guess(torch::Tensor streams, torch::Tensor norm_w, torch::Tensor down, torch::Tensor up, double eps,
-                  torch::Tensor xhat, torch::Tensor scratch) {
+                  torch::Tensor xhat, torch::Tensor scratch, bool gates) {
   const int64_t H = xhat.numel(), GH = streams.numel(), G = GH / H, R = down.size(0);
   TORCH_CHECK(GH == G * H && down.size(1) == GH && up.size(0) == GH && up.size(1) == R && norm_w.numel() == GH &&
               scratch.numel() >= 2 * GH + R && streams.is_contiguous() && down.is_contiguous() && up.is_contiguous() &&
@@ -2121,40 +2187,85 @@ void hc_mix_guess(torch::Tensor streams, torch::Tensor norm_w, torch::Tensor dow
   float* d = hn + GH;
   float* u = d + R;
   hc_norm_kernel<<<G, 1024, 0, st>>>((const __nv_bfloat16*)streams.data_ptr(), (const __nv_bfloat16*)norm_w.data_ptr(), hn, H, (float)eps);
-  rowdot_kernel<0><<<(R + 7) / 8, 256, 0, st>>>((const __nv_bfloat16*)down.data_ptr(), hn, d, R, GH, (float)G);
+  if (!gates) { hc_mean_kernel<<<(H + 255) / 256, 256, 0, st>>>(hn, (__nv_bfloat16*)xhat.data_ptr(), H, G); return; }
+  rowdot_block_kernel<0><<<R, 256, 0, st>>>((const __nv_bfloat16*)down.data_ptr(), hn, d, GH, (float)G);
   rowdot_kernel<1><<<(GH + 7) / 8, 256, 0, st>>>((const __nv_bfloat16*)up.data_ptr(), d, u, GH, R, 1.f);
   hc_mix_kernel<<<(H + 255) / 256, 256, 0, st>>>(u, hn, (__nv_bfloat16*)xhat.data_ptr(), H, G);
+}
+namespace {
+
+// Join without a cross-stream event: the main stream derives from the lookup's own output (`gpu_w` 0 and `w` != 0:
+// a CPU route, dealt alternately to tiers a / b exactly like host_post2) whether and which tiers this layer posted to,
+// keeps its own copy of the post counter (mstate[0], advanced iff the layer posts, like the side stream's), and waits
+// on the tiers' done flags in mapped memory; then out + results.
+__global__ void __launch_bounds__(1024) host_join4_kernel(const __nv_bfloat16* __restrict__ in, __nv_bfloat16* __restrict__ out,
+    int numel, const float* __restrict__ w, const float* __restrict__ gpu_w, int R, HostResult2* res, HostResult2* res2,
+    unsigned long long* mstate) {
+  __shared__ unsigned long long sa, sb;
+  if (threadIdx.x == 0) {
+    int n = 0;
+    for (int r = 0; r < R; ++r) n += gpu_w[r] == 0.f && w[r] != 0.f;
+    unsigned long long sq = 0;
+    if (n) { sq = mstate[0] + 1; mstate[0] = sq; }
+    sa = n >= 1 ? sq : 0;
+    sb = (res2 && n >= 2) ? sq : 0;
+    if (sa) while (res->done != sa) {}
+    if (sb) while (res2->done != sb) {}
+    __threadfence_system();
+  }
+  __syncthreads();
+  const unsigned long long a_ = sa, b_ = sb;
+  for (int i = threadIdx.x; i < numel / 4; i += blockDim.x) {
+    float4 v = a_ ? __ldcv(reinterpret_cast<const float4*>(res->out) + i) : make_float4(0.f, 0.f, 0.f, 0.f);
+    if (b_) { const float4 u = __ldcv(reinterpret_cast<const float4*>(res2->out) + i); v.x += u.x; v.y += u.y; v.z += u.z; v.w += u.w; }
+    const __nv_bfloat162* a = reinterpret_cast<const __nv_bfloat162*>(in) + 2 * i;
+    const float2 a0 = __bfloat1622float2(a[0]), a1 = __bfloat1622float2(a[1]);
+    __nv_bfloat162* o = reinterpret_cast<__nv_bfloat162*>(out) + 2 * i;
+    o[0] = __floats2bfloat162_rn(a0.x + v.x, a0.y + v.y);
+    o[1] = __floats2bfloat162_rn(a1.x + v.z, a1.y + v.w);
+  }
+}
+}  // namespace
+
+torch::Tensor host_join4(torch::Tensor out, torch::Tensor w, torch::Tensor gpu_w, int64_t result, int64_t result_b, torch::Tensor mstate) {
+  TORCH_CHECK(out.is_contiguous() && out.scalar_type() == at::kBFloat16 && out.numel() % 4 == 0 && out.numel() <= HT2_MAXT * HT2_MAXH &&
+              w.numel() == gpu_w.numel() && w.numel() <= HT2_MAXR && w.scalar_type() == at::kFloat && gpu_w.scalar_type() == at::kFloat);
+  auto o = torch::empty_like(out);
+  host_join4_kernel<<<1, 1024, 0, at::cuda::getCurrentCUDAStream()>>>((const __nv_bfloat16*)out.data_ptr(), (__nv_bfloat16*)o.data_ptr(),
+      out.numel(), w.data_ptr<float>(), gpu_w.data_ptr<float>(), w.numel(), (HostResult2*)result, (HostResult2*)result_b,
+      (unsigned long long*)mstate.data_ptr<int64_t>());
+  return o;
 }
 namespace {
 }  // namespace
 
 void host_post2(torch::Tensor ids, torch::Tensor w, int64_t layer, torch::Tensor gpu_w, torch::Tensor x,
-                int64_t mailbox, torch::Tensor state) {
+                int64_t mailbox, torch::Tensor state, int64_t mailbox_b) {
   const int64_t H = x.size(-1), ntok = x.numel() / H;
   TORCH_CHECK(ids.numel() <= HT2_MAXR && ntok <= HT2_MAXT && H <= HT2_MAXH && H % 128 == 0 && x.is_contiguous() &&
               x.scalar_type() == at::kBFloat16 && ids.scalar_type() == at::kInt && w.scalar_type() == at::kFloat &&
-              gpu_w.scalar_type() == at::kFloat && gpu_w.numel() == ids.numel());
+              gpu_w.scalar_type() == at::kFloat && gpu_w.numel() == ids.numel() && state.numel() >= 3);
   host_post2_kernel<<<1, 512, 0, at::cuda::getCurrentCUDAStream()>>>(ids.data_ptr<int>(), w.data_ptr<float>(), ids.numel(),
       layer, gpu_w.data_ptr<float>(), (const __nv_bfloat16*)x.data_ptr(), H, ntok, (HostMailbox2*)mailbox,
-      (unsigned long long*)state.data_ptr<int64_t>());
+      (HostMailbox2*)mailbox_b, (unsigned long long*)state.data_ptr<int64_t>());
 }
 
-torch::Tensor host_wait2(torch::Tensor out, int64_t result, torch::Tensor state) {
+torch::Tensor host_wait2(torch::Tensor out, int64_t result, torch::Tensor state, int64_t result_b) {
   TORCH_CHECK(out.is_contiguous() && out.scalar_type() == at::kBFloat16 && out.numel() % 4 == 0 && out.numel() <= HT2_MAXT * HT2_MAXH);
   auto o = torch::empty_like(out);
-  host_wait2_kernel<<<1, 1024, 0, at::cuda::getCurrentCUDAStream()>>>((const __nv_bfloat16*)out.data_ptr(),
-      (__nv_bfloat16*)o.data_ptr(), out.numel(), (HostResult2*)result, (const unsigned long long*)state.data_ptr<int64_t>());
+  host_wait2_kernel<<<1, HT2_POLL_THREADS, 0, at::cuda::getCurrentCUDAStream()>>>((const __nv_bfloat16*)out.data_ptr(),
+      (__nv_bfloat16*)o.data_ptr(), out.numel(), (HostResult2*)result, (HostResult2*)result_b, (const unsigned long long*)state.data_ptr<int64_t>());
   return o;
 }
 
 // dst[:numel] = host result of the last post (0 when nothing was posted): for a side stream, into a static buffer
-void host_fetch2(torch::Tensor dst, int64_t numel, int64_t result, torch::Tensor state) {
+void host_fetch2(torch::Tensor dst, int64_t numel, int64_t result, torch::Tensor state, int64_t result_b) {
   TORCH_CHECK(dst.is_contiguous() && dst.scalar_type() == at::kBFloat16 && numel % 4 == 0 && numel <= dst.numel() && numel <= HT2_MAXT * HT2_MAXH);
-  host_wait2_kernel<<<1, 1024, 0, at::cuda::getCurrentCUDAStream()>>>(nullptr, (__nv_bfloat16*)dst.data_ptr(), numel,
-      (HostResult2*)result, (const unsigned long long*)state.data_ptr<int64_t>());
+  host_wait2_kernel<<<1, HT2_POLL_THREADS, 0, at::cuda::getCurrentCUDAStream()>>>(nullptr, (__nv_bfloat16*)dst.data_ptr(), numel,
+      (HostResult2*)result, (HostResult2*)result_b, (const unsigned long long*)state.data_ptr<int64_t>());
 }
 
-std::tuple<int64_t, int64_t, int64_t> host_tier2_start(std::vector<int64_t> banks, int64_t H, int64_t I, int64_t G, std::vector<int64_t> cpus, int64_t E);
+std::tuple<int64_t, int64_t, int64_t> host_tier2_start(std::vector<int64_t> banks, int64_t H, int64_t I, int64_t G, std::vector<int64_t> cpus, int64_t E, int64_t replica_node);
 void host_tier2_stop(int64_t handle);
 std::vector<int64_t> host_tier2_timing(int64_t handle);
 
@@ -2173,18 +2284,18 @@ void gtimer(torch::Tensor buf, torch::Tensor slot) {
 
 TORCH_LIBRARY(OPS_NS, m) {
   m.def("gtimer(Tensor(a!) buf, Tensor(b!) slot) -> ()");
-  m.def("host_hint2(Tensor ids, int layer, int E, Tensor table, int mailbox, Tensor(a!) hstate) -> ()");
-  m.def("host_fetch2(Tensor(a!) dst, int numel, int result, Tensor state) -> ()");
-  m.def("host_guess2(Tensor x, Tensor W, int k, int layer, Tensor table, int mailbox, Tensor(a!) hstate, Tensor(b!) scratch, Tensor(c!) counter, int max_out, int blocks) -> ()");
-  m.def("host_refresh2(Tensor ids, int layer, int E, Tensor(a!) table, Tensor(b!) owner, Tensor(c!) age, Tensor clock, int max_installs, int mailbox, Tensor(d!) rstate) -> ()");
-  m.def("host_tier2_installer(int handle, int[] pool, int[] expert_bytes, int E, int device, int cpu) -> ()");
+  m.def("host_fetch2(Tensor(a!) dst, int numel, int result, Tensor state, int result_b=0) -> ()");
+  m.def("host_guess2(Tensor x, Tensor W, int k, int layer, Tensor table, int mailbox, Tensor(a!) hstate, Tensor(b!) scratch, Tensor(c!) counter, int max_out, int blocks, int mailbox_b=0) -> ()");
+  m.def("host_refresh2(Tensor ids, int layer, int E, Tensor(a!) table, Tensor(b!) owner, Tensor(c!) age, Tensor clock, int max_installs, int mailbox, Tensor(d!) rstate, int mode=0) -> ()");
+  m.def("host_tier2_installer(int handle, int[] pool, int[] expert_bytes, int E, int device, int cpu, int table=0) -> ()");
   m.def("host_tier2_drain(int handle) -> int");
   m.def("host_lookup_post3(Tensor ids, Tensor w, int layer, int E, Tensor table, Tensor age, Tensor clock, Tensor x, int mailbox, Tensor state) -> (Tensor, Tensor)");
   m.def("host_join3(Tensor out, int result, Tensor state) -> Tensor");
-  m.def("hc_mix_guess(Tensor streams, Tensor norm_w, Tensor down, Tensor up, float eps, Tensor(a!) xhat, Tensor(b!) scratch) -> ()");
-  m.def("host_post2(Tensor ids, Tensor w, int layer, Tensor gpu_w, Tensor x, int mailbox, Tensor(a!) state) -> ()");
-  m.def("host_wait2(Tensor out, int result, Tensor state) -> Tensor");
-  m.def("host_tier2_start(int[] banks, int H, int I, int G, int[] cpus, int E) -> (int, int, int)");
+  m.def("hc_mix_guess(Tensor streams, Tensor norm_w, Tensor down, Tensor up, float eps, Tensor(a!) xhat, Tensor(b!) scratch, bool gates=True) -> ()");
+  m.def("host_join4(Tensor out, Tensor w, Tensor gpu_w, int result, int result_b, Tensor mstate) -> Tensor");
+  m.def("host_post2(Tensor ids, Tensor w, int layer, Tensor gpu_w, Tensor x, int mailbox, Tensor(a!) state, int mailbox_b=0) -> ()");
+  m.def("host_wait2(Tensor out, int result, Tensor state, int result_b=0) -> Tensor");
+  m.def("host_tier2_start(int[] banks, int H, int I, int G, int[] cpus, int E, int replica_node=-1) -> (int, int, int)");
   m.def("host_tier2_stop(int handle) -> ()");
   m.def("host_tier2_timing(int handle) -> int[]");
   m.def("qmv4_tc6(Tensor x, Tensor pw, Tensor ps, Tensor pb, int hw, int hs, int hb, Tensor ids, Tensor? slots, Tensor? miss, Tensor? weights, int J, int x_div, int group_size) -> Tensor");
@@ -2216,13 +2327,13 @@ TORCH_LIBRARY(OPS_NS, m) {
 TORCH_LIBRARY_IMPL(OPS_NS, CUDA, m) {
   m.impl("gtimer", &gtimer);
   m.impl("host_post2", &host_post2);
+  m.impl("host_join4", &host_join4);
   m.impl("hc_mix_guess", &hc_mix_guess);
   m.impl("host_lookup_post3", &host_lookup_post3);
   m.impl("host_join3", &host_join3);
   m.impl("host_refresh2", &host_refresh2);
   m.impl("host_guess2", &host_guess2);
   m.impl("host_fetch2", &host_fetch2);
-  m.impl("host_hint2", &host_hint2);
   m.impl("host_wait2", &host_wait2);
   m.impl("qmv4_tc6", &qmv4_tc6);
   m.impl("gather_qmv4_tc", &gather_qmv4_tc);

@@ -22,7 +22,7 @@ for l in range(L):
     banks += [t.data_ptr() for t in (gw, gs, gb, dw, ds, db)]
 print(f"banks {sum(t.numel() * t.element_size() for t in keep) / 1e9:.1f} GB pinned", flush=True)
 table = torch.full((L * EH,), -1, dtype=torch.int32, device="cuda")  # nothing resident: every posted route is a miss
-state = torch.zeros(2, dtype=torch.long, device="cuda")
+state = torch.zeros(3, dtype=torch.long, device="cuda")
 hstate = torch.zeros(1, dtype=torch.long, device="cuda")
 HINT = int(os.environ.get("HINT", "0")); A = int(os.environ.get("A", "0"))
 x = torch.randn(1, H, device="cuda").bfloat16()

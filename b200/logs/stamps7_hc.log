@@ -10,3 +10,6 @@ Notes:
 Some parameters are on the meta device because they were offloaded to the cpu.
 /home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
   warnings.warn(
+host 'Write a Python function that p': per token 11.84 ms = layer0 MoE 0.21 + layers 1..47 9.44 + layer47 end -> next layer0 router 2.18 ms
+host 'Explain the causes of the Fren': per token 12.15 ms = layer0 MoE 0.20 + layers 1..47 9.29 + layer47 end -> next layer0 router 2.58 ms
+== 2026-11-24T00:52:25-08:00 exit 0; other processes on GPU at end: 0

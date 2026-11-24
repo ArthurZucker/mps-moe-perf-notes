@@ -254,19 +254,20 @@ def _(x, pw, ps, pb, hw, hs, hb, ids, slots, miss, weights, J, x_div, group_size
     return x.new_empty(ids.numel() // J, pw.shape[1])
 
 
-def host_post2(ids, weights, layer: int, gpu_weights, x, mailbox: int, state):
-    """Host tier v2: post the routes the lookup left to the CPU (GPU weight 0), the activation and its group sums."""
-    ops.host_post2(ids, weights, layer, gpu_weights, x, mailbox, state)
+def host_post2(ids, weights, layer: int, gpu_weights, x, mailbox: int, state, mailbox_b: int = 0):
+    """Host tier v2: post the routes the lookup left to the CPU (GPU weight 0), the activation and its group sums;
+    with a second tier (`mailbox_b`), the missed routes alternate between the two. `state`: int64 [3]."""
+    ops.host_post2(ids, weights, layer, gpu_weights, x, mailbox, state, mailbox_b)
 
 
-def host_wait2(out, result: int, state):
+def host_wait2(out, result: int, state, result_b: int = 0):
     """Host tier v2: `out` + the host result of the last post (a copy of `out` when nothing was posted)."""
-    return ops.host_wait2(out, result, state)
+    return ops.host_wait2(out, result, state, result_b)
 
 
-def host_tier2_start(banks, hidden: int, intermediate: int, group_size: int, cpus, num_experts: int):
+def host_tier2_start(banks, hidden: int, intermediate: int, group_size: int, cpus, num_experts: int, replica_node: int = -1):
     """Host tier v2 CPU workers over the host banks (6 pointers per layer) -> `(handle, mailbox, result)`."""
-    return ops.host_tier2_start(list(banks), hidden, intermediate, group_size, list(cpus), num_experts)
+    return ops.host_tier2_start(list(banks), hidden, intermediate, group_size, list(cpus), num_experts, replica_node)
 
 
 def host_tier2_stop(handle: int):
@@ -279,36 +280,30 @@ def host_tier2_timing(handle: int):
 
 
 @torch.library.register_fake(add_op_namespace_prefix("host_wait2"))
-def _(out, result, state):
+def _(out, result, state, result_b=0):
     return torch.empty_like(out)
 
 
-def host_hint2(ids, layer: int, num_experts: int, table, mailbox: int, hstate):
-    """Host tier v2 prefetch hint: the non-resident experts among `ids` (guesses for `layer`) get staged by the CPU
-    workers (each its own row slices, into its L2) before the layer posts its real misses."""
-    ops.host_hint2(ids, layer, num_experts, table, mailbox, hstate)
-
-
-def host_fetch2(dst, numel: int, result: int, state):
+def host_fetch2(dst, numel: int, result: int, state, result_b: int = 0):
     """Host tier v2: `dst[:numel]` = the host result of the last post (zeros when nothing was posted)."""
-    ops.host_fetch2(dst, numel, result, state)
+    ops.host_fetch2(dst, numel, result, state, result_b)
 
 
-def host_guess2(x, router_weight, k: int, layer: int, table, mailbox: int, hstate, scratch, counter, max_out: int = 64, blocks: int = 8):
+def host_guess2(x, router_weight, k: int, layer: int, table, mailbox: int, hstate, scratch, counter, max_out: int = 64, blocks: int = 8, mailbox_b: int = 0):
     """Host tier v2: top-`k` of `router_weight @ x` (one token), minus the experts resident for `layer`, posted as the
     prefetch hint for `layer`, in one launch. `scratch` ([E] float) and `counter` (one int32, zero) are static buffers."""
-    ops.host_guess2(x, router_weight, k, layer, table, mailbox, hstate, scratch, counter, max_out, blocks)
+    ops.host_guess2(x, router_weight, k, layer, table, mailbox, hstate, scratch, counter, max_out, blocks, mailbox_b)
 
 
-def host_refresh2(ids, layer: int, num_experts: int, table, owner, age, clock, max_installs: int, mailbox: int, rstate):
+def host_refresh2(ids, layer: int, num_experts: int, table, owner, age, clock, max_installs: int, mailbox: int, rstate, mode: int = 0):
     """Host tier v2 pool refresh: commit the installs the CPU installer has copied, plan installs (LRU victims) for this
     layer's missed experts. `rstate`: int64 [produced, committed]."""
-    ops.host_refresh2(ids, layer, num_experts, table, owner, age, clock, max_installs, mailbox, rstate)
+    ops.host_refresh2(ids, layer, num_experts, table, owner, age, clock, max_installs, mailbox, rstate, mode)
 
 
-def host_tier2_installer(handle: int, pool, expert_bytes, num_experts: int, device: int, cpu: int):
+def host_tier2_installer(handle: int, pool, expert_bytes, num_experts: int, device: int, cpu: int, table: int = 0):
     """Start the CPU installer thread: planned installs are copied host bank -> pool slot by the copy engine."""
-    ops.host_tier2_installer(handle, list(pool), list(expert_bytes), num_experts, device, cpu)
+    ops.host_tier2_installer(handle, list(pool), list(expert_bytes), num_experts, device, cpu, table)
 
 
 def host_tier2_drain(handle: int) -> int:
@@ -342,7 +337,18 @@ def _(out, result, state):
     return torch.empty_like(out)
 
 
-def hc_mix_guess(streams, norm_weight, down, up, eps: float, xhat, scratch):
+def hc_mix_guess(streams, norm_weight, down, up, eps: float, xhat, scratch, gates: bool = True):
     """Approximate MoE input of a hyper-connection layer from the streams entering it (no attention): grouped RMSNorm,
     low-rank mixing gates, weighted mean of the streams -> `xhat` [H] (bf16). `scratch`: float [2 * G * H + R]."""
-    ops.hc_mix_guess(streams, norm_weight, down, up, eps, xhat, scratch)
+    ops.hc_mix_guess(streams, norm_weight, down, up, eps, xhat, scratch, gates)
+
+
+def host_join4(out, weights, gpu_weights, result: int, result_b: int, mstate):
+    """Host tier: `out` + the CPU result(s) of this layer, joined on the main stream without an event: misses are
+    derived from the lookup's `gpu_weights`; `mstate` (int64 [1]) mirrors the post counter."""
+    return ops.host_join4(out, weights, gpu_weights, result, result_b, mstate)
+
+
+@torch.library.register_fake(add_op_namespace_prefix("host_join4"))
+def _(out, weights, gpu_weights, result, result_b, mstate):
+    return torch.empty_like(out)

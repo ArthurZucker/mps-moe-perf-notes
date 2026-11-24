@@ -143,6 +143,8 @@ struct Tier2 {
   // installer: copies planned (key, slot) installs host bank -> pool with cudaMemcpyAsync
   std::thread installer_thread;
   void* pool[6] = {};
+  std::vector<LayerBanks> install_src;  // where the installer copies from (empty: the primary banks)
+  int32_t* table = nullptr;  // device table: the copy stream commits table[key] = slot itself after the copy
   size_t expert_bytes[6] = {};
   int E = 0;
   std::atomic<uint64_t> installs{0};
@@ -153,8 +155,11 @@ struct Tier2 {
     if (cpu >= 0) { cpu_set_t set; CPU_ZERO(&set); CPU_SET(cpu, &set); sched_setaffinity(0, sizeof(set), &set); }
     cudaSetDevice(device);
     using WriteValue64 = CUresult (*)(CUstream, CUdeviceptr, cuuint64_t, unsigned int);
+    using WriteValue32 = CUresult (*)(CUstream, CUdeviceptr, cuuint32_t, unsigned int);
     WriteValue64 write_value = nullptr;
+    WriteValue32 write_value32 = nullptr;
     cudaDriverEntryPointQueryResult q;
+    cudaGetDriverEntryPointByVersion("cuStreamWriteValue32", (void**)&write_value32, 12000, cudaEnableDefault, &q);
     cudaGetDriverEntryPointByVersion("cuStreamWriteValue64", (void**)&write_value, 12000, cudaEnableDefault, &q);
     TORCH_CHECK(write_value && q == cudaDriverEntryPointSuccess, "installer: cuStreamWriteValue64 unavailable");
     cudaStream_t st;
@@ -181,7 +186,7 @@ struct Tier2 {
         const int key = mb->ring[i % RING][0], slot = mb->ring[i % RING][1];
         const int L = key / E, e = key % E;
         if (L < 0 || L >= (int)layers.size() || e < 0 || slot < 0) continue;
-        const LayerBanks& lb = layers[L];
+        const LayerBanks& lb = install_src.empty() ? layers[L] : install_src[L];
         const void* srcs[6] = {lb.gw, lb.gs, lb.gb, lb.dw, lb.ds, lb.db};
         for (int b = 0; b < 6; ++b) {
           dst.push_back((char*)pool[b] + (size_t)slot * expert_bytes[b]);
@@ -191,6 +196,11 @@ struct Tier2 {
       }
       if (!dst.empty())
         cudaMemcpyBatchAsync(dst.data(), src.data(), size.data(), dst.size(), &attr, &attr_idx, 1, st);
+      if (table && write_value32)  // commit right after the copies (a pending slot is never re-planned: no stale entry)
+        for (uint64_t i = issued; i < head; ++i) {
+          const int key = mb->ring[i % RING][0], slot = mb->ring[i % RING][1];
+          if (key >= 0 && slot >= 0) write_value32((CUstream)st, (CUdeviceptr)(table + key), (cuuint32_t)slot, 0);
+        }
       write_value((CUstream)st, (CUdeviceptr)&mb->inst_done, (cuuint64_t)head, 0);
       installs.fetch_add(head - issued, std::memory_order_relaxed);
       issued = head;
@@ -204,10 +214,18 @@ struct Tier2 {
   std::vector<uint16_t> act;      // [n][I] bf16 elements of the pair layout (uint16 view)
   std::vector<float> ags;         // unused
   uint64_t calls = 0;
-  bool umwait = false;  // idle workers wait in C0.1 (HOST_UMWAIT=1): less power, ~7 us later to start a call
+  bool umwait = false;
+  bool gate_prefetch = true;  // HOST_GATE_PREFETCH=0 turns it off  // idle workers wait in C0.1 (HOST_UMWAIT=1): less power, ~7 us later to start a call
   // dissemination barrier: round r, thread t signals (t + 2^r) % T and waits for (t - 2^r) % T; per-thread epochs
   struct alignas(64) Flag { std::atomic<uint64_t> v{0}; };
   std::vector<Flag> flags;  // [rounds][T]
+  std::vector<Flag> claim1, done1, claim2, done2, steal1, steal2;  // per slice, stamped with the call's sequence number
+  alignas(64) std::atomic<uint64_t> published{0};
+  alignas(64) std::atomic<uint64_t> count1{0};  // first completions of phase-1 / phase-2 slices, over all calls
+  alignas(64) std::atomic<uint64_t> count2{0};
+  alignas(64) std::atomic<uint64_t> call_index{0};  // (index << 32) | (sequence & 0xffffffff) of the latest call
+  alignas(64) std::atomic<uint64_t> redo_total{0};
+  uint64_t steal_ns = 20000;  // HOST_STEAL_US
   int rounds = 0;
   void barrier(int t, uint64_t& epoch) {
     ++epoch;
@@ -223,7 +241,7 @@ struct Tier2 {
     if (cpu >= 0) { cpu_set_t set; CPU_ZERO(&set); CPU_SET(cpu, &set); sched_setaffinity(0, sizeof(set), &set); }
     // a worker reads the banks in its own node's memory
     const std::vector<LayerBanks>& banks = (!replica.empty() && thread_node[t] == replica_node) ? replica : layers;
-    std::vector<float> outacc((size_t)MAXT * ((H + T - 1) / T));
+    std::vector<float> outacc((size_t)MAXT * (((H + T - 1) / T + 3) / 4 * 4));  // a slice is cd rows (multiple of 4)
     uint64_t last = 0, last_hint = 0;
     uint64_t sink = 0;
     const int rb_g = H / 2, rb_d = I / 2;  // packed bytes per row
@@ -235,6 +253,8 @@ struct Tier2 {
     std::vector<float> rowbuf(std::max(2 * ck, cd));
     std::vector<float> agsl((size_t)MAXR * (I / 64));
     uint64_t epoch = 0;
+    uint64_t redo = 0;
+    uint64_t ncalls = 0;  // calls this worker has seen (every worker sees every call): phase targets ncalls * T
     while (true) {
       uint64_t s;
       while ((s = mb->seq) == last) {
@@ -271,7 +291,7 @@ struct Tier2 {
       }
       std::atomic_thread_fence(std::memory_order_acquire);
       last = s;
-      const uint64_t t0 = t == 0 ? now_ns() : 0;
+      const uint64_t t0 = now_ns();
       const int L = mb->layer, ntok = mb->ntok;
       int n = mb->n;
       bool valid = L >= 0 && L < (int)layers.size() && n >= 0 && n <= MAXR && ntok >= 1 && ntok <= MAXT;
@@ -279,66 +299,120 @@ struct Tier2 {
       if (!valid) { n = 0; if (t == 0) res->bad_posts += 1; }  // a malformed post: answer zeros rather than read out of bounds
       if (t == 0) res->routes += n;
       const LayerBanks& lb = banks[std::max(0, std::min(L, (int)banks.size() - 1))];
-      // this thread's down rows: prefetch into L2 now, they are read after the gate phase
+      // this thread's gate / up slices of every missed expert: issue them all now (memory-level parallelism: a short
+      // per-thread stream never ramps the hardware prefetchers up), then the down rows into L2
+      if (gate_prefetch)
+        for (int j = 0; j < n; ++j) {
+          const size_t e = mb->ids[j];
+          if ((int)e < 0 || (int)e >= E) continue;
+          const uint8_t* g = lb.gw + (e * 2 * I + k0) * rb_g;
+          const uint8_t* u = lb.gw + (e * 2 * I + I + k0) * rb_g;
+          const size_t bytes = (size_t)(k1 - k0) * rb_g;
+          for (size_t o = 0; o < bytes; o += 64) { _mm_prefetch((const char*)g + o, _MM_HINT_T0); _mm_prefetch((const char*)u + o, _MM_HINT_T0); }
+        }
       for (int j = 0; j < n; ++j) {
         const uint8_t* p = lb.dw + ((size_t)mb->ids[j] * H + r0) * rb_d;
         const size_t bytes = (size_t)(r1 - r0) * rb_d;
         for (size_t o = 0; o < bytes; o += 64) _mm_prefetch((const char*)p + o, _MM_HINT_T1);
       }
-      // phase 1: gate rows [k0, k1) and up rows [I + k0, I + k1) of every missed expert -> act slice (pair layout)
+      // Work items = the T slices of each phase; a thread runs its own slice first, then claims unstarted ones; a slice
+      // claimed but not done after `steal_ns` is run again by a waiting thread (idempotent: same inputs, same outputs to
+      // the same disjoint rows). No all-thread barrier: a preempted worker delays a call by at most `steal_ns`.
       uint16_t* act16 = act.data();
-      for (int j = 0; j < n; ++j) {
-        const int q = mb->tok[j];
-        const size_t e = mb->ids[j];
-        const uint8_t* gw = lb.gw + e * 2 * I * rb_g;
-        const uint16_t* gsc = lb.gs + e * 2 * I * (H / 64);
-        const uint16_t* gbi = lb.gb + e * 2 * I * (H / 64);
-        const uint32_t* xq = mb->xq + (size_t)q * H / 2;
-        const float* xg = mb->xgs + (size_t)q * (H / 64);
-        dot_range(gw, rb_g, gsc, gbi, H / 64, k0, k1, xq, xg, rowbuf.data());
-        dot_range(gw, rb_g, gsc, gbi, H / 64, I + k0, I + k1, xq, xg, rowbuf.data() + (k1 - k0));
-        for (int k = k0; k < k1; ++k) {
-          const float gv = bf2f(f2bf(rowbuf[k - k0])), u = bf2f(f2bf(rowbuf[(k1 - k0) + k - k0]));
-          const uint16_t a = f2bf(bf2f(f2bf(gv / (1.f + std::exp(-gv)))) * u);
-          // element k of the pair layout: chunk k / 128, p = k % 128, lane i = p / 8, nibble slot p % 8
-          const int c = k / 128, p = k % 128, i = p / 8, kk = p % 8;
-          act16[(size_t)j * I + 2 * (c * 64 + (kk & 3) * 16 + i) + (kk >> 2)] = a;
+      auto run1 = [&](int u) {  // gate rows [a, b) and up rows [I + a, I + b) of every missed expert -> act slice
+        const int a = std::min(I, u * ck), b = std::min(I, a + ck);
+        if (a >= b) return;
+        for (int j = 0; j < n; ++j) {
+          const int q = mb->tok[j];
+          const size_t e = mb->ids[j];
+          const uint8_t* gw = lb.gw + e * 2 * I * rb_g;
+          const uint16_t* gsc = lb.gs + e * 2 * I * (H / 64);
+          const uint16_t* gbi = lb.gb + e * 2 * I * (H / 64);
+          const uint32_t* xq = mb->xq + (size_t)q * H / 2;
+          const float* xg = mb->xgs + (size_t)q * (H / 64);
+          dot_range(gw, rb_g, gsc, gbi, H / 64, a, b, xq, xg, rowbuf.data());
+          dot_range(gw, rb_g, gsc, gbi, H / 64, I + a, I + b, xq, xg, rowbuf.data() + (b - a));
+          for (int k = a; k < b; ++k) {
+            const float gv = bf2f(f2bf(rowbuf[k - a])), uu = bf2f(f2bf(rowbuf[(b - a) + k - a]));
+            const uint16_t v = f2bf(bf2f(f2bf(gv / (1.f + std::exp(-gv)))) * uu);
+            const int c = k / 128, p = k % 128, i = p / 8, kk = p % 8;  // element k of the pair layout
+            act16[(size_t)j * I + 2 * (c * 64 + (kk & 3) * 16 + i) + (kk >> 2)] = v;
+          }
+        }
+      };
+      auto run2 = [&](int u) {  // down rows [a, b): routing-weighted sum over the missed experts, written to the result
+        const int a = std::min(H, u * cd), b = std::min(H, a + cd);
+        if (a >= b) return;
+        std::fill(outacc.begin(), outacc.begin() + (size_t)ntok * (b - a), 0.f);
+        for (int j = 0; j < n; ++j) {
+          const size_t e = mb->ids[j];
+          const float wj = mb->w[j];
+          float* oq = outacc.data() + (size_t)mb->tok[j] * (b - a);
+          dot_range(lb.dw + e * H * rb_d, rb_d, lb.ds + e * H * (I / 64), lb.db + e * H * (I / 64), I / 64, a, b,
+                    reinterpret_cast<const uint32_t*>(act16 + (size_t)j * I), agsl.data() + (size_t)j * (I / 64), rowbuf.data());
+          for (int r = a; r < b; ++r) oq[r - a] += wj * rowbuf[r - a];
+        }
+        for (int q = 0; q < ntok; ++q) memcpy(res->out + (size_t)q * H + a, outacc.data() + (size_t)q * (b - a), (b - a) * 4);
+      };
+      auto claim = [&](std::vector<Flag>& c, int u) {
+        uint64_t cur = c[u].v.load(std::memory_order_relaxed);
+        return cur != s && c[u].v.compare_exchange_strong(cur, s, std::memory_order_acq_rel);
+      };
+      auto finish = [&](std::vector<Flag>& dn, std::atomic<uint64_t>& cnt, int u) {  // count a slice's first completion
+        if (dn[u].v.exchange(s, std::memory_order_acq_rel) != s) cnt.fetch_add(1, std::memory_order_release);
+      };
+      auto phase = [&](std::vector<Flag>& cl, std::vector<Flag>& dn, auto&& run, std::vector<Flag>& st,
+                       std::atomic<uint64_t>& cnt, uint64_t target) {
+        if (claim(cl, t)) { run(t); finish(dn, cnt, t); }
+        for (int k = 1; k < T; ++k) {  // unstarted slices (a worker that has not woken up yet)
+          const int u = (t + k) % T;
+          if (cl[u].v.load(std::memory_order_relaxed) != s && claim(cl, u)) { run(u); finish(dn, cnt, u); }
+        }
+        const uint64_t w0 = now_ns();
+        while (cnt.load(std::memory_order_acquire) < target) {  // one cache line while waiting
+          if (now_ns() - w0 > steal_ns)
+            for (int u = 0; u < T; ++u)  // late: one stealer per unfinished slice re-runs it (idempotent)
+              if (dn[u].v.load(std::memory_order_acquire) != s && claim(st, u)) { run(u); finish(dn, cnt, u); redo += 1; }
+          _mm_pause();
+        }
+        std::atomic_thread_fence(std::memory_order_acquire);
+      };
+      // the call's index, shared: the first worker to see sequence `s` assigns it (a worker can skip a call that
+      // completed without it, so a private count would be off); packed (index << 32 | seq low bits) in one CAS word
+      {
+        uint64_t v = call_index.load(std::memory_order_acquire);
+        for (;;) {
+          if ((v & 0xffffffffull) == (s & 0xffffffffull)) { ncalls = v >> 32; break; }
+          const uint64_t nv = (((v >> 32) + 1) << 32) | (s & 0xffffffffull);
+          if (call_index.compare_exchange_weak(v, nv, std::memory_order_acq_rel)) { ncalls = nv >> 32; break; }
         }
       }
-      barrier(t, epoch);
-      const uint64_t t1 = t == 0 ? now_ns() : 0;
-      // group sums of each act (cheap: every thread computes them all)
-      for (int j = 0; j < n; ++j)
+      phase(claim1, done1, run1, steal1, count1, ncalls * (uint64_t)T);
+      const uint64_t t1 = now_ns();
+      for (int j = 0; j < n; ++j)  // group sums of each act (every thread computes them all: cheap)
         for (int g = 0; g < I / 64; ++g) {
-          // group g = lanes [8 (g % 2), 8 (g % 2) + 8) of chunk g / 2, all 4 k slots, both halves
           const uint32_t* aq = reinterpret_cast<const uint32_t*>(act16 + (size_t)j * I) + (g / 2) * 64 + (g % 2) * 8;
           float sum = 0.f;
           for (int kk = 0; kk < 4; ++kk)
             for (int ii = 0; ii < 8; ++ii) { const uint32_t v = aq[kk * 16 + ii]; sum += bf2f(v & 0xFFFF) + bf2f(v >> 16); }
           agsl[(size_t)j * (I / 64) + g] = sum;
         }
-      const uint64_t t2 = t == 0 ? now_ns() : 0;
-      // phase 3: down rows r0..r1, experts outer (each expert's rows stream sequentially), routing-weighted sum
-      std::fill(outacc.begin(), outacc.begin() + (size_t)ntok * (r1 - r0), 0.f);
-      for (int j = 0; j < n; ++j) {
-        const size_t e = mb->ids[j];
-        const float wj = mb->w[j];
-        float* oq = outacc.data() + (size_t)mb->tok[j] * (r1 - r0);
-        dot_range(lb.dw + e * H * rb_d, rb_d, lb.ds + e * H * (I / 64), lb.db + e * H * (I / 64), I / 64, r0, r1,
-                  reinterpret_cast<const uint32_t*>(act16 + (size_t)j * I), agsl.data() + (size_t)j * (I / 64), rowbuf.data());
-        for (int r = r0; r < r1; ++r) oq[r - r0] += wj * rowbuf[r - r0];
-      }
-      for (int q = 0; q < ntok; ++q) memcpy(res->out + (size_t)q * H + r0, outacc.data() + (size_t)q * (r1 - r0), (r1 - r0) * 4);
-      barrier(t, epoch);
+      const uint64_t t2 = now_ns();
+      phase(claim2, done2, run2, steal2, count2, ncalls * (uint64_t)T);
       if (sink == 0x123456789ull) res->pad[0] = sink;  // keep the touches
-      if (t == 0) {
+      uint64_t pub = published.load(std::memory_order_relaxed);
+      if (pub != s && published.compare_exchange_strong(pub, s, std::memory_order_acq_rel)) {  // one publisher
         const uint64_t t3 = now_ns();
         res->t_gate_ns += t1 - t0; res->t_act_ns += t2 - t1; res->t_down_ns += t3 - t2; res->calls += 1;
+        res->pad[1] += redo_total.exchange(0) + redo;
         std::atomic_thread_fence(std::memory_order_release);
         _mm_sfence();
         res->done = s;
         ++calls;
+      } else if (redo) {
+        redo_total.fetch_add(redo);
       }
+      redo = 0;
     }
   }
 };
@@ -367,10 +441,12 @@ static void* replicate(const void* src, size_t bytes, int node, int nt) {
 }
 
 std::tuple<int64_t, int64_t, int64_t> host_tier2_start(std::vector<int64_t> banks, int64_t H, int64_t I, int64_t G,
-                                                       std::vector<int64_t> cpus, int64_t E) {
+                                                       std::vector<int64_t> cpus, int64_t E, int64_t replica_node) {
   TORCH_CHECK(G == 64 && H <= MAXH && H % 128 == 0 && I % 128 == 0 && banks.size() % 6 == 0, "host tier 2: group 64");
   auto* tier = new Tier2();
   tier->H = H; tier->I = I; tier->G = G; tier->T = (int)cpus.size(); tier->E = (int)E;
+  const char* gp = getenv("HOST_GATE_PREFETCH");
+  tier->gate_prefetch = !(gp && gp[0] == '0');
   const char* uw = getenv("HOST_UMWAIT");
   tier->umwait = uw && uw[0] == '1';
   TORCH_CHECK(E > 0, "host tier 2: number of experts per layer");
@@ -392,8 +468,9 @@ std::tuple<int64_t, int64_t, int64_t> host_tier2_start(std::vector<int64_t> bank
     TORCH_CHECK((int)nodes.size() == tier->T, "HOST_CPU_NODES: one node per worker cpu");
     tier->thread_node = nodes;
   }
-  if (const char* rn = getenv("HOST_REPLICA_NODE")) {
-    tier->replica_node = atoi(rn);
+  if (replica_node >= 0) {  // every worker of this tier reads a replica of the banks in `replica_node`'s memory
+    tier->replica_node = (int)replica_node;
+    tier->thread_node.assign(tier->T, (int)replica_node);
     const size_t gw = (size_t)E * 2 * I * H / 2, gs = (size_t)E * 2 * I * (H / 64) * 2, dw = (size_t)E * H * I / 2, ds = (size_t)E * H * (I / 64) * 2;
     for (const LayerBanks& lb : tier->layers)
       tier->replica.push_back({(const uint8_t*)replicate(lb.gw, gw, tier->replica_node, 16), (const uint16_t*)replicate(lb.gs, gs, tier->replica_node, 4),
@@ -402,6 +479,10 @@ std::tuple<int64_t, int64_t, int64_t> host_tier2_start(std::vector<int64_t> bank
   }
   while ((1 << tier->rounds) < tier->T) ++tier->rounds;
   tier->flags = std::vector<Tier2::Flag>((size_t)std::max(tier->rounds, 1) * tier->T);
+  tier->claim1 = std::vector<Tier2::Flag>(tier->T); tier->done1 = std::vector<Tier2::Flag>(tier->T);
+  tier->claim2 = std::vector<Tier2::Flag>(tier->T); tier->done2 = std::vector<Tier2::Flag>(tier->T);
+  tier->steal1 = std::vector<Tier2::Flag>(tier->T); tier->steal2 = std::vector<Tier2::Flag>(tier->T);
+  if (const char* st = getenv("HOST_STEAL_US")) tier->steal_ns = strtoull(st, nullptr, 10) * 1000;
   for (int t = 0; t < tier->T; ++t) tier->threads.emplace_back(&Tier2::worker, tier, t, (int)cpus[t]);
   g_tiers2.push_back(tier);
   return std::make_tuple((int64_t)(g_tiers2.size() - 1), (int64_t)tier->mb, (int64_t)tier->res);
@@ -410,18 +491,36 @@ std::tuple<int64_t, int64_t, int64_t> host_tier2_start(std::vector<int64_t> bank
 std::vector<int64_t> host_tier2_timing(int64_t handle) {
   Result2* r = g_tiers2.at(handle)->res;
   std::vector<int64_t> v{(int64_t)r->t_gate_ns, (int64_t)r->t_act_ns, (int64_t)r->t_down_ns, (int64_t)r->bad_posts,
-                         (int64_t)r->bad_hints, (int64_t)r->hints, (int64_t)r->routes, (int64_t)r->calls};
+                         (int64_t)r->bad_hints, (int64_t)r->hints, (int64_t)r->routes, (int64_t)r->pad[1], (int64_t)r->calls};
   r->t_gate_ns = r->t_act_ns = r->t_down_ns = r->calls = r->bad_posts = r->bad_hints = r->hints = r->routes = 0;
+  r->pad[1] = 0;  // slices re-run after a stall (preempted worker)
   return v;
 }
 
 // start the pool installer: `pool` = the 6 slot-indexed device banks (gate w/s/b, down w/s/b), E experts per layer
 void host_tier2_installer(int64_t handle, std::vector<int64_t> pool, std::vector<int64_t> expert_bytes, int64_t E,
-                          int64_t device, int64_t cpu) {
+                          int64_t device, int64_t cpu, int64_t table) {
   Tier2* tier = g_tiers2.at(handle);
   TORCH_CHECK(pool.size() == 6 && expert_bytes.size() == 6 && !tier->installer_thread.joinable());
   for (int b = 0; b < 6; ++b) { tier->pool[b] = (void*)pool[b]; tier->expert_bytes[b] = (size_t)expert_bytes[b]; }
   TORCH_CHECK((int)E == tier->E, "installer: experts per layer differ from host_tier2_start");
+  // HOST_INSTALL_NODE: the installer's copies read a pinned replica on that NUMA node, so the copy engine's DRAM reads do
+  // not compete with the CPU workers reading the banks on the GPU's node
+  if (const char* in = getenv("HOST_INSTALL_NODE")) {
+    const int node = atoi(in);
+    const int I = tier->I, H = tier->H;
+    const size_t gw = (size_t)E * 2 * I * H / 2, gs = (size_t)E * 2 * I * (H / 64) * 2, dw = (size_t)E * H * I / 2, ds = (size_t)E * H * (I / 64) * 2;
+    auto pinned = [&](const void* src, size_t bytes, int nt) {
+      void* p = replicate(src, bytes, node, nt);
+      const size_t len = (bytes + (2u << 20) - 1) & ~((size_t)(2u << 20) - 1);
+      TORCH_CHECK(cudaHostRegister(p, len, cudaHostRegisterPortable) == cudaSuccess, "install replica: cudaHostRegister");
+      return p;
+    };
+    for (const LayerBanks& lb : tier->layers)
+      tier->install_src.push_back({(const uint8_t*)pinned(lb.gw, gw, 16), (const uint16_t*)pinned(lb.gs, gs, 4), (const uint16_t*)pinned(lb.gb, gs, 4),
+                                   (const uint8_t*)pinned(lb.dw, dw, 16), (const uint16_t*)pinned(lb.ds, ds, 4), (const uint16_t*)pinned(lb.db, ds, 4)});
+  }
+  tier->table = (int32_t*)table;
   tier->installer_thread = std::thread(&Tier2::installer, tier, (int)device, (int)cpu);
 }
 

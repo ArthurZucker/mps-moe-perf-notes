@@ -13,7 +13,8 @@ ceilings: [`THEORY.md`](THEORY.md).
 | full + compile, torch 2.15 / kernels 0.19 | **119.6** | ~120 / 124.8 GiB | ref |
 | full + compile, torch 2.11 (tc6 experts) | 118.6 | ~120 / 124.8 GiB | ref |
 | full + compile, MTP K=2 speculative | ~134 | ~125 GiB | bf16 near-ties |
-| **0.25: CPU computes the misses** (host tier v2, best run) | **83.9** | 74 / 120.3 GiB | 128/128 |
+| **0.25: CPU computes the misses** (host tier v2, control-candidate-control) | **83.2** (controls 117.3 / 124.7) | 74 / 120.3 GiB | 128/128 |
+| 0.25: host tier v2, best single run | 83.9 | 74 / 120.3 GiB | 128/128 |
 | 0.25: host tier v2, other runs | 73-82 | 74 / 120.3 GiB | 128/128 |
 | 0.25: GPU-only streaming, scalar kernels | 67.9 | 74 / 120.3 GiB | 128/128 |
 | 0.25: GPU-only streaming, tc6 kernel | 54.9 | 74 / 120.3 GiB | 110/128 |
@@ -73,6 +74,18 @@ one socket's DRAM bandwidth (~140-150 GB/s), ~45 us against a ~25 us resident wi
 
 Profiler caveat: `prof_decode.py` warms up on the same prompt, so the LRU pool is warm: it reported gpu-nola at
 103.8 tok/s where the bench (4 distinct prompts) gives 54.9. Bench + in-graph GPU timestamps are the references.
+
+## Since the first push (2026-11-24)
+
+- Hints from the streams entering each layer (mean of the MLP-side normed hyper-connection streams): 82-89% of misses
+  covered at top-16 vs 70%; layers 1..47 9.85 -> 9.4 ms.
+- CPU tier without barriers: claimable, stealable slices (one stealer per late slice, shared call index); immune to other
+  users' threads landing on worker cores (one run had 2 ms gate phases from that). 9.4 -> 9.0-9.3 ms.
+- Guess kernel 57 -> 19 us (warp-shuffle top-k), HC projection 32 -> 6.5 us.
+- Measured and rejected: two CPU tiers (one per socket), huge-page replica, copy-engine installs from the other socket,
+  GPU prefetch of hinted experts, poll join, wider staging, gated vs plain hint estimate (equal).
+- Zero-miss machinery: +0.93 ms/token over full (5 small kernels per layer). At 0.25 the misses cost ~2 ms on top: ~5 MB
+  per layer must be read after routing inside a ~25 us window; hint precision is ~15% at the staged top-4.
 
 ## Next
 

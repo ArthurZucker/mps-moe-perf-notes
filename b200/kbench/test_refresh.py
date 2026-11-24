@@ -24,6 +24,7 @@ for token in range(60):
         ids = torch.randperm(E // 2, device="cuda")[:TOPK].int() + (token % 2) * (E // 2) * 0
         slots, gw = k.offload_lookup2(ids, layer, E, table, age, clock, w)
         k.host_refresh2(ids, layer, E, table, owner, age, clock, 4, mb, rstate)
+torch.cuda.synchronize()
 n = k.host_tier2_drain(handle)
 ids = torch.zeros(1, dtype=torch.int32, device="cuda")
 k.host_refresh2(ids, 0, E, table, owner, age, clock, 0, mb, rstate)  # commit the rest

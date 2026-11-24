@@ -1,0 +1,22 @@
+== 2026-11-24T05:11:03-08:00 GPU5 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --decode-linears --mode max-autotune --combo --out ccc.jsonl --configs full+compile
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/1] full+compile | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 17/1359 [00:00<00:35, 38.24it/s]Loading weights:   5%|▌         | 68/1359 [00:09<03:16,  6.57it/s]Loading weights:  35%|███▍      | 475/1359 [00:09<00:13, 65.24it/s]Loading weights:  42%|████▏     | 565/1359 [00:11<00:13, 61.00it/s]Loading weights:  55%|█████▌    | 752/1359 [00:12<00:07, 86.60it/s]Loading weights:  63%|██████▎   | 856/1359 [00:13<00:05, 94.07it/s]Loading weights:  72%|███████▏  | 978/1359 [00:13<00:03, 117.21it/s]Loading weights:  76%|███████▌  | 1034/1359 [00:13<00:02, 129.00it/s]Loading weights:  78%|███████▊  | 1066/1359 [00:14<00:03, 95.45it/s] Loading weights:  88%|████████▊ | 1202/1359 [00:15<00:01, 147.74it/s]Loading weights:  91%|█████████ | 1240/1359 [00:15<00:00, 123.72it/s]Loading weights:  97%|█████████▋| 1313/1359 [00:16<00:00, 136.32it/s]Loading weights: 100%|██████████| 1359/1359 [00:16<00:00, 84.21it/s] 
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears (['fuse', 'gemv', 'router']): {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+  loaded in 24s
+    prompt 1/4: 124.55 tok/s
+    prompt 2/4: 117.73 tok/s
+    prompt 3/4: 126.62 tok/s
+    prompt 4/4: 126.63 tok/s
+  RESULT {"prefill_tok_s": 91.56911573856871, "decode_tok_s": 124.74844577719593, "decode_tok_s_per_prompt": [124.55, 117.73, 126.62, 126.63], "decode_ms_median": 8.016131934709847, "sustained_tok_s": null, "prefill_stats": {}, "config": "full+compile", "load_s": 23.507094247965142, "device": "cuda", "peak_gib": 124.80916929244995, "same_tokens_as_first": 128}
+done in 1.4m
+== 2026-11-24T05:12:36-08:00 exit 0; other processes on GPU at end: 0

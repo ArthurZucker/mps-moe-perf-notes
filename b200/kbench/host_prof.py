@@ -15,7 +15,7 @@ for l in range(L):
     keep += b; banks += [t.data_ptr() for t in b]
 handle, mb, res = k.host_tier2_start(banks, H, I, G, list(range(1, 56)), EH)
 table = torch.full((L * EH,), -1, dtype=torch.int32, device="cuda")
-state = torch.zeros(2, dtype=torch.long, device="cuda"); hstate = torch.zeros(1, dtype=torch.long, device="cuda")
+state = torch.zeros(3, dtype=torch.long, device="cuda"); hstate = torch.zeros(1, dtype=torch.long, device="cuda")
 x = torch.randn(1, H, device="cuda").bfloat16(); out = torch.zeros(1, H, device="cuda").bfloat16()
 n = int(os.environ.get("N", "1"))
 idss = [torch.randperm(EH, device="cuda")[:n].int() for _ in range(64)]

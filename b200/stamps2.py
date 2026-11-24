@@ -35,7 +35,7 @@ elif MODE == "host":
         for part in open(d).read().strip().split(","):
             a, _, b = part.partition("-"); node_of.update({c: n for c in range(int(a), int(b or a) + 1)})
     os.environ["HOST_CPU_NODES"] = ",".join(str(node_of[c]) for c in cpus)
-    apply_gpu_experts_offload(model, 0.25, path, lookahead=False, host_cpus=cpus)
+    apply_gpu_experts_offload(model, float(os.environ.get("FRAC", "0.25")), path, lookahead=False, host_cpus=cpus)
 else:
     model = AutoModelForCausalLM.from_pretrained(path, device_map="cuda", dtype=torch.bfloat16)
 if os.environ.get("STRIP_HOOKS") == "1":  # accelerate's dispatch hooks (cpu offload device_map): everything is on cuda now
@@ -64,6 +64,10 @@ with torch.inference_mode():
     model.generate(enc(PROMPTS[0]), max_new_tokens=N, min_new_tokens=N, **gk)  # compile + warm
     for p in PROMPTS[1:]:
         torch.cuda.synchronize(); SLOT.zero_()
+        st0 = getattr(model, "_gpu_experts_offload", None)
+        if st0 is not None and st0.host_tier is not None:
+            for tier in (st0.host_tier, getattr(st0, "host_tier_b", None)):
+                if tier is not None: st0.kernel.host_tier2_timing(tier[0])
         model.generate(enc(p), max_new_tokens=N, min_new_tokens=N, **gk)
         torch.cuda.synchronize()
         st = STAMPS[: int(SLOT.item())].cpu().tolist()
@@ -75,4 +79,10 @@ with torch.inference_mode():
         gap = sorted(T(t + 1, 0) - T(t, nl) for t in range(1, toks - 1))
         tot = sorted(T(t + 1, 0) - T(t, 0) for t in range(1, toks - 1))
         m = lambda v: v[len(v) // 2] / 1e6
+        store = getattr(model, "_gpu_experts_offload", None)
+        if store is not None and store.host_tier is not None:
+            for name, tier in (("A", store.host_tier), ("B", getattr(store, "host_tier_b", None))):
+                if tier is None: continue
+                t = store.kernel.host_tier2_timing(tier[0]); c = max(t[-1], 1)
+                print(f"  tier {name}: {t[-1] / max(toks, 1):.1f} calls/token, {t[6] / c:.2f} routes/call, cpu per call gate {t[0] / c / 1e3:.1f} act {t[1] / c / 1e3:.1f} down {t[2] / c / 1e3:.1f} us, slices re-run {t[7]}")
         print(f"{MODE} {p[:30]!r}: per token {m(tot):.2f} ms = layer0 MoE {m(moe0):.2f} + layers 1..47 {m(ing):.2f} + layer47 end -> next layer0 router {m(gap):.2f} ms")

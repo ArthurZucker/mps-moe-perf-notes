@@ -16,8 +16,10 @@ for l in range(L):
     b = (pinned(E, 2 * I, H // 8, dtype=torch.int32), pinned(E, 2 * I, H // G, dtype=torch.bfloat16), pinned(E, 2 * I, H // G, dtype=torch.bfloat16),
          pinned(E, H, I // 8, dtype=torch.int32), pinned(E, H, I // G, dtype=torch.bfloat16), pinned(E, H, I // G, dtype=torch.bfloat16))
     banks += [t.data_ptr() for t in b]; gpu.append([t.cuda() for t in b]); gpu[-1].append(b)
-handle, mb, res = k.host_tier2_start(banks, H, I, G, list(range(8, 40)), E)
-state = torch.zeros(2, dtype=torch.long, device="cuda")
+handle, mb, res = k.host_tier2_start(banks, H, I, G, list(range(64, 80)), E)
+TWO = os.environ.get("TWO") == "1"
+handle_b, mb_b, res_b = k.host_tier2_start(banks, H, I, G, list(range(8, 24)), E, 0) if TWO else (None, 0, 0)
+state = torch.zeros(3, dtype=torch.long, device="cuda")
 table = torch.full((L * E,), -1, dtype=torch.int32, device="cuda")
 for ntok in (1, 2, 4):
     for l in range(L):
@@ -36,8 +38,8 @@ for ntok in (1, 2, 4):
         w_host = w * (~resident)
         ref = k.down_route4(act.contiguous(), dw, ds, db, ids, w_host.float().contiguous(), TOPK, G).float()
         base = torch.randn(ntok, H, device="cuda").bfloat16()
-        k.host_post2(ids, w, l, w * (table[l * E + ids.long()] >= 0), x, mb, state)
-        got = k.host_wait2(base, res, state).float() - base.float()
+        k.host_post2(ids, w, l, w * (table[l * E + ids.long()] >= 0), x, mb, state, mb_b)
+        got = k.host_wait2(base, res, state, res_b).float() - base.float()
         torch.cuda.synchronize()
         err = ((got - ref).norm() / ref.norm()).item()
         print(f"ntok {ntok} layer {l} host routes {int((~resident).sum())}: rel err {err:.2e}")
@@ -45,5 +47,6 @@ for ntok in (1, 2, 4):
 table.fill_(0)
 base = torch.randn(1, H, device="cuda").bfloat16()
 k.host_post2(ids[:TOPK], w[:TOPK], 0, w[:TOPK] * (table[ids[:TOPK].long()] >= 0), x[:1], mb, state)
-print("no-miss passthrough:", torch.equal(k.host_wait2(base, res, state), base))
+print("no-miss passthrough:", torch.equal(k.host_wait2(base, res, state, res_b), base))
 k.host_tier2_stop(handle)
+if TWO: k.host_tier2_stop(handle_b)

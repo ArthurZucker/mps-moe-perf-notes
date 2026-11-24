@@ -1,0 +1,24 @@
+== 2026-11-24T05:00:25-08:00 GPU5 idle; python bench.py --model ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit --decode-linears --mode max-autotune --combo --out ccc.jsonl --configs full+compile
+transformers 5.23.0.dev0 from /home/arthur/tf-pr50997/src/transformers | torch 2.11.0+cu130
+device cuda: NVIDIA B200
+ArthurZ/Qwen3.8-Flash-Next-metal-experts-4bit: experts 64.6 GiB, rest 57.9 GiB (0s)
+[1/1] full+compile | elapsed 0.0m | eta ?
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   1%|▏         | 20/1359 [00:00<00:14, 94.47it/s]Loading weights:   3%|▎         | 44/1359 [00:00<00:08, 150.55it/s]Loading weights:   5%|▍         | 62/1359 [00:00<00:09, 136.91it/s]Loading weights:   6%|▌         | 77/1359 [00:09<04:21,  4.90it/s] Loading weights:  22%|██▏       | 303/1359 [00:10<00:28, 36.85it/s]Loading weights:  27%|██▋       | 362/1359 [00:11<00:27, 35.74it/s]Loading weights:  28%|██▊       | 381/1359 [00:12<00:25, 38.15it/s]Loading weights:  47%|████▋     | 642/1359 [00:12<00:07, 102.23it/s]Loading weights:  51%|█████     | 694/1359 [00:12<00:05, 113.02it/s]Loading weights:  53%|█████▎    | 724/1359 [00:13<00:06, 91.08it/s] Loading weights:  62%|██████▏   | 836/1359 [00:14<00:06, 86.61it/s]Loading weights:  76%|███████▌  | 1033/1359 [00:15<00:02, 118.85it/s]Loading weights:  86%|████████▋ | 1174/1359 [00:16<00:01, 142.18it/s]Loading weights:  88%|████████▊ | 1194/1359 [00:16<00:01, 137.77it/s]Loading weights:  92%|█████████▏| 1256/1359 [00:17<00:00, 127.91it/s]Loading weights: 100%|██████████| 1359/1359 [00:17<00:00, 78.35it/s] 
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  decode linears (['fuse', 'gemv', 'router']): {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+  loaded in 23s
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+    prompt 1/4: 125.31 tok/s
+    prompt 2/4: 117.26 tok/s
+    prompt 3/4: 117.04 tok/s
+    prompt 4/4: 117.3 tok/s
+  RESULT {"prefill_tok_s": 91.741753183278, "decode_tok_s": 117.34951615975251, "decode_tok_s_per_prompt": [125.31, 117.26, 117.04, 117.3], "decode_ms_median": 8.52155196480453, "sustained_tok_s": null, "prefill_stats": {}, "config": "full+compile", "load_s": 23.021172435954213, "device": "cuda", "peak_gib": 124.80794668197632, "same_tokens_as_first": 128}
+done in 3.9m
+== 2026-11-24T05:04:27-08:00 exit 0; other processes on GPU at end: 0

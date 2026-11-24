@@ -1,0 +1,57 @@
+== 2026-11-24T02:52:08-08:00 GPU5 idle; python prof_decode.py --gpu-offload 0.25 --host 64-111 --gemv --mode max-autotune --inductor combo_kernels=True --tokens 64 --trace /raid/arthur/tr_join_poll.json
+Loading weights:   0%|          | 0/1359 [00:00<?, ?it/s]Loading weights:   5%|▌         | 68/1359 [00:09<02:51,  7.51it/s]Loading weights: 100%|██████████| 1359/1359 [00:09<00:00, 149.30it/s]
+[transformers] [1mQwen4ExpForCausalLM LOAD REPORT[0m from: /raid/arthur/hub/models--ArthurZ--Qwen3.8-Flash-Next-metal-experts-4bit/snapshots/22057d32df9b53f8095d09feaeee614bd8b21c4b
+Key                                                               | Status  | 
+------------------------------------------------------------------+---------+-
+model.layers.1.ple.ple_embedding.ngram_embedding.weight_scale_inv | MISSING | 
+
+Notes:
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Some parameters are on the meta device because they were offloaded to the cpu.
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/home/arthur/tf-pr50997/.venv/lib/python3.12/site-packages/torch/profiler/profiler.py:224: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+after load: 56.9 GiB
+after offload setup: 74.0 GiB
+inductor combo_kernels = True
+kernelize_decode_linears: {'fused_groups': 192, 'gemv_linears': 97, 'fused_routers': 0}
+memory: allocated 74.2 GiB, peak 120.3 GiB, reserved 79.0 GiB
+decode median 11.65 ms/token -> 85.8 tok/s (min 10.27 max 15.20)
+text: The salt had long since claimed Elias’s skin, turning it the color of driftwood, and the wind had carved lines into his face that mirrored the jagged cliffs of Blackwood Point. For thirty years, his w
+host tier: 29.2 calls/token (of 48 layers), 64.5 host routes/token, cpu per call gate 20.9 act 1.6 down 7.4 us, bad posts 0 bad hints 0 hints 2801
+GPU kernel time 39.50 ms/token (incl. 1 prefill amortized over 65), kernels/token 2257
+  memcpy                        22.011 ms/tok    99.6/tok
+  other                          6.090 ms/tok   615.0/tok
+  experts triton (prefill)       4.944 ms/tok     1.5/tok
+  triton fused                   4.532 ms/tok  1113.6/tok
+  cuBLAS dense                   0.957 ms/tok   243.7/tok
+  topk/sort                      0.708 ms/tok   122.4/tok
+  attention                      0.129 ms/tok    23.8/tok
+  conv                           0.127 ms/tok    37.0/tok
+ 21.921 ms/tok    32.8/tok  Memcpy HtoD (Pinned -> Device)
+  4.944 ms/tok     1.5/tok  _gather_qmv_kernel
+  1.287 ms/tok    46.3/tok  (anonymous namespace)::host_guess2_kernel(__nv_bfloat16 const*, __nv_bfloat16 const*, int, int, int, int, int, int const
+  1.104 ms/tok    47.3/tok  (anonymous namespace)::host_refresh2_kernel(int const*, int, int, int, int*, int*, long*, long const*, int, int, (anonym
+  0.701 ms/tok    47.3/tok  (anonymous namespace)::host_join4_kernel(__nv_bfloat16 const*, __nv_bfloat16*, int, float const*, float const*, int, (an
+  0.634 ms/tok    47.3/tok  void (anonymous namespace)::tc6::kernel<2560, 1>(__nv_bfloat16 const*, uint4*, __nv_bfloat16*, __nv_bfloat16*, (anonymou
+  0.620 ms/tok   189.0/tok  void gemv_block_kernel<1>(__nv_bfloat16 const*, uint4 const*, __nv_bfloat16 const*, __nv_bfloat16*, int, int, long)
+  0.607 ms/tok    35.4/tok  triton_red_fused_mm_t_view_16
+  0.572 ms/tok    47.3/tok  void (anonymous namespace)::tc6::kernel<640, 10>(__nv_bfloat16 const*, uint4*, __nv_bfloat16*, __nv_bfloat16*, (anonymou
+  0.563 ms/tok    35.4/tok  triton_red_fused__to_copy__unsafe_view_add_mean_mm_mul_pow_rsqrt_sigmoid_slice_t_transpose_view_zeros_like_23
+  0.420 ms/tok    47.3/tok  (anonymous namespace)::host_post2_kernel(int const*, float const*, int, int, float const*, __nv_bfloat16 const*, int, in
+  0.410 ms/tok    35.4/tok  triton_red_fused__to_copy__unsafe_view_add_clone_copy__div_exp_expand_mm_mul_neg_rsqrt_select_sigmoid_silu_slice_softplu
+  0.390 ms/tok    59.1/tok  void at::native::sbtopk::gatherTopK<float, unsigned int, 1, false>(at::cuda::detail::TensorInfo<float const, unsigned in
+  0.389 ms/tok    46.3/tok  void (anonymous namespace)::rowdot_block_kernel<0>(__nv_bfloat16 const*, float const*, float*, int, float)
+  0.330 ms/tok    44.3/tok  triton_red_fused__to_copy__unsafe_view_add_div_mean_mm_mul_pow_sigmoid_slice_unsqueeze_view_45
+  0.270 ms/tok    59.1/tok  void at::native::bitonicSortKVInPlace<-2, -1, 16, 16, float, long, at::native::GTOp<float, true>, unsigned int>(at::cuda
+  0.242 ms/tok    46.3/tok  void (anonymous namespace)::rowdot_kernel<1>(__nv_bfloat16 const*, float const*, float*, int, int, float)
+  0.210 ms/tok    46.3/tok  triton_per_fused_39
+  0.194 ms/tok    46.3/tok  (anonymous namespace)::hc_norm_kernel(__nv_bfloat16 const*, __nv_bfloat16 const*, float*, int, float)
+  0.193 ms/tok     1.0/tok  triton_red_fused_mm_slice_t_view_62
+  0.179 ms/tok    48.2/tok  triton_per_fused_div_mm_silu_slice_t_view_12
+  0.176 ms/tok    11.8/tok  triton_red_fused_mm_t_view_46
+  0.170 ms/tok    47.3/tok  triton_red_fused_28
+  0.158 ms/tok    47.3/tok  triton_per_fused_29
+  0.149 ms/tok     1.5/tok  offload_plan_kernel(int const*, int, int, int, int*, int*, long*, long*, int, int*, int*)
+== 2026-11-24T02:56:06-08:00 exit 0; other processes on GPU at end: 0
