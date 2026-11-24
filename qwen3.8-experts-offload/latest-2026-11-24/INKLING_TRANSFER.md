@@ -51,25 +51,51 @@ remaining gap is bytes per token from SSD, not dispatch count.
 
 ## Measured transfer attempts on Qwen3.8
 
-Both on the final Qwen3.8 checkpoint, 16 GiB cache, events off, 32 GB Metal cap.
+All on the final Qwen3.8 checkpoint, 16 GiB expert cache, events off, 32 GB Metal cap,
+128/128 greedy tokens matching eager in every arm below.
+
+The earlier revision of this table rejected both kernels, and the router was reported at
+7/128. That verdict does not survive: the read-ahead path in `offload.py` could evict a
+resident expert of the layer it was prefetching for while the GPU was still in that
+layer's first pass, so a slot could be read as the wrong expert. With read-ahead disabled
+(`TRANSFORMERS_EXPERTS_OFFLOAD_PIN_AHEAD` unset, now the default) every arm is 128/128.
 
 | transfer | decode | sustained | correctness | verdict |
 |---|---:|---:|---|---|
-| baseline (no transfer) | 8.56 | 9.10 | 128/128 | reference |
-| Inkling GDN/short-conv hub kernels (`use_kernels=True` after load) | 6.94 | 7.90 | 128/128 | **reject: slower** |
-| fused Qwen4 router (Metal softmax top-k, one dispatch) | 6.51 | 9.13 | **7/128** | **reject: wrong output** |
+| router off, kernels off | 6.54 / 6.73 | 8.27 / 7.20 | 128/128 | reference |
+| fused Qwen4 router | 6.78 / 6.98 | 8.31 / 8.24 | 128/128 | **exact, neutral perf** |
+| fused router + GDN hub kernels | 6.77 / 6.71 | 8.97 / 7.24 | 128/128 | **exact, perf inconclusive** |
 
-The GDN hub kernels are numerically correct but slower on this M3 Ultra; the kernelize path also
-needs a post-load workaround because the streamed embed leaves `model.device` on meta. The
-fused router kernel is not correct yet (softmax/top-k selection), so it is not pushed as a
-perf branch.
+The two numbers per cell are separate runs. Run-to-run spread on this machine is ~15%
+(load average ~2, 35 days uptime), and the original 8.56/9.10 baseline no longer
+reproduces on its own script: re-running `run_verify16_events_off.sh` unchanged gives
+6.73/7.20. So no arm here shows a delta outside noise, and the earlier "slower" and
+"wrong" verdicts were both artefacts: one of the eviction bug, one of thermal drift.
+
+What is solid:
+
+- The fused router is numerically exact. Its previous 7/128 was the eviction bug, not
+  the softmax/top-k math. Logits are stored as bf16-rounded doubles and the full softmax
+  denominator is used, because Qwen4 sets `norm_topk_prob=None` (no renormalisation).
+- The GDN/short-conv hub kernels are exact for Qwen3.8 and load without the meta-device
+  failure when enabled after load (`model.set_use_kernels(True)`); the `use_kernels=True`
+  constructor path still dies on `Unsupported device type 'meta'`.
+- Neither lever moves the 32 GB number. The router is one dispatch per layer against a
+  ~37 ms/token host sync and multi-GB/token expert reads; the GDN kernels are a few
+  small ops per layer. At 16 GiB cache the wall is expert bytes from SSD.
 
 ## Conclusion
 
-No Inkling kernel transfers positively to Qwen3.8 at 32 GB. The Qwen3.8 gains remain:
+No Inkling kernel transfers a measurable win to Qwen3.8 at 32 GB. What did transfer is a
+correctness fix: the read-ahead eviction bug in the Qwen3.8 offload path, which corrupted
+expert slots and made the two candidate kernels look wrong or slow.
+
+The Qwen3.8 gains remain:
 
 - final checkpoint, 0 on-the-fly quantization (published);
 - fused sibling linears, 4-bit Metal experts (already in the branch);
+- fused Qwen4 router and GDN hub kernels, both exact and both pushed on
+  `qwen3.8-metal-perf` (perf-neutral, kept because they are correct and reduce dispatch);
 - 48 GB for 4-bit (59.59 tok/s) or 2.5-bit Sakura at 30 GB (56-62 tok/s).
 
 The 32 GB 4-bit wall is expert bytes from SSD, not router or GDN dispatch.
