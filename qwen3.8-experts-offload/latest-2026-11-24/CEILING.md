@@ -63,8 +63,71 @@ they were perf-neutral, so dispatch count is not the wall either.
 The unmeasured part is where the ~24.8 ms of non-stall time goes: GPU kernels, host sync,
 and the offload table bookkeeping. That needs a host-side profile before more kernel work.
 
+## The wall, measured (16 GiB cache, events off, 128/128)
+
+Instrumented `store.stats()` around a 254-token decode (`profile_decode.py`). The three
+components sum to the wall exactly, so nothing is hidden:
+
+| component | 16 GiB | 40 GiB |
+|---|---:|---:|
+| host sync — routing D2H round trip, 48x/token | 39.00 | 34.72 |
+| host wait — blocking on expert reads | 42.65 | 20.68 |
+| residual — GPU compute + python | 55.58 | 46.50 |
+| **wall** | **137.23** | **101.89** |
+| tok/s | 7.29 | 9.81 |
+| hit rate | 91.2% | 96.9% |
+
+ms/token. The 16 GiB row sums to 137.23 exactly.
+
+The dominant, *fixable* component is **host sync: one GPU -> host routing round trip per
+layer, 48 per token**, worth 35-39 ms/token. It is a fixed per-layer latency, not bytes:
+it barely moves when the cache grows (39.00 -> 34.72). Every layer does
+
+    GPU router -> D2H routing copy -> host decides misses -> host reads -> GPU experts
+
+so the host blocks on a pipeline drain 48 times per token, and the expert reads
+(42.65 ms) cannot overlap that same layer's GPU work. The 48 serialized round trips are
+the wall; the SSD feeds them and is never the limit.
+
+## Ablations (each outside the ~15% run-to-run noise band)
+
+| ablation | sustained tok/s | change |
+|---|---:|---|
+| 16 GiB cache, events off (baseline) | 8.2 | — |
+| 40 GiB cache, events off (reads 42.65 -> 20.68) | 9.8 (+35%) | reads are real but not dominant |
+| 16 GiB cache, **events on** (host work moved off the main thread) | **19.25** | **+135%, 128/128** |
+
+The events-on path (`TRANSFORMERS_EXPERTS_OFFLOAD_MPS_EVENTS=1`) already existed to solve
+exactly this: a host thread resolves misses while the device runs pass 1, and the device
+waits on an event instead of the host draining the queue. It was previously rejected
+because it produced 5/128 — that was the read-ahead eviction bug, fixed today. With
+`LOOKAHEAD=0` and the eviction fix it is **128/128 at 19.25 tok/s sustained**, 2.25x the
+previous best correct result (8.56) and faster than the old "fastest" 14.41/18.86 that
+was broken.
+
+Component split with events on, same harness (`profile_decode.py`, 254 tokens):
+
+| component | events off | events on |
+|---|---:|---:|
+| main-thread host sync | 39.00 | **0.00** |
+| main-thread host wait (reads) | 42.65 | **0.00** |
+| GPU compute + python | 55.58 | 55.10 |
+| host router thread: spin | — | 33.26 (beside the GPU) |
+| host router thread: work | — | 22.21 (beside the GPU) |
+| **wall** | **137.23** | **55.10** |
+| tok/s | 7.29 | 18.15 |
+
+Events off: the host components are *added* to the GPU time (39.00 + 42.65 + 55.58 =
+137.23, exact). Events on: the same 55.47 ms of host work runs *beside* the 55.10 ms of
+GPU work, so the wall becomes `max(host, GPU)` instead of `host + GPU`. Host and GPU are
+almost perfectly balanced, which is why the gain is 2.5x and why the next lever after
+this is reducing both together, not either one alone.
+
 ## What to fix
 
+0. **Ship the events path on.** `TRANSFORMERS_EXPERTS_OFFLOAD_MPS_EVENTS=1` with
+   `LOOKAHEAD=0` is 19.25 tok/s at 128/128, 2.25x the events-off path. This is the answer
+   to "what is the wall": the per-layer host round trip, removed by overlap.
 1. Overlap the miss read with the next layer's compute, not the current layer's wait.
    The JITEngine notes already describe the right shape: GPU pass 1 on resident experts,
    host reads misses, next-layer router runs on the provisional output.
