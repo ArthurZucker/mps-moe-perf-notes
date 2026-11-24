@@ -14,6 +14,7 @@
 #include <ATen/native/mps/OperationUtils.h>
 #include <ATen/mps/MPSDevice.h>
 #include <ATen/mps/MPSStream.h>
+#include <ATen/Functions.h>
 #import <Metal/Metal.h>
 #import <Foundation/Foundation.h>
 #include <mutex>
@@ -201,6 +202,135 @@ void mps_concurrent_finish() {
   T.last_write.clear(); T.last_read.clear();
   T.reads.clear(); T.writes.clear();
   T.gen = T.barrier_gen = 0;
+}
+
+
+// ---------------------------------------------------------------------------
+// Metal cumsum: the AOTI cumsum op otherwise runs on PyTorch's stream and forces
+// a flush around every mixed op. One 1-D float32 inclusive scan in three stages,
+// all in our concurrent encoder.
+// ---------------------------------------------------------------------------
+static const char* kCumsumSrc = R"MTL(
+#include <metal_stdlib>
+using namespace metal;
+kernel void cumsum_local(device const float* x [[buffer(0)]],
+                         device float* y [[buffer(1)]],
+                         device float* blocks [[buffer(2)]],
+                         constant uint& n [[buffer(3)]],
+                         uint tg [[threadgroup_position_in_grid]],
+                         uint tid [[thread_position_in_threadgroup]],
+                         uint tgs [[threads_per_threadgroup]]) {
+  threadgroup float scan[1024];
+  uint base = tg * tgs;
+  uint i = base + tid;
+  scan[tid] = i < n ? x[i] : 0.0f;
+  threadgroup_barrier(mem_flags::mem_threadgroup);
+  for (uint off = 1; off < tgs; off <<= 1) {
+    float prev = tid >= off ? scan[tid - off] : 0.0f;
+    threadgroup_barrier(mem_flags::mem_threadgroup);
+    scan[tid] += prev;
+    threadgroup_barrier(mem_flags::mem_threadgroup);
+  }
+  if (i < n) y[i] = scan[tid];
+  if (tid == tgs - 1) blocks[tg] = scan[tid];
+}
+kernel void cumsum_blocks(device float* blocks [[buffer(0)]],
+                          constant uint& nb [[buffer(1)]],
+                          uint tid [[thread_position_in_threadgroup]]) {
+  if (tid == 0) { float s = 0.0f; for (uint i = 0; i < nb; ++i) { s += blocks[i]; blocks[i] = s; } }
+}
+kernel void cumsum_add(device float* y [[buffer(0)]],
+                       device const float* blocks [[buffer(1)]],
+                       constant uint& n [[buffer(2)]],
+                       uint tg [[threadgroup_position_in_grid]],
+                       uint tid [[thread_position_in_threadgroup]],
+                       uint tgs [[threads_per_threadgroup]]) {
+  if (tg == 0) return;
+  uint i = tg * tgs + tid;
+  if (i < n) y[i] += blocks[tg - 1];
+}
+kernel void cumsum_seq(device const float* x [[buffer(0)]],
+                       device float* y [[buffer(1)]],
+                       constant uint& n [[buffer(2)]],
+                       uint tid [[thread_position_in_threadgroup]]) {
+  if (tid != 0) return;
+  float s = 0.0f;
+  for (uint i = 0; i < n; ++i) { s += x[i]; y[i] = s; }
+}
+)MTL";
+
+static at::native::mps::DynamicMetalShaderLibrary* g_cumsum_lib = nullptr;
+static at::native::mps::MetalKernelFunction* g_cum_local = nullptr;
+static at::native::mps::MetalKernelFunction* g_cum_blocks = nullptr;
+static at::native::mps::MetalKernelFunction* g_cum_add = nullptr;
+static at::native::mps::MetalKernelFunction* g_cum_seq = nullptr;
+
+static void ensure_cumsum() {
+  if (g_cum_local) return;
+  g_cumsum_lib = new at::native::mps::DynamicMetalShaderLibrary(kCumsumSrc);
+  g_cum_local = g_cumsum_lib->getCachedKernelFunctionPtr("cumsum_local");
+  g_cum_blocks = g_cumsum_lib->getCachedKernelFunctionPtr("cumsum_blocks");
+  g_cum_add = g_cumsum_lib->getCachedKernelFunctionPtr("cumsum_add");
+  g_cum_seq = g_cumsum_lib->getCachedKernelFunctionPtr("cumsum_seq");
+}
+
+static void use_encoder(at::native::mps::MetalKernelFunction* f) {
+  auto* m = reinterpret_cast<MKF*>(f);
+  m->encoder = T.enc;
+  [T.enc setComputePipelineState:m->cps];
+}
+
+AOTITorchError aoti_torch_mps_cumsum(AtenTensorHandle self, int64_t dim, int32_t* dtype, AtenTensorHandle* ret0) {
+  AOTI_TORCH_CONVERT_EXCEPTION_TO_ERROR_CODE({
+    auto* tp = tensor_handle_to_tensor_pointer(self);
+    TORCH_CHECK(tp != nullptr, "cumsum input is null");
+    const at::Tensor& in = *tp;
+    TORCH_CHECK(in.dim() == 1 && dim == 0 && in.scalar_type() == at::kFloat && in.is_contiguous(),
+                "metal cumsum expects a contiguous 1-D float32 tensor");
+    ensure();
+    ensure_cumsum();
+    at::Tensor out = at::empty_like(in);
+    const uint32_t n = (uint32_t)in.numel();
+    const uint32_t tgs = 256;
+    const uint32_t nb = (n + tgs - 1) / tgs;
+    at::Tensor blocks = at::empty({(int64_t)nb}, in.options());
+    // The producer (sin, etc.) was encoded earlier in this concurrent encoder.
+    [T.enc memoryBarrierWithScope:MTLBarrierScopeBuffers];
+    id<MTLBuffer> xb = at::native::mps::getMTLBufferStorage(in);
+    id<MTLBuffer> yb = at::native::mps::getMTLBufferStorage(out);
+    id<MTLBuffer> bb = at::native::mps::getMTLBufferStorage(blocks);
+    if (n <= 1024) {
+      // exact left-to-right order, matching the serial reference
+      use_encoder(g_cum_seq);
+      g_cum_seq->setArg(0, in);
+      g_cum_seq->setArg(1, out);
+      g_cum_seq->setArg(2, n);
+      g_cum_seq->dispatch(1, 1);
+    } else {
+      use_encoder(g_cum_local);
+      g_cum_local->setArg(0, in);
+      g_cum_local->setArg(1, out);
+      g_cum_local->setArg(2, blocks);
+      g_cum_local->setArg(3, n);
+      g_cum_local->dispatch(nb * tgs, tgs);
+      [T.enc memoryBarrierWithScope:MTLBarrierScopeBuffers];
+      use_encoder(g_cum_blocks);
+      g_cum_blocks->setArg(0, blocks);
+      g_cum_blocks->setArg(1, nb);
+      g_cum_blocks->dispatch(tgs, tgs);
+      [T.enc memoryBarrierWithScope:MTLBarrierScopeBuffers];
+      use_encoder(g_cum_add);
+      g_cum_add->setArg(0, out);
+      g_cum_add->setArg(1, blocks);
+      g_cum_add->setArg(2, n);
+      g_cum_add->dispatch(nb * tgs, tgs);
+    }
+    [T.enc memoryBarrierWithScope:MTLBarrierScopeBuffers];
+    T.barrier_gen = T.gen;
+    T.last_write[(void*)yb] = T.gen;
+    T.last_read[(void*)xb] = T.gen;
+    *ret0 = new_tensor_handle(std::move(out));
+  });
 }
 
 } // extern "C"

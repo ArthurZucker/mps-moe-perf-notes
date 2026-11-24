@@ -66,3 +66,37 @@ python patch_aoti_pkg.py toy.pt2 toy_concurrent.pt2
 # compare
 python compare_toy.py
 ```
+
+## Follow-up: replacing the PyTorch-stream cumsum with a Metal kernel
+
+`aoti_torch_mps_cumsum` was the mixed op that forced a flush. The runner now defines it
+in Metal (three-stage scan for n > 1024, sequential for n <= 1024) and dispatches it into
+the same concurrent encoder, so no PyTorch stream sync.
+
+| graph | build | ms | maxdiff vs eager |
+|---|---|---:|---:|
+| 2 independent Metal kernels | serial | 0.317 | 0 |
+| | concurrent | 0.286 | 0 |
+| 8 independent Metal kernels (65K each) | serial | 0.294 | 0 |
+| | concurrent | 0.340 | 0 |
+| sin+Metal cumsum+cos (65K) | serial AOTI | 0.381 | 7.6e-6 |
+| | concurrent Metal cumsum | 0.546 | 4.6e-5 / 1.5e-4 |
+
+The custom cumsum removes the PyTorch block, but it is **slower** than PyTorch's own
+cumsum at 65K and not bit-identical. Replacing a PyTorch op only helps if the custom Metal
+kernel itself is faster; otherwise the runner overhead + scan cost wins.
+
+## 8 independent kernels
+
+The concurrent encoder did not beat the serial AOTI graph for eight 65K-element kernels:
+the kernels are large enough to keep the GPU busy, while the runner pays command-buffer
+and submission overhead. The concurrency win is for many small kernels or graphs with
+real independent branches; 1170-kernel Inkling decode has a critical path of 915, so the
+single-stream ceiling from concurrency alone is still ~3-5%.
+
+## What to replace, in order
+
+1. Ops that force a stream flush **and** are cheap to implement as a Metal kernel
+   (pointwise/norm/indexing), not scan/linalg.
+2. Ops on the critical path of the Inkling AOTI wrapper, not every PyTorch op.
+3. Only keep a replacement if it beats the PyTorch op in-context; cumsum did not.
