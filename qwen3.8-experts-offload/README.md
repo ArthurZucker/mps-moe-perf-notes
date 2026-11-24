@@ -9,5 +9,10 @@
 - `convert_metal_experts.py`: an FP8 / bf16 checkpoint -> 4-bit Metal experts in the transformers format.
 - `dense_quant.py`, `quality_check.py`: 4-bit always-on layers on Metal and their perplexity.
 
+**2026-11-24 follow-up:** final pre-quantized checkpoint, transformers 32 GB cache /
+read-ahead / lookahead experiments, the nondeterminism finding, the overlap/hit-rate
+ceiling, a 4-bit 96→32 GiB reference ladder with identical output hashes, and a 32 GB
+50+ tok/s 2.5-bit build: [`latest-2026-11-24/`](latest-2026-11-24/).
+
 Results and the experiment log: `BENCH_LOG.md`. Check the GPU is idle first
 (`ioreg -r -c IOAccelerator | grep "Device Utilization"`): another app on the GPU skews every number.

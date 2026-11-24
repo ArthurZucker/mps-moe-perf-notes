@@ -95,3 +95,10 @@ CPU write into a new buffer / pool); a device fill of a fresh buffer runs after 
 Note: another app (a browser tab) using ~65-70% of the GPU dropped the resident reference from 48.1 to ~38 tok/s and made
 runs 32-41 tok/s; check `ioreg -r -c IOAccelerator | grep "Device Utilization"` is near 0 before benchmarking.
 | S9 | 2026-11-21 | misses read by safetensors `prefetch(device="mps", out=slots)` (safetensors#996: its own threads, GIL released) instead of Python `preadv`; kernels from the Hub | **43.0 / 43.3 / 42.2** (skew 0.6, GPU idle) | exact (fp32 test); falls back to `preadv` without #996 |
+
+
+## 2026-11-24 follow-up
+
+Final pre-quantized checkpoint, 32 GB cache/read-ahead/lookahead experiments,
+reproducibility failure, overlap/hit-rate ceiling, 96→32 GiB 4-bit ladder, and a
+32 GB 50+ tok/s 2.5-bit build: [`latest-2026-11-24/`](latest-2026-11-24/).

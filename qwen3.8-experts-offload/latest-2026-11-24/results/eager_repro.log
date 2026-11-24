@@ -1,0 +1,14 @@
+=== eager cache=16 run=1 ===
+Kernel 'metal-moe-decode' variant 'torch-metal': the metadata does not record a digest, so its integrity cannot be verified
+deterministic expert path on 48 experts modules
+tokens_sha ab1ff961dc85c1d3
+decode 8.67 tok/s over 126 steps
+sustained 8.79 tok/s over last 63 steps
+text 'Imagine you’re living in France in the late 1700s. You’re tired, hungry, and angry. You look around and see that the people who have all the money and power are'
+=== eager cache=16 run=2 ===
+Kernel 'metal-moe-decode' variant 'torch-metal': the metadata does not record a digest, so its integrity cannot be verified
+deterministic expert path on 48 experts modules
+tokens_sha 7db4d723f4c7aa7a
+decode 8.68 tok/s over 126 steps
+sustained 8.84 tok/s over last 63 steps
+text 'Imagine you’re living in France in the late 1700s. You’re tired, hungry, and angry. You look around and see that the people who have all the money and power are'

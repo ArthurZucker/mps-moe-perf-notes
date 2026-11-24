@@ -1,0 +1,37 @@
+  MPS cap 24.96 GiB (fraction 0.05112 of 488.28 GiB recommended)
+  pre-quantized checkpoint: max_memory +1.48 GiB (packed weights, scales)
+  embed_tokens streamed from disk (1.18 GiB off the GPU)
+Kernel 'metal-moe-decode' variant 'torch-metal': the metadata does not record a digest, so its integrity cannot be verified
+[transformers] Using FP8 quantized models requires a GPU or XPU, we will default to dequantizing the model to bf16 since no GPU or XPU is available
+No module was quantized with fp8: please double check the model architecture and `modules_to_not_convert`.
+  MPS before fusion: 3.5 GiB
+  MPS after fusion: 4.5 GiB
+  quantized 0 nn.Linear: 4g32c, fused 192 sibling groups
+  on-the-fly quantization calls: 0
+<work>/transformers/src/transformers/generation/utils.py:2984: UserWarning: You are calling .generate() with the `input_ids` being on a device type different than your model's device. `input_ids` is on mps, whereas the model is on meta. You may experience unexpected behaviors or slower generation. Please make sure that you have put `input_ids` to the correct device by calling for example input_ids = input_ids.to('meta') before running `.generate()`.
+  warnings.warn(
+  eager text: '```python\nimport re\nfrom typing import Optional, Tuple\n\n\ndef parse_iso8601(date_string: str) -> Tuple[int, int, int]:\n    """\n    Parse an ISO 8601 date string '
+<work>/transformers/src/transformers/generation/utils.py:2984: UserWarning: You are calling .generate() with the `input_ids` being on a device type different than your model's device. `input_ids` is on mps, whereas the model is on meta. You may experience unexpected behaviors or slower generation. Please make sure that you have put `input_ids` to the correct device by calling for example input_ids = input_ids.to('meta') before running `.generate()`.
+  warnings.warn(
+<work>/.bench/mem_bounded_run.py:309: FutureWarning: `torch.distributed.reduce_op` is deprecated, please use `torch.distributed.ReduceOp` instead
+  if isinstance(obj, torch.Tensor) and obj.device.type == "mps":
+<work>/transformers/src/transformers/generation/utils.py:2984: UserWarning: You are calling .generate() with the `input_ids` being on a device type different than your model's device. `input_ids` is on mps, whereas the model is on meta. You may experience unexpected behaviors or slower generation. Please make sure that you have put `input_ids` to the correct device by calling for example input_ids = input_ids.to('meta') before running `.generate()`.
+  warnings.warn(
+  compiled text: '```python\nimport re\nfrom typing import Optional, Tuple\n\n\ndef parse_iso8601(date_string: str) -> Tuple[int, int, int]:\n    """\n    Parse an ISO 8601 date string '
+correctness: compiled greedy tokens == eager for 128/128
+<work>/transformers/src/transformers/generation/utils.py:2984: UserWarning: You are calling .generate() with the `input_ids` being on a device type different than your model's device. `input_ids` is on mps, whereas the model is on meta. You may experience unexpected behaviors or slower generation. Please make sure that you have put `input_ids` to the correct device by calling for example input_ids = input_ids.to('meta') before running `.generate()`.
+  warnings.warn(
+  decode 9.09 tok/s (mean of 127 steps): 'Write a short story about a lighthouse k'
+<work>/transformers/src/transformers/generation/utils.py:2984: UserWarning: You are calling .generate() with the `input_ids` being on a device type different than your model's device. `input_ids` is on mps, whereas the model is on meta. You may experience unexpected behaviors or slower generation. Please make sure that you have put `input_ids` to the correct device by calling for example input_ids = input_ids.to('meta') before running `.generate()`.
+  warnings.warn(
+  decode 8.49 tok/s (mean of 127 steps): 'Write a Python function that parses an I'
+<work>/transformers/src/transformers/generation/utils.py:2984: UserWarning: You are calling .generate() with the `input_ids` being on a device type different than your model's device. `input_ids` is on mps, whereas the model is on meta. You may experience unexpected behaviors or slower generation. Please make sure that you have put `input_ids` to the correct device by calling for example input_ids = input_ids.to('meta') before running `.generate()`.
+  warnings.warn(
+  decode 8.46 tok/s (mean of 127 steps): 'Explain the causes of the French Revolut'
+<work>/transformers/src/transformers/generation/utils.py:2984: UserWarning: You are calling .generate() with the `input_ids` being on a device type different than your model's device. `input_ids` is on mps, whereas the model is on meta. You may experience unexpected behaviors or slower generation. Please make sure that you have put `input_ids` to the correct device by calling for example input_ids = input_ids.to('meta') before running `.generate()`.
+  warnings.warn(
+  decode 8.18 tok/s (mean of 127 steps): 'Translate into French and explain the gr'
+<work>/transformers/src/transformers/generation/utils.py:2984: UserWarning: You are calling .generate() with the `input_ids` being on a device type different than your model's device. `input_ids` is on mps, whereas the model is on meta. You may experience unexpected behaviors or slower generation. Please make sure that you have put `input_ids` to the correct device by calling for example input_ids = input_ids.to('meta') before running `.generate()`.
+  warnings.warn(
+decode mean over 4 prompts: 8.56 tok/s
+sustained: 9.10 tok/s (mean over tokens 511-1022 of 1024)

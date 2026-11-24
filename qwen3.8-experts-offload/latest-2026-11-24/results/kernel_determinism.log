@@ -1,0 +1,15 @@
+
+Fetching 6 files:   0%|          | 0/6 [00:00<?, ?it/s]
+Fetching 6 files: 100%|██████████| 6/6 [00:00<00:00, 651.39it/s]
+gather_qmm runs equal: True
+  diff max 0.0 neq 0
+  diff max 0.0 neq 0
+  diff max 0.0 neq 0
+
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]
+Fetching 4 files: 100%|██████████| 4/4 [00:00<00:00, 1540.18it/s]
+Kernel 'metal-moe-decode' variant 'torch-metal': the metadata does not record a digest, so its integrity cannot be verified
+qmv4 runs equal: True
+  diff max 0.0 neq 0
+  diff max 0.0 neq 0
+  diff max 0.0 neq 0

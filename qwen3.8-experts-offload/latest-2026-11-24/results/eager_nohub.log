@@ -1,0 +1,14 @@
+=== eager nohub cache=16 run=1 ===
+Kernel 'metal-moe-decode' variant 'torch-metal': the metadata does not record a digest, so its integrity cannot be verified
+deterministic expert path on 48 experts modules
+tokens_sha 59d73f4047ec0b44
+decode 8.47 tok/s over 126 steps
+sustained 8.67 tok/s over last 63 steps
+text 'Imagine you’re living in France in the late 1700s. You’re tired, hungry, and angry. You look around and see that the people in charge are living in luxury while'
+=== eager nohub cache=16 run=2 ===
+Kernel 'metal-moe-decode' variant 'torch-metal': the metadata does not record a digest, so its integrity cannot be verified
+deterministic expert path on 48 experts modules
+tokens_sha a25123907093de52
+decode 8.62 tok/s over 126 steps
+sustained 8.85 tok/s over last 63 steps
+text 'Imagine you’re living in France in the late 1700s. You’re tired, hungry, and angry. You look at your government, and it feels like a broken machine that only wo'

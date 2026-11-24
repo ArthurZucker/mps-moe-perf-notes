@@ -1,0 +1,6 @@
+usage None chunks 512
+decode 60.16 tok/s (512 chunks in 8.51s), wall 8.82s
+usage None chunks 512
+decode 68.17 tok/s (512 chunks in 7.51s), wall 7.59s
+usage None chunks 512
+decode 202.15 tok/s (512 chunks in 2.53s), wall 2.61s

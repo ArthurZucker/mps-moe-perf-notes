@@ -26,6 +26,12 @@ floor. The rest is serialization: torch's MPS stream encodes ~1200 small kernels
 Streaming MoE experts from SSD on MPS (huggingface/transformers#50997): `BENCH_LOG.md` holds the measurements, plus the synthetic
 checkpoint builder, harness and quality / generate checks.
 
+**2026-11-24:** [32 GB findings](qwen3.8-experts-offload/latest-2026-11-24/): final
+pre-quantized checkpoint, transformers cache/read-ahead/lookahead results, the
+reproducibility failure, the overlap/hit-rate ceiling (55 tok/s at 90% hit / 7.3 GB/s),
+a 4-bit 96→32 GiB ladder with one identical output hash, and a 32 GB 50+ tok/s
+2.5-bit build.
+
 ## Kernels (`kernels/`)
 - `metal-moe-decode/`: the Metal kernels as published on the Hub (`ArthurZ/metal-moe-decode`): NVFP4 / MXFP8 expert decode
   (gate_up_act, down_route), grouped fp4 expert GEMMs for prefill, prefill flash attention with in-kernel relative bias / sinks,

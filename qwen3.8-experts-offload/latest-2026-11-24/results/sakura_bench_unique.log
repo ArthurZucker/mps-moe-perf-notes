@@ -1,0 +1,12 @@
+tag test1 usage {'completion_tokens': 512, 'prompt_tokens': 83, 'total_tokens': 595, 'prompt_tokens_details': {'cached_tokens': 0}} chunks 512 chars 1902
+tail '      if len(cleaned) == 0:\n            return True\n    return False\n\n\ndef is_table_start(line: str)'
+decode_chunks 56.41 tok/s; wall 9.40s; prefill/first 0.33s
+decode_usage 56.41 tok/s
+tag test2 usage {'completion_tokens': 512, 'prompt_tokens': 83, 'total_tokens': 595, 'prompt_tokens_details': {'cached_tokens': 0}} chunks 512 chars 2034
+tail '           # Include the table as-is\n            table_block = lines[start_idx:i]\n            result'
+decode_chunks 58.28 tok/s; wall 9.09s; prefill/first 0.31s
+decode_usage 58.28 tok/s
+tag test3 usage {'completion_tokens': 512, 'prompt_tokens': 83, 'total_tokens': 595, 'prompt_tokens_details': {'cached_tokens': 0}} chunks 512 chars 2091
+tail ' PARAGRAPH = auto()\n    CODE_BLOCK = auto()\n    TABLE = auto()\n    BLANK = auto()\n    HEADING = auto'
+decode_chunks 59.21 tok/s; wall 8.96s; prefill/first 0.31s
+decode_usage 59.21 tok/s
