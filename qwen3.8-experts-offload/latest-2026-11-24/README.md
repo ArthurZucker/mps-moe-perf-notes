@@ -62,6 +62,7 @@ quality is independent of the memory budget; only speed changes.
 - `CEILING.md`: the overlap/hit-rate/SSD ceiling, including the 55 tok/s point.
 - `RESULTS.md`: full tables, hashes, nondeterminism experiments, Sakura details.
 - `PATCHES.md`: the transformers patches in this directory and how to apply them.
+- `SAFETENSORS.md`: correction on the safetensors row-streaming path (#995/#996).
 - `patches/`: 0001 read-ahead pinning + lookahead env; 0002 deterministic top-k.
 - `tools/`: final-checkpoint builder, final 32 GB harness, short benchmark.
 - `results/`: raw benchmark JSON and logs (paths scrubbed).

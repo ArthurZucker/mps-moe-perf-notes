@@ -151,6 +151,14 @@ path, not the miss bandwidth.
 `-ngl 95`, 2048 context, `-b 256 -ub 256`. This is a quality trade and not the
 transformers path. It is the only 50+ tok/s result at a 32 GB footprint.
 
+## 7b. safetensors row-streaming correction
+
+The PLE/n-gram table is not an unsupported custom mmap. The row path is covered by
+safetensors#996 (`prefetch` into MPS unified memory with `out=` for existing slots),
+#995 (sparse rows into device tensors with the GIL released), #994 (list-of-slices
+plans) and #884 (MLX zero-copy via DLPack). See `SAFETENSORS.md`. This does not remove
+the 32 GB expert-cache bottleneck; PLE rows are already streamed.
+
 ## 8. Kernel determinism check
 
 `results/kernel_determinism.log`: `gather_qmm` and `qmv4` repeated calls are byte-identical
