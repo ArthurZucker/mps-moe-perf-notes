@@ -48,3 +48,18 @@ SSD. At 95% hit, the 14.3 ms compute floor dominates and 32 GB can reach the sam
 3. Treat a non-miss whose slot changed owner as a miss in `_resolve` (epoch/ownership
    check), or pin the in-flight layer until pass 2 completes.
 4. A super-fast miss is worth ~1.5-2x at 32 GB; a larger cache buys the rest.
+
+
+## Measured correction (32 GB /stats)
+
+The measured 32 GB run is **96.8% hit**, not 80-90%:
+
+- 37.2 MB/token miss bytes, 8.5 ms/token I/O stall
+- 24.8 ms/token non-stall (host + GPU)
+- 33.3 ms/token wall = 30 tok/s
+- perfect overlap of the I/O alone: `1000/24.8 = 40.3 tok/s`
+
+So the simple overlap model gives ~40 tok/s, not 55. The 48 GiB run reaches 59.6 tok/s
+because its non-stall cost is ~16.8 ms/token. The remaining 8 ms/token at 32 GB is host
+cache bookkeeping / MTP verify work, not SSD reads. To reach 50 at 32 GB, that host work
+must be reduced or overlapped; more cache is the easier answer (48 GiB).

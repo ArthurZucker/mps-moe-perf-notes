@@ -84,6 +84,25 @@ Still open: the remaining nondeterminism is in the Qwen4 Metal path (QSA/attenti
 GDN fallback, or another reduction). Until this is fixed, no 96→32 GB output ladder can
 be reproducible on the transformers path.
 
+
+## 5b. Measured 32 GB decomposition (JITEngine `/stats`)
+
+After the 512-token benchmark at 29.8 GiB budget, `/stats` reports:
+
+- decode hit rate: **96.77%** (622,438 hits / 787,200 lookups)
+- misses: 20,769; miss bytes: **57.42 GB** over 1,544 tokens = **37.2 MB/token**
+- stall: 13.15 s / 1,544 tokens = **8.52 ms/token**
+- decode wall: 33.3 ms/token (30.0 tok/s in this sample)
+- non-stall (host + GPU): 33.3 - 8.5 = **24.8 ms/token**
+- MTP: 816 verifies, 716 accepted, 1.89 tokens/round
+
+The hit rate is already 96.8%, not 80-90%. The miss path is only ~37 MB/token. With
+perfect overlap the ceiling under the current non-stall cost is `1000/24.8 = 40.3 tok/s`,
+not 55. The 48 GiB run's 59.6 tok/s (16.8 ms/token) shows that the 32 GiB non-stall cost
+is about 8 ms/token higher: cache bookkeeping / host work / MTP verify, not miss bandwidth.
+To reach 50 at 32 GB, the non-stall path has to drop below ~20 ms/token, or the extra
+host work has to move off the critical path.
+
 ## 6. 4-bit reference ladder (JITEngine MLX, not transformers)
 
 512-token interactive decode, same task, `text_sha` from the benchmark JSON:
