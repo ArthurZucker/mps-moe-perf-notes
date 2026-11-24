@@ -1,0 +1,7 @@
+/Users/transformers/qwen38-metal/torch-nightly/.venv/lib/python3.12/site-packages/torch/_subclasses/functional_tensor.py:376: UserWarning: Failed to initialize NumPy: No module named 'numpy' (Triggered internally at /Users/runner/work/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:82.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))
+torch 2.16.0.dev20261123, size 1048576, 100 dependent steps per branch
+serial 2 branches:     3.98 ms
+ 2 streams:     4.06 ms  speedup 0.96x  exact=True
+ 4 streams:     7.83 ms  speedup 0.50x  exact=True
+ 8 streams:    15.11 ms  speedup 0.26x  exact=True

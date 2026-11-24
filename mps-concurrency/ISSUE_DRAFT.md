@@ -65,3 +65,8 @@ the Python guard only allows the default stream). Two dependent chains at 4K/64K
 2 streams = 0.96-1.05x, 4 streams = ~0.5x, 8 streams = ~0.25x, outputs exact. So separate
 queues do not overlap; the concurrent-encoder path above is still the lever, and it needs
 the per-resource barrier design (or indirect command buffers) that pytorch#189785 lacked.
+
+
+Nightly 2.16.0.dev20261123 with the new `Event.record(stream)` / `wait(stream)` API:
+2 streams 1.00x at 4K and 0.96x at 1M, 4 streams 0.50x, 8 streams 0.25x, exact. The
+event API is not the blocker; separate streams still serialize eager kernels.

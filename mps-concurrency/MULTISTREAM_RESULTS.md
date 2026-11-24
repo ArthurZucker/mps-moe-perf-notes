@@ -46,3 +46,17 @@ The model's decode graph is mostly a dependent chain (1170 kernels, critical pat
 the notes), so even a perfect concurrent encoder can only recover ~3-5% for single-stream
 decode. The larger wins are batched requests, prefill branches, and independent expert
 groups.
+
+## torch nightly 2.16.0.dev20261123
+
+The nightly has the proper `Event.record(stream)` / `Event.wait(stream)` API, no Python
+default-stream guard. Re-ran the same harness:
+
+| size | serial 2 branches | 2 streams | 4 streams | 8 streams |
+|---:|---:|---:|---:|---:|
+| 4,096 | 5.28 ms | 5.08 ms (1.00x) | 9.85 (0.50x) | 19.37 (0.25x) |
+| 1,048,576 | 3.98 ms | 4.06 ms (0.96x) | 7.83 (0.50x) | 15.11 (0.26x) |
+
+Exact outputs. The stream/event API is fixed in nightly; the kernels still do not overlap
+across streams. So the blocker is the serial compute encoder / backend scheduling, not the
+Python event wrapper.
