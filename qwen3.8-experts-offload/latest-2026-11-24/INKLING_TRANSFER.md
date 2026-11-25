@@ -25,7 +25,7 @@ The final checkpoint moves that work offline. Qwen3.8 already has the same treat
 | `qmv4` / `qmv4_multi` decode matvec | **done** | stream-experts MetalLinear |
 | fused routed-expert decode (`qmv4`/`experts_down_sum`) | **done** | `MetalExperts._fused_decode` |
 | fused router top-k (`router_topk`, one dispatch) | **not in Qwen3.8** | candidate: Qwen4 router uses `torch.topk`; porting the fused sigmoid/top-k/route kernel is generic |
-| GDN / short-conv Metal kernels (`linear_attention.py`) | **not enabled by default** | candidate: Qwen3.8 GDN uses the `causal_conv1d` fallback unless `use_kernels=True`; the Inkling `use_kernels=True` test produced garbage, so this needs an exactness gate per kernel |
+| GDN / short-conv Metal kernels (`linear_attention.py`) | **already active on MPS** | correction: `use_kernel_func_from_hub_with_fallback` resolves the hub kernel at import time, and its wrapper takes the Metal path whenever `args[0].device.type == "mps"`. `Qwen4Exp.causal_conv1d_update` is a `kernels.Func` object, not the torch function, with `use_kernels` left at its default. So the conv/GDN kernels are in *every* MPS arm, and `use_kernels=True` only adds the layer-level `kernelize` pass |
 | `down_route` fixed-order expert sum | Qwen3.8 uses the fused decode sum | already covered |
 | `fp4_gate_up_act` / `fp4_gemm` (NVFP4/MXFP8) | not applicable | Qwen3.8 experts are affine 4-bit |
 | `inkling_attention` / `prefill_attention` | not applicable | Qwen3.8 uses QSA, not relative-bias + sinks |
@@ -36,9 +36,10 @@ The final checkpoint moves that work offline. Qwen3.8 already has the same treat
 1. **Fused Qwen4 router**: one `router_topk` dispatch instead of matmul + softmax +
    topk + gather/normalize. This is the same shape class as Inkling's router, low risk,
    and does not touch the expert I/O bottleneck.
-2. **GDN/conv Metal kernels**: test each kernel against torch for Qwen3.8 before enabling.
-   `use_kernels=True` alone is not safe: it gave 38.1 tok/s and garbage on Inkling's
-   public branch.
+2. **GDN/conv Metal kernels**: corrected — they are already on for MPS without
+   `use_kernels`. The Inkling "38.1 tok/s garbage" result therefore reflects the Metal
+   linear-attention path itself, which is why the per-kernel exactness gate matters: the
+   Qwen3.8 arms are 128/128, but that has to be checked on every change.
 3. **Expert I/O remains the Qwen3.8 wall**: at 32 GB the 4-bit expert bank holds 9,122 of
    24,576 records; 30.88 tok/s (JITEngine). No Inkling kernel changes that. 48 GB gives
    59.59 tok/s; 2.5-bit Sakura gives 56-62 at 30 GB.
@@ -77,9 +78,12 @@ What is solid:
 - The fused router is numerically exact. Its previous 7/128 was the eviction bug, not
   the softmax/top-k math. Logits are stored as bf16-rounded doubles and the full softmax
   denominator is used, because Qwen4 sets `norm_topk_prob=None` (no renormalisation).
-- The GDN/short-conv hub kernels are exact for Qwen3.8 and load without the meta-device
-  failure when enabled after load (`model.set_use_kernels(True)`); the `use_kernels=True`
-  constructor path still dies on `Unsupported device type 'meta'`.
+- The GDN/short-conv hub kernels are exact for Qwen3.8 and are **already active** on MPS
+  without `use_kernels`: the decorator resolves the hub kernel at import and its wrapper
+  dispatches to Metal for any MPS input. `Qwen4Exp.causal_conv1d_update` is a
+  `kernels.Func`. Enabling `use_kernels=True` additionally kernelizes whole layers; that
+  constructor path still dies on `Unsupported device type 'meta'` (streamed embed leaves
+  `model.device` on meta), so it is applied after load via `model.set_use_kernels(True)`.
 - Neither lever moves the 32 GB number. The router is one dispatch per layer against a
   ~37 ms/token host sync and multi-GB/token expert reads; the GDN kernels are a few
   small ops per layer. At 16 GiB cache the wall is expert bytes from SSD.
