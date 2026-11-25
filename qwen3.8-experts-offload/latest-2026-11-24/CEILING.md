@@ -270,3 +270,43 @@ The routing copy is 0.63 ms/token and is not the cost.
 The per-layer round trip is the cost: ~0.74 ms x 48 = 35.7 ms warm. Removing it needs the experts
 resident (48 GiB+ measured 22.47 / 64 GiB 25.11), or a host-side prediction good enough that the
 device never needs pass 2 - which is the guess path, not a wait-batching one.
+
+
+## Instruments, finally: the GPU is 63.5% busy and the host submits every 1.27 ms
+
+Window: events on, LOOKAHEAD=0, MAX_AHEAD=16, 16 GiB, `final-ckpt` 4g32c, 32-token warm-up then 62
+measured. Metal System Trace attached to the live decode (12.04 s), table
+`metal-application-command-buffer-submissions` exported with `xctrace export`:
+
+| quantity | value |
+|---|---:|
+| wall | 63.56 ms/token |
+| main-thread CPU | 62.79 ms/token (98.8%, `thread_time` verified against `sleep`) |
+| command buffers | 9458 / 12.04 s = 785/s = **~50 per token** (~1.04/layer) |
+| sum of command-buffer durations | 7.65 s / 12.04 s = **GPU busy 63.5%** |
+| command-buffer duration | p50 0.75 ms (p90 1.28, p99 2.98) |
+| host gap between submissions | p50 0.94 ms, mean 1.27 |
+
+One command buffer per layer carrying ~0.75 ms of GPU work, submitted every ~1.27 ms: the GPU idles
+~0.5 ms per layer waiting for the host. That is the handshake, measured rather than argued. *Earlier
+"GPU 15% occupied / 20 buffers per token" was an artefact of a trace that covered only 21.8 s of the
+load phase, not decode.*
+
+`route()` is not the cost: copy 0.48 / spin 27.31 / put 0.05 / flush 0.45 ms per token, where the spin
+is the MAX_AHEAD backpressure loop, not CPU.
+
+## Four changes, measured, all neutral or worse
+| change | result |
+|---|---|
+| `NO_COMPILE=1` | CPU 58.2 vs 62.8, wall 64.1 vs 63.6 -> neutral |
+| route() without `torch.cat` | 63.56 vs 63.62 -> neutral |
+| skip `lengths.tolist()` in the 1-sequence rotary split | 63.56 vs 63.62 -> neutral (that call is 0.4 ms/token) |
+| `GUESS=1` (decoupled from `lookahead`) | 70.22 vs 63.56 -> 10% worse |
+
+## The guess pass was never running
+`guess()` is gated on `next_layers()`, i.e. on `lookahead`, which is 0 for the shipped path. Every arm
+therefore predicted nothing (`guess_calls 3072, no next layer 3065`). Decoupled with `ahead_layer()` +
+`GUESS=1`: 2952 comparable layers, **2.4% exact**, ~69% per expert, 4525 ahead reads (+53%), 10% slower.
+Predicting layer L+1 from layer L's *input* is the wrong predictor: the correlation is per expert and
+the wrong experts are the reads you pay for. The right predictor, if any, is temporal (layer L's
+experts at token t-1), which needs no extra reads because those slots are already resident.
