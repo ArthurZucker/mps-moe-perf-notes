@@ -332,3 +332,30 @@ MAX_AHEAD sweep, 256 tokens per arm, one prompt, events on, LOOKAHEAD=0, single 
   the 17.62 sustained in the 128-token verify are the ones to quote.
 - Arms are not bit-identical to each other (`tokens DIFFERENT`), so cross-arm token comparison is not an exactness
   test here; the eager-vs-compiled gate in `verify_generate.py` is (128/128 on the pushed tree).
+
+
+## Fullgraph deadlock: captured, not argued
+
+`FULLGRAPH=1` on the standard arm (16 GiB, events on, LOOKAHEAD=0) is reproducible: exit 134,
+`AcceleratorError ... kIOGPUCommandBufferCallbackErrorTimeout`. Sampling the process live
+(`sample <pid> 8`, four 8-second chunks) at the hang gives:
+
+```
+Thread_<main>  Main Thread
+  5166/5168 samples  at::mps::MPSStream::commitAndWait()
+  5166/5168 samples    -[_MTLCommandBuffer waitUntilCompleted]
+```
+
+and every other thread parked: OpenMP workers in `__kmp_fork_barrier`, workqueue threads in
+`__workq_kernreturn`, the experts-offload router in `_pthread_cond_wait` with no job queued. Earlier
+chunks show the same build-up (`gpu_wait` -> `commit`/`commitEncoder` while the router is still asleep).
+
+Mechanism, measured: the whole decode step is one command buffer. The main thread waits for that buffer
+in `waitUntilCompleted`; the device inside it waits on Metal shared events; the host thread that would
+signal them is parked because its work is gated on the same buffer. One buffer cannot both contain the
+wait and the commit that lets the host resolve it, so fullgraph and host-in-the-loop offloading are
+mutually exclusive unless the handshake disappears.
+
+Negative result kept on purpose: a primitive repro that encodes one wait in one buffer and signals only
+after commit does **not** deadlock (0.01 s vs 0.21 s control) - pytorch ends the buffer at the next op,
+so only the whole-step graph gates the commit. That repro is not the mechanism and is not citable as one.
