@@ -310,3 +310,25 @@ therefore predicted nothing (`guess_calls 3072, no next layer 3065`). Decoupled 
 Predicting layer L+1 from layer L's *input* is the wrong predictor: the correlation is per expert and
 the wrong experts are the reads you pay for. The right predictor, if any, is temporal (layer L's
 experts at token t-1), which needs no extra reads because those slots are already resident.
+
+
+## CORRECTION: the MAX_AHEAD knee and the "28 tok/s warm steady state" were a 16-token artefact
+
+The sweep above measured 16 tokens per arm straight after a 32-token warm-up, where the 16 GiB cache is at
+**99.9% hit**. That is not a steady state: over 256 tokens on the same prompt the hit rate settles at **92%**
+and the same arms land 40% lower.
+
+MAX_AHEAD sweep, 256 tokens per arm, one prompt, events on, LOOKAHEAD=0, single process:
+
+| MAX_AHEAD | 2 | 4 | 8 | 12 | 16 | 24 | 32 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| ms/token | 53.94 | 53.76 | 54.97 | 54.95 | 54.00 | 56.14 | 53.60 |
+| tok/s | 18.54 | 18.60 | 18.19 | 18.20 | 18.52 | 17.81 | 18.66 |
+| hit | 92.4% | 92.5% | 92.4% | 92.2% | 92.6% | 91.8% | 92.6% |
+
+- **Flat from 2 to 32** (18.2-18.7 tok/s, inside noise). The earlier "knee at 4" was an artefact of the short
+  warm window; only `MAX_AHEAD=1` is genuinely bad (it starves the host).
+- The earlier "warm steady state 28 tok/s / 35.7 ms per token" is **withdrawn**. 32/48/64/96 GB ladder numbers and
+  the 17.62 sustained in the 128-token verify are the ones to quote.
+- Arms are not bit-identical to each other (`tokens DIFFERENT`), so cross-arm token comparison is not an exactness
+  test here; the eager-vs-compiled gate in `verify_generate.py` is (128/128 on the pushed tree).
