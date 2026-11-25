@@ -223,3 +223,50 @@ So the simple overlap model gives ~40 tok/s, not 55. The 48 GiB run reaches 59.6
 because its non-stall cost is ~16.8 ms/token. The remaining 8 ms/token at 32 GB is host
 cache bookkeeping / MTP verify work, not SSD reads. To reach 50 at 32 GB, that host work
 must be reduced or overlapped; more cache is the easier answer (48 GiB).
+
+
+## MAX_AHEAD: the earlier sweep never swept, and the knob saturates at 4
+
+`run_maxahead.sh` exported `TRANSFORMERS_EXPERTS_OFFLOAD_MAX_AHEAD`, but `offload.py` held
+`MAX_AHEAD = 16` as a plain class attribute. The 2026-11-25 "48" and "96" runs both ran at 16 and
+both ended in `kIOGPUCommandBufferCallbackErrorTimeout`; that timeout was a flaky cold 128-token
+verify, not the queue depth.
+
+`benchmark_v2/experts_offload/max_ahead_sweep.py` now sets `MAX_AHEAD` on the live router and
+walks values inside one process (one checkpoint load), events on, `LOOKAHEAD=0`, 16 GiB, warm
+cache, 16 tokens per arm:
+
+| MAX_AHEAD | ms/token | tok/s |
+|---:|---:|---:|
+| 1 | 72.25 | 13.84 |
+| 2 | 38.09 | 26.25 |
+| 4 | 35.94 | 27.83 |
+| 8 | 36.03 | 27.75 |
+| 12 | 35.65 | 28.05 |
+| 16 | 35.75 | 27.97 |
+| 24 | 35.86 | 27.89 |
+| 32 | 35.67 | 28.04 |
+
+- **Knee at 4.** At 1 the host cannot get the routing before the device needs the table
+  (72.25 ms/token, and the hit rate falls to 82% because the host is starved). From 4 to 32
+  everything sits inside the ±15% band (35.65-36.03 ms): past the knee the extra depth buys no
+  overlap.
+- Every arm produced identical tokens; no deadlock up to 32 in this configuration.
+- **Cold 128-token verify, MAX_AHEAD=32 with `PIN_AHEAD=1`: 128/128 correct, sustained 17.48**
+  against 19.58 for the shipped arm (16, `PIN_AHEAD=0`). The deeper queue does not help, and the
+  read-ahead pin costs ~2 tok/s in extra evictions. The default stays 16.
+- Warm steady state (99.9% hit) is 35.7 ms/token = **28 tok/s**; the 19.58 ladder number pays the
+  cold misses. `ahead_reads` is 0 at that hit rate, so this sweep cannot price read-ahead; it
+  only matters in the cold window, where the 32/1 arm above lost.
+
+### Why batching waits (the "two-sided pipeline") cannot remove the handshake
+
+`encodeWaitForEvent` has to run outside an open compute encoder, so every wait costs one encoder
+teardown, and the wait must sit between a layer's pass 1 and its pass 2. Layer L+1's pass 1 needs
+L's pass-2 result, so K layers cannot share one handshake: `gpu_wait_many(handle, values[], n)`
+would batch the *encoding*, not the dependency, and save at most a commit, not the round trip.
+The routing copy is 0.63 ms/token and is not the cost.
+
+The per-layer round trip is the cost: ~0.74 ms x 48 = 35.7 ms warm. Removing it needs the experts
+resident (48 GiB+ measured 22.47 / 64 GiB 25.11), or a host-side prediction good enough that the
+device never needs pass 2 - which is the guess path, not a wait-batching one.
