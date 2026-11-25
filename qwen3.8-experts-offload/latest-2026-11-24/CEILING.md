@@ -154,6 +154,47 @@ read. So the ~45 ms "GPU + python" residual is reported as one bucket, bounded b
 64 GiB run above, and not split into kernel vs dispatch. That is a tooling gap, not an
 unexplored lever: the wall itself (host sync) is already isolated by ablation.
 
+
+## FINAL LADDER + xctrace verdict (2026-11-25)
+
+Events on, `LOOKAHEAD=0`, `verify_generate.py`, 4g32c, **128/128 on every arm**:
+
+| resident budget | expert cache | sustained tok/s |
+|---|---:|---:|
+| 32 GB | 16 GiB | 19.58 (no compile) / 18.96 (compile) |
+| 48 GB | 32 GiB | 22.47 |
+| 64 GB | 48 GiB | 25.11 |
+| 96 GB | 80 GiB | 25.31 |
+
+Saturates at 64 GB (all 24,576 expert records resident). Old correct baseline was 8.56 tok/s,
+so 32 GB is now **2.29x** and this design's ceiling is ~25 tok/s.
+
+### Instruments 27.2, `Metal System Trace`, exported `mps-hw-intervals`
+
+| window | MPS intervals | GPU busy | GPU occupied | cmd buffers/token |
+|---|---:|---:|---:|---:|
+| whole run | 1118 | 724 ms | 5% of 15.6 s | - |
+| last 1.0 s (decode) | 280 | 151 ms | **15%** | **20** |
+
+586 unnamed command buffers (mean 983 us) + 532 `MPSGraph` (mean 279 us).
+
+**The GPU is ~15% occupied during decode**, and the main thread is ~79% busy with
+`sync`/`wait` at 0.00. Three independent GPU-side ablations failed to move the wall
+(fused router 18.38, `use_kernels` 17.76, pass-2 zeroed 59.29 vs 56.04 ms control). The wall is
+therefore **host-side serialization around ~20 command buffers per token** — not GPU compute,
+not SSD, not memory. Tracer perturbs the host, so 15% is an upper bound on GPU occupancy.
+
+### Bottlenecks already excluded by measurement
+
+| hypothesis | how it was killed | result |
+|---|---|---|
+| SSD bandwidth | cut reads 3.08x (`LOOKAHEAD=0`) | 8.27 -> 8.16, flat; drive does 7.6 GB/s, decode used 1.4 |
+| GPU compute | zeroed the whole second expert pass | 59.29 vs 56.04 (no gain; pass 2 is only the ~44 misses) |
+| dispatch count | fused router, GDN hub kernels | 18.38 / 17.76 vs 18.96 — slower |
+| python/inductor overhead | dropped `torch.compile` entirely | 19.58 vs 18.96 — no loss |
+| fullgraph | `fullgraph=True` with setup hoisted + embedding as a custom op | traces, then `kIOGPUCommandBufferCallbackErrorTimeout`: device wait inside one command buffer deadlocks |
+| routing copy | timed the copy stage | 0.64 ms/token; `ext.cpu_address` already host-visible |
+
 ## What to fix
 
 0. **Ship the events path on.** `TRANSFORMERS_EXPERTS_OFFLOAD_MPS_EVENTS=1` with
